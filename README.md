@@ -1,6 +1,6 @@
 # hbttrckr
 şu an hala türkçe readme ama yakında ingilizceye de çevirecem
-nasıl özgün proje ismi ama "habit tracker"'ın ünsüz harfleri
+nasıl özgün proje ismi ama "habit tracker"'ın ünsüz harfleri (habit tracker alışkanlık takip eden demek)
 
 ## Alışkanlık takip uygulaması 
 İnternet üzerinde çok güzel alışkanlık uygulamaları var ve insanlar bunları sonuna kadar kullanmak 
