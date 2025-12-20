@@ -1,4 +1,4 @@
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_acrylic/window.dart';
 import 'package:hbttrckr/views/adaptivescaffoldmainview.dart';
@@ -53,8 +53,22 @@ final colorScheme2 = ColorScheme(
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Window.initialize();
-  await Window.setEffect(effect:  isMica ? WindowEffect.mica :WindowEffect.transparent);
+  if (kIsWeb) {
+
+  }else if (defaultTargetPlatform == TargetPlatform.android) {
+
+  }else if (defaultTargetPlatform == TargetPlatform.iOS) {
+
+  }else if (defaultTargetPlatform == TargetPlatform.macOS) {
+    await Window.initialize();
+    await Window.setEffect(effect:  isMica ? WindowEffect.mica :WindowEffect.transparent);
+  }else if (defaultTargetPlatform == TargetPlatform.windows) {
+    await Window.initialize();
+    await Window.setEffect(effect:  isMica ? WindowEffect.mica :WindowEffect.transparent);
+  }else if (defaultTargetPlatform == TargetPlatform.linux) {
+    await Window.initialize();
+    await Window.setEffect(effect:  isMica ? WindowEffect.mica :WindowEffect.transparent);
+  }
   initializeDateFormatting('tr_TR', null);
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => CurrentThemeMode()),

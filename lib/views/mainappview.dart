@@ -17,10 +17,11 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 import 'habits_page.dart';
 
-// TODO: transparent olma ve olmama durumu iyice bakılması lazım mesela transparan değilken ve açık moddayken gri oluyor bunu değişkenler ile halledelim mesela if transparan o zaman colorda alpha olacak ama eğer ki else transparan o vakit colorda alpha olmayacak
+// TODO: mobilde tranparan yöntemleri bakılacak ve her yerde liquid glass kullanılmaya çalışılacak (transparan ekranda olmuyor çünkü içindeki şeyleri transparan arka planda göstermiyor bu son paket)
+
 // TODO: habit yazı rengi de transparan olmaya göre bakılacak ayrıca bottom app bar a sonradan dönülecek çünkü rengi şüpheli
 
-bool isMica = false;
+bool isMica = true ;
 
 // TODO : kod düzenlemesi yapılması lazım. Birgün alıp bu tüm belirli widgetları sayfaları felan ayrı dosyalara ayıralım
 
@@ -131,6 +132,14 @@ class MainAppViewState extends State<MainAppView> {
           ? Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 1)
           : Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.3),
       floatingActionButton: FloatingActionButton(
+        foregroundColor: isMica
+            ? Theme.of(context).floatingActionButtonTheme.foregroundColor
+            : Theme.of(context).floatingActionButtonTheme.foregroundColor
+                  ?.withValues(alpha: 0.2),
+        backgroundColor: isMica
+            ? Theme.of(context).floatingActionButtonTheme.backgroundColor
+            : Theme.of(context).floatingActionButtonTheme.backgroundColor
+                  ?.withValues(alpha: 0.2),
         onPressed: () {},
         shape: StadiumBorder(),
         child: IconButton(
@@ -300,11 +309,9 @@ class MainAppViewState extends State<MainAppView> {
             ) // 1. sayfa: alışkanlıklar
           : StatisticsScreen(), // 2. sayfa: istatistikler
       bottomNavigationBar: BottomAppBar(
-        color: isMica ? Theme.of(
-          context,
-        ).bottomAppBarTheme.color?.withValues(alpha: 1) : Theme.of(
-          context,
-        ).bottomAppBarTheme.color?.withValues(alpha: 0.2),
+        color: isMica
+            ? Theme.of(context).bottomAppBarTheme.color?.withValues(alpha: 1)
+            : Theme.of(context).bottomAppBarTheme.color?.withValues(alpha: 0.2),
         elevation: 10,
         shape: CircularNotchedRectangle(),
         clipBehavior: Clip.hardEdge,
@@ -323,6 +330,12 @@ class MainAppViewState extends State<MainAppView> {
               onPressed: () => onItemTapped(0),
             ),
             IconButton(
+              style: IconButton.styleFrom(
+                shape: StadiumBorder(),
+                foregroundColor: _selectedIndex == 1
+                    ? Theme.of(context).colorScheme.secondary
+                    : Colors.grey,
+              ),
               icon: Icon(Icons.bar_chart),
               onPressed: () => onItemTapped(1),
             ),
