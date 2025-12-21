@@ -13,6 +13,8 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 
 // TODO ERROR : düzenleme oluyor iki iptal tuşu var
 
+// TODO : habitlerde kategorilendirme yapılacak ve ana ekranda ona göre bakma olacak
+
 // TODO : lottie fire . json çalışmıyor ona bak pubspec.yaml dosyasında assets kısmını açtım bir daha bak o şekil dene
 
 // TODO : time ve count selector tasarım

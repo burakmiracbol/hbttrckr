@@ -17,11 +17,14 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 import 'habits_page.dart';
 
+// TODO: ayarlar düğmesi ile bottom sheet açılacak ve farklı ayar menülerine gitme gösterilecek
+// NOTE: sheet yapıldı
+
 // TODO: mobilde tranparan yöntemleri bakılacak ve her yerde liquid glass kullanılmaya çalışılacak (transparan ekranda olmuyor çünkü içindeki şeyleri transparan arka planda göstermiyor bu son paket)
 
 // TODO: habit yazı rengi de transparan olmaya göre bakılacak ayrıca bottom app bar a sonradan dönülecek çünkü rengi şüpheli
 
-bool isMica = true ;
+bool isMica = true;
 
 // TODO : kod düzenlemesi yapılması lazım. Birgün alıp bu tüm belirli widgetları sayfaları felan ayrı dosyalara ayıralım
 
@@ -196,6 +199,83 @@ class MainAppViewState extends State<MainAppView> {
                   : Icons.dark_mode,
             ),
             onPressed: () => context.read<CurrentThemeMode>().changeThemeMode(),
+          ),
+          IconButton.outlined(
+            onPressed: () {
+              showModalBottomSheet(
+                enableDrag: true,
+                useSafeArea: true,
+                isScrollControlled: true,
+                context: context,
+                builder: (sheetContext) =>
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16 ,left: 8, right: 8 , bottom: 8),
+                      child: Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Center(child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text("Ayarlar",style: TextStyle(fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize)),
+                            )),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(child: Icon(Icons.account_circle_outlined),),
+                                  title: Text("Hesap Bilgileri"),
+                                  trailing: Icon(Icons.chevron_right),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(child: Icon(Icons.notifications_outlined),),
+                                  title: Text("Bildirimler"),
+                                  trailing: Icon(Icons.chevron_right),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(child: Icon(Icons.tune),),
+                                  title: Text("Tercihler"),
+                                  trailing: Icon(Icons.chevron_right),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(child: Icon(Icons.message_outlined),),
+                                  title: Text("Destek Hattı"),
+                                  trailing: Icon(Icons.chevron_right),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(child: Icon(Icons.star_outline),),
+                                  title: Text("Bizi Değerlendir"),
+                                  trailing: Icon(Icons.chevron_right),
+                                ),
+                              ),
+                            ),
+                          ]
+                        ),
+                      ),
+                    ),
+              );
+            },
+            icon: Icon(Icons.settings),
           ),
         ],
       ),
