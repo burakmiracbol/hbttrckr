@@ -54,6 +54,10 @@ class MainAppView extends StatefulWidget {
 }
 
 class MainAppViewState extends State<MainAppView> {
+  static TextEditingController accountController = TextEditingController();
+
+  static TextEditingController passwordController = TextEditingController();
+
   late ThemeMode currentThemeMode = context
       .watch<CurrentThemeMode>()
       .currentMode;
@@ -207,72 +211,246 @@ class MainAppViewState extends State<MainAppView> {
                 useSafeArea: true,
                 isScrollControlled: true,
                 context: context,
-                builder: (sheetContext) =>
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16 ,left: 8, right: 8 , bottom: 8),
-                      child: Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Center(child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text("Ayarlar",style: TextStyle(fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize)),
-                            )),
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(child: Icon(Icons.account_circle_outlined),),
-                                  title: Text("Hesap Bilgileri"),
-                                  trailing: Icon(Icons.chevron_right),
-                                ),
+                builder: (sheetContext) => Padding(
+                  padding: const EdgeInsets.only(
+                    top: 16,
+                    left: 8,
+                    right: 8,
+                    bottom: 8,
+                  ),
+                  child: Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(
+                              "Ayarlar",
+                              style: TextStyle(
+                                fontSize: Theme.of(
+                                  context,
+                                ).textTheme.headlineSmall?.fontSize,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(child: Icon(Icons.notifications_outlined),),
-                                  title: Text("Bildirimler"),
-                                  trailing: Icon(Icons.chevron_right),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(child: Icon(Icons.tune),),
-                                  title: Text("Tercihler"),
-                                  trailing: Icon(Icons.chevron_right),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(child: Icon(Icons.message_outlined),),
-                                  title: Text("Destek Hattı"),
-                                  trailing: Icon(Icons.chevron_right),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4.0),
-                              child: Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(child: Icon(Icons.star_outline),),
-                                  title: Text("Bizi Değerlendir"),
-                                  trailing: Icon(Icons.chevron_right),
-                                ),
-                              ),
-                            ),
-                          ]
+                          ),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Card(
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                child: Icon(Icons.account_circle_outlined),
+                              ),
+                              title: Text("Hesap Bilgileri"),
+                              trailing: Icon(Icons.chevron_right),
+                              onTap: () {
+
+                                showModalBottomSheet(
+                                  enableDrag: true,
+                                  useSafeArea: true,
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (sheetContext) => Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 16,
+                                      left: 8,
+                                      right: 8,
+                                      bottom: 8,
+                                    ),
+                                    child: Expanded(
+                                      child: Column(
+                                        children: [
+                                          Stack(
+                                              children: [
+                                            Align(
+                                              alignment: Alignment.topLeft,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(4.0),
+                                                child: IconButton(onPressed: (){
+                                                  Navigator.pop(context);
+                                                }, icon: Icon(Icons.close)),
+                                              ),
+                                            ),
+                                                Center(
+                                                  child: Text("Account", style: TextStyle(
+                                                    fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize,
+                                                  )),
+                                                )
+                                          ]
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Card(
+                                              child: TextField(
+                                                controller: accountController,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                                decoration: InputDecoration(
+                                                  hintText: 'Account name',
+                                                  hintStyle: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                  filled: true,
+                                                  fillColor: Colors.grey[900],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Card(
+                                              child: TextField(
+                                                controller: passwordController,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                                decoration: InputDecoration(
+                                                  hintText:
+                                                      'Password (that is secret don\'t share it)',
+                                                  hintStyle: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                  filled: true,
+                                                  fillColor: Colors.grey[900],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: TextButton(
+                                              onPressed: () {},
+                                              child: Text(
+                                                "Forgot your password ?\n(okay that is normal but we are tired)",
+                                              ),
+                                            ),
+                                          ),
+
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Expanded(
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Color.fromARGB(
+                                                      255, 140, 140, 73),
+                                                ),
+                                                onPressed: () {},
+                                                child: Expanded(
+                                                  child: Text("Log in"),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          Stack(
+                                            children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 6.0),
+                                              child: Center(child: Divider()),
+                                            ),
+                                              Center(child: Card(child: Expanded(child: Text("  or  "))))
+                                          ],
+                                          ),
+                                          
+                                          Card(child: Expanded(child: TextButton(onPressed: (){}, child: Text("Create Account")))),
+
+                                          Row(mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Card(
+                                                    child: Image.network(
+                                                      "https://media.tenor.com/8N-eAawZ-9wAAAAm/google.webp",
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Card(
+                                                      child: Image.network(
+                                                        "https://media.tenor.com/8N-eAawZ-9wAAAAm/google.webp",
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                  ),
+                                                ),
+                                              ]
+                                          )
+                                          
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Card(
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                child: Icon(Icons.notifications_outlined),
+                              ),
+                              title: Text("Bildirimler"),
+                              trailing: Icon(Icons.chevron_right),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Card(
+                            child: ListTile(
+                              leading: CircleAvatar(child: Icon(Icons.tune)),
+                              title: Text("Tercihler"),
+                              trailing: Icon(Icons.chevron_right),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Card(
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                child: Icon(Icons.message_outlined),
+                              ),
+                              title: Text("Destek Hattı"),
+                              trailing: Icon(Icons.chevron_right),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Card(
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                child: Icon(Icons.star_outline),
+                              ),
+                              title: Text("Bizi Değerlendir"),
+                              trailing: Icon(Icons.chevron_right),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+                ),
               );
             },
             icon: Icon(Icons.settings),
