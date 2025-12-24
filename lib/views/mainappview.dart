@@ -17,6 +17,32 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 import 'habits_page.dart';
 
+// TODO's
+//
+//  calendar yapılmalı ana sayfa için veya daha düzgün paket bulunmalı ama not edelim geçen güzel pakaet bulamadık
+//  her alışkanlığın kendi içinde de takvimi olacak ve eklenmesi acil
+//  stats_view.dart ekranında da takvim lazım ve görsellik yükseltilmeli yapma sayısı oran felan
+//  ve ayrıca tüm alışkanlıkları list halinde gösterme bottom sheete taşınmalı
+//  alışkanlıklara yeni özellikler eklemeli notlar kısmı ikonu felan ayrıca ikon seçme özelliği eklenmeli
+//  alışkanlıklarda skip tuşu eklenmeli
+//  haftanın hangi gününden başladığı eklenmeli
+//  o güne göre habit çekme olmalı (şu an sadece yaşadığımız günü çekme var o yüzden calendarda geçmiş tarihe gidince bugün tamamlanma oranı var) ve habitlerin saklanma şekli çok şüpheci onlara bakılmalı
+//  habit gruplama olmalı
+//  kodu düzeltmeli hızımızı artırır eğer düzenler isek
+//  alarm ve haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
+//  custom theme olsun ve şu an ki transparan butonu ve açık koyu tema butonu ayarlara doğru yol alsın
+//  tema açısından geliştirmeler yapılmalı
+//  daha önce bahsedildiği gibi şu anki calendarda tamamlanmış habitleri çekmede sıkıntı var sadece taskleri sayıyor
+//  time habitleri için ana ekranda play tuşu olsunve süreyi başlatsın
+//  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
+//  custom bildirim gönderme olmalı
+//  bir icon paketi oluşturlmalı veya bulunmalı ama bize uyumlu olsun
+//  material 3 expressive veya material 3 tasarım biçimlerini uygulamaya koymalıyız
+//  ana ekrana eklemelik widgetlar yapılmalı
+//  windows gibi bilgisayarlara farklı bir tasarım olmalı
+//
+
+
 // TODO: ayarlar düğmesi ile bottom sheet açılacak ve farklı ayar menülerine gitme gösterilecek
 // NOTE: sheet yapıldı
 
@@ -369,28 +395,6 @@ class MainAppViewState extends State<MainAppView> {
                                           
                                           Card(child: Expanded(child: TextButton(onPressed: (){}, child: Text("Create Account")))),
 
-                                          Row(mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Card(
-                                                    child: Image.network(
-                                                      "https://media.tenor.com/8N-eAawZ-9wAAAAm/google.webp",
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Card(
-                                                      child: Image.network(
-                                                        "https://media.tenor.com/8N-eAawZ-9wAAAAm/google.webp",
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                  ),
-                                                ),
-                                              ]
-                                          )
                                           
                                         ],
                                       ),
