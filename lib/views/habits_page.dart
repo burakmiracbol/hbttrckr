@@ -5,6 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:hbttrckr/views/mainappview.dart';
+import 'dart:async';
 
 // TODO : calendarda task türünden yapılanları işaretliyor diğer türleri değil
 // TODO : calendar habitlerin hangi günde olduğunu biliyor ama hangi günde ne kadar bittiğini bilmiyor
@@ -25,6 +26,9 @@ Widget buildHabitsPage({
       ),
     );
   }
+
+  bool isRunning = false;
+  late Timer timer;
 
   return Consumer<HabitProvider>(
       builder: (context, provider, child) { // BU CONTEXT DOĞRU!
@@ -205,7 +209,7 @@ Widget buildHabitsPage({
                               habit.name,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            subtitle: Text(isFuture || isTooLate ? "Yapılacak" :
+                            subtitle: Text(isFuture || isTooLate ? " " :
                               habit.type == HabitType.task
                                   ? (habit.isCompletedToday()
                                   ? 'Tamamlandı'
@@ -219,8 +223,11 @@ Widget buildHabitsPage({
                                   ? 'Tamamlandı'
                                   : 'Yapılmadı',
                             ),
-                            trailing: isFuture || isTooLate ? habit.type == HabitType.task
-                                ? IconButton(
+                            trailing: isFuture || isTooLate ?
+
+                            habit.type == HabitType.task
+                                ?
+                            IconButton(
                               style: IconButton.styleFrom(
                                 foregroundColor:  Colors.grey,
                               ),
@@ -242,7 +249,8 @@ Widget buildHabitsPage({
                               },
                             )
                                 : habit.type == HabitType.time
-                                ? IconButton(
+                                ?
+                            IconButton(
                               style: IconButton.styleFrom(
                                 foregroundColor:  Colors.grey,
                               ),
@@ -251,7 +259,8 @@ Widget buildHabitsPage({
                               ),
                               onPressed: () {},
                             )
-                                : IconButton(
+                                :
+                            IconButton(
                               style: IconButton.styleFrom(
                                 foregroundColor:  Colors.grey,
                               ),
@@ -260,8 +269,11 @@ Widget buildHabitsPage({
                               ),
                               onPressed: () {},
                             )
+
                                 : habit.type == HabitType.task
-                                ? IconButton(
+
+                                ?
+                            IconButton(
                               style: IconButton.styleFrom(
                                 foregroundColor: habit.isCompletedToday()
                                     ? Colors.green
@@ -279,7 +291,9 @@ Widget buildHabitsPage({
                                     .toggleTaskCompletion(habit.id);
                               },
                             )
+
                                 : habit.type == HabitType.count
+
                                 ? IconButton(
                               style: IconButton.styleFrom(
                                 foregroundColor: habit.isCompletedToday()
@@ -298,22 +312,29 @@ Widget buildHabitsPage({
                                 );
                               },
                             )
+
                                 : habit.type == HabitType.time
-                                ? IconButton(
+
+                                ?
+                            IconButton(
                               style: IconButton.styleFrom(
-                                foregroundColor: habit.isCompletedToday()
-                                    ? Colors.green
-                                    : Colors.grey,
+                                foregroundColor:  Colors.grey,
                               ),
-                              icon: Icon(
-                                habit.isCompletedToday()
-                                    ? Icons.check_circle
-                                    : Icons.radio_button_unchecked,
-                                size: 25,
-                              ),
-                              onPressed: () {},
+                              onPressed: () {
+                                if (isRunning) {
+                                  timer = Timer.periodic(const Duration(seconds: 1), (t) {
+                                    Provider.of<HabitProvider>(context).incrementTime(habit.id);
+                                  });
+                                  isRunning = !isRunning;
+
+                                } else {
+                                  timer.cancel();
+                                  isRunning = !isRunning;
+                                }
+                              },
+                              icon: Icon(isRunning ? Icons.pause : Icons.play_arrow),
                             )
-                                : IconButton(
+                                :  IconButton(
                               style: IconButton.styleFrom(
                                 foregroundColor: habit.isCompletedToday()
                                     ? Colors.green

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_neat_and_clean_calendar/neat_and_clean_calendar_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +22,24 @@ class HabitProvider with ChangeNotifier {
 
   HabitProvider() {
     _loadHabits();
+  }
+
+  void incrementTime(String habitId) {
+    final index = _habits.indexWhere((h) => h.id == habitId);
+    if (index == -1) return;
+    final habit = _habits[index];
+    if (habit.type != HabitType.time) return;
+
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final current = habit.dailyProgress?[today] as int? ?? 0;
+    final newValue = current + 1;
+
+    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress ?? {});
+    newProgress[today] = newValue;
+
+    _habits[index] = habit.copyWith(dailyProgress: newProgress);
+    notifyListeners();
+    _saveHabits();
   }
 
   void changeCount(String habitId, int value ) {

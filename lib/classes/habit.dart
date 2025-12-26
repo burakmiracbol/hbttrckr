@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
@@ -55,6 +57,8 @@ class Habit {
   }) :  dailyProgress = dailyProgress ?? {},
         completedDates = completedDates ?? [],
         skippedDates = skippedDates ?? [];
+
+
 
   // === STRENGTH HESAPLAMASI (getter) ===
   /// Alışkanlığın genel gücü (0.0 - 100.0)
