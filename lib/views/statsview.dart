@@ -123,65 +123,8 @@ class StatisticsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                //       GridView.count(
-                //         crossAxisCount: 2,
-                //         shrinkWrap: true,
-                //         physics: const NeverScrollableScrollPhysics(),
-                //         crossAxisSpacing: 12,
-                //         mainAxisSpacing: 12,
-                //         children: [
-                //           Padding(
-                //             padding: const EdgeInsets.all(8.0),
-                //             child: _StatCard("Toplam Alışkanlık", totalHabits.toString(), Icons.list_alt, Colors.blue),
-                //           ),
-                //           Padding(
-                //             padding: const EdgeInsets.all(8.0),
-                //             child: _StatCard("Aktif Streak", activeHabits.toString(), Icons.whatshot, Colors.orange),
-                //           ),
-                //           Padding(
-                //             padding: const EdgeInsets.all(8.0),
-                //             child: _StatCard("Efsane Seviye", perfectHabits.toString(), Icons.star, Colors.purple),
-                //           ),
-                //           Padding(
-                //             padding: const EdgeInsets.all(8.0),
-                //             child: _StatCard("Ortalama Güç", "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%", Icons.trending_up, Colors.green),
-                //           ),
-                // ],
-                //       ),
-                Text(
-                  "Tüm Alışkanlıklar",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
 
-                ...habits.map(
-                  (h) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Card(
-                      color: isMica
-                          ? Theme.of(context).cardColor
-                          : Theme.of(context).cardColor.withValues(alpha: 0.2),
-                      elevation: 3,
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: h.color,
-                          child: Text(h.name[0].toUpperCase()),
-                        ),
-                        title: Text(h.name),
-                        subtitle: Text(
-                          "${h.currentStreak} gün streak • ${h.strength}% güç",
-                        ),
-                        trailing: h.currentStreak > 0
-                            ? Icon(
-                                Icons.local_fire_department,
-                              ) // TODO : lottie ekle
-                            : const Icon(
-                                Icons.local_fire_department_outlined,
-                                color: Colors.grey,
-                              ),
-                      ),
-                    ),
-                  ),
-                ),
+
               ],
             ),
           ),

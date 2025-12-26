@@ -22,7 +22,6 @@ import 'habits_page.dart';
 //  calendar yapılmalı ana sayfa için veya daha düzgün paket bulunmalı ama not edelim geçen güzel pakaet bulamadık
 //  her alışkanlığın kendi içinde de takvimi olacak ve eklenmesi acil
 //  stats_view.dart ekranında da takvim lazım ve görsellik yükseltilmeli yapma sayısı oran felan
-//  ve ayrıca tüm alışkanlıkları list halinde gösterme bottom sheete taşınmalı
 //  alışkanlıklara yeni özellikler eklemeli notlar kısmı ikonu felan ayrıca ikon seçme özelliği eklenmeli
 //  alışkanlıklarda skip tuşu eklenmeli
 //  haftanın hangi gününden başladığı eklenmeli
@@ -41,7 +40,6 @@ import 'habits_page.dart';
 //  ana ekrana eklemelik widgetlar yapılmalı
 //  windows gibi bilgisayarlara farklı bir tasarım olmalı
 //
-
 
 // TODO: ayarlar düğmesi ile bottom sheet açılacak ve farklı ayar menülerine gitme gösterilecek
 // NOTE: sheet yapıldı
@@ -223,6 +221,55 @@ class MainAppViewState extends State<MainAppView> {
         title: Center(child: Text(title)),
         actions: [
           IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (sheetContext) =>
+                    Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Center(child: Column(
+                          children: [
+                            Text(
+                              "Tüm Alışkanlıklar",
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            ...habits.map(
+                                  (h) => Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Card(
+                                  color: isMica
+                                      ? Theme.of(context).cardColor
+                                      : Theme.of(context).cardColor.withValues(alpha: 0.2),
+                                  elevation: 3,
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: h.color,
+                                      child: Text(h.name[0].toUpperCase()),
+                                    ),
+                                    title: Text(h.name),
+                                    subtitle: Text(
+                                      "${h.currentStreak} gün streak • ${h.strength}% güç",
+                                    ),
+                                    trailing: h.currentStreak > 0
+                                        ? Icon(
+                                      Icons.local_fire_department,
+                                    ) // TODO : lottie ekle
+                                        : const Icon(
+                                      Icons.local_fire_department_outlined,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),)
+                    ),
+              );
+            },
+            icon: Icon(Icons.panorama_fisheye),
+          ),
+          IconButton(
             icon: Icon(
               context.watch<CurrentThemeMode>().isDarkMode
                   ? Icons.light_mode
@@ -272,7 +319,6 @@ class MainAppViewState extends State<MainAppView> {
                               title: Text("Hesap Bilgileri"),
                               trailing: Icon(Icons.chevron_right),
                               onTap: () {
-
                                 showModalBottomSheet(
                                   enableDrag: true,
                                   useSafeArea: true,
@@ -289,22 +335,33 @@ class MainAppViewState extends State<MainAppView> {
                                       child: Column(
                                         children: [
                                           Stack(
-                                              children: [
-                                            Align(
-                                              alignment: Alignment.topLeft,
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(4.0),
-                                                child: IconButton(onPressed: (){
-                                                  Navigator.pop(context);
-                                                }, icon: Icon(Icons.close)),
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    4.0,
+                                                  ),
+                                                  child: IconButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    icon: Icon(Icons.close),
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                                Center(
-                                                  child: Text("Account", style: TextStyle(
-                                                    fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize,
-                                                  )),
-                                                )
-                                          ]
+                                              Center(
+                                                child: Text(
+                                                  "Account",
+                                                  style: TextStyle(
+                                                    fontSize: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall
+                                                        ?.fontSize,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(4.0),
@@ -372,8 +429,13 @@ class MainAppViewState extends State<MainAppView> {
                                             child: Expanded(
                                               child: ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Color.fromARGB(
-                                                      255, 140, 140, 73),
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                        255,
+                                                        140,
+                                                        140,
+                                                        73,
+                                                      ),
                                                 ),
                                                 onPressed: () {},
                                                 child: Expanded(
@@ -385,17 +447,30 @@ class MainAppViewState extends State<MainAppView> {
 
                                           Stack(
                                             children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 6.0),
-                                              child: Center(child: Divider()),
-                                            ),
-                                              Center(child: Card(child: Expanded(child: Text("  or  "))))
-                                          ],
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 6.0,
+                                                ),
+                                                child: Center(child: Divider()),
+                                              ),
+                                              Center(
+                                                child: Card(
+                                                  child: Expanded(
+                                                    child: Text("  or  "),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          
-                                          Card(child: Expanded(child: TextButton(onPressed: (){}, child: Text("Create Account")))),
 
-                                          
+                                          Card(
+                                            child: Expanded(
+                                              child: TextButton(
+                                                onPressed: () {},
+                                                child: Text("Create Account"),
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
