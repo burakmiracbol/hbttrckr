@@ -32,7 +32,6 @@ import 'habits_page.dart';
 //  custom theme olsun ve şu an ki transparan butonu ve açık koyu tema butonu ayarlara doğru yol alsın
 //  tema açısından geliştirmeler yapılmalı
 //  daha önce bahsedildiği gibi şu anki calendarda tamamlanmış habitleri çekmede sıkıntı var sadece taskleri sayıyor
-//  time habitleri için ana ekranda play tuşu olsunve süreyi başlatsın
 //  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
 //  custom bildirim gönderme olmalı
 //  bir icon paketi oluşturlmalı veya bulunmalı ama bize uyumlu olsun

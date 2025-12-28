@@ -19,28 +19,71 @@ class HabitProvider with ChangeNotifier {
   DateTime? selectedDate = DateTime.now();
 
   List<Habit> get habits => List.unmodifiable(_habits);
+  Timer? _timer;
+  Map<String, bool> runningTimers = {};
 
   HabitProvider() {
     _loadHabits();
   }
 
-  void incrementTime(String habitId) {
+  void resetTimer(String habitId) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
+
     final habit = _habits[index];
     if (habit.type != HabitType.time) return;
 
     final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    final current = habit.dailyProgress?[today] as int? ?? 0;
-    final newValue = current + 1;
 
-    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress ?? {});
-    newProgress[today] = newValue;
+    final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
+    newProgress[today] = 0; // bugünki süreyi sıfırla
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
     notifyListeners();
     _saveHabits();
   }
+
+  void incrementTime(String habitId) {
+    final index = _habits.indexWhere((h) => h.id == habitId);
+    if (index == -1) return;
+
+    final habit = _habits[index];
+    if (habit.type != HabitType.time) return;
+
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    final currentSeconds = (habit.dailyProgress?[today] as int?) ?? 0;
+    final newSeconds = currentSeconds + 1; // her çağrıda +1 saniye
+
+    final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
+    newProgress[today] = newSeconds;
+
+    _habits[index] = habit.copyWith(dailyProgress: newProgress);
+    notifyListeners();
+    _saveHabits();
+  }
+
+  void toggleTimer(String habitId) {
+    if (runningTimers[habitId] == true) {
+      // DURDUR
+      _timer?.cancel();
+      runningTimers[habitId] = false;
+    } else {
+      // BAŞLAT
+      runningTimers[habitId] = true;
+      _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+        incrementTime(habitId); // saniye ekle
+      });
+    }
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
 
   void changeCount(String habitId, int value ) {
     final index = _habits.indexWhere((h) => h.id == habitId);

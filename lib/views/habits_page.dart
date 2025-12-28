@@ -316,23 +316,21 @@ Widget buildHabitsPage({
                                 : habit.type == HabitType.time
 
                                 ?
-                            IconButton(
-                              style: IconButton.styleFrom(
-                                foregroundColor:  Colors.grey,
-                              ),
-                              onPressed: () {
-                                if (isRunning) {
-                                  timer = Timer.periodic(const Duration(seconds: 1), (t) {
-                                    Provider.of<HabitProvider>(context).incrementTime(habit.id);
-                                  });
-                                  isRunning = !isRunning;
+                            Consumer<HabitProvider>(
+                              builder: (context, provider, child) {
+                                final bool isRunning = provider.runningTimers[habit.id] ?? false;
 
-                                } else {
-                                  timer.cancel();
-                                  isRunning = !isRunning;
-                                }
+                                return IconButton(
+                                  style: IconButton.styleFrom(foregroundColor: Colors.grey),
+                                  onPressed: () {
+                                    provider.toggleTimer(habit.id);
+                                  },
+                                  icon: Icon(
+                                    isRunning ? Icons.pause : Icons.play_arrow,
+                                    size: 25,
+                                  ),
+                                );
                               },
-                              icon: Icon(isRunning ? Icons.pause : Icons.play_arrow),
                             )
                                 :  IconButton(
                               style: IconButton.styleFrom(

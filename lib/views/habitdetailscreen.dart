@@ -834,26 +834,74 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       )
                                     // TIME
                                     else if (currentHabit.type == HabitType.time)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: LiquidGlass(
-                                          shape: LiquidRoundedRectangle(borderRadius: 16),
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: currentHabit.color.withValues(
-                                                alpha: 0.2,
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: LiquidGlass(
+                                              shape: LiquidOval(),
+                                              child: Consumer<HabitProvider>(
+                                                builder: (context, provider, child) {
+                                                  final bool isRunning = provider.runningTimers[currentHabit.id] ?? false;
+
+                                                  return IconButton(
+                                                    style: IconButton.styleFrom(foregroundColor: Colors.grey),
+                                                    onPressed: () {
+                                                      provider.resetTimer(currentHabit.id); // sıfırla
+                                                      if (isRunning) {
+                                                        provider.toggleTimer(currentHabit.id); // timer'ı da durdur
+                                                      }
+                                                    },
+                                                    icon: const Icon(Icons.refresh, size: 25),
+                                                  );
+                                                },
                                               ),
-                                              shape: const StadiumBorder(),
-                                            ),
-                                            onPressed: () =>
-                                                showTimeSelectorSheet(context, currentHabit),
-                                            child: Text(
-                                              currentHabit.todayMinutesProgress
-                                                  .toInt()
-                                                  .formattedHMS,
                                             ),
                                           ),
-                                        ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: LiquidGlass(
+                                              shape: LiquidRoundedRectangle(borderRadius: 16),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: currentHabit.color.withValues(
+                                                    alpha: 0.2,
+                                                  ),
+                                                  shape: const StadiumBorder(),
+                                                ),
+                                                onPressed: () =>
+                                                    showTimeSelectorSheet(context, currentHabit),
+                                                child: Text(
+                                                  currentHabit.todayMinutesProgress
+                                                      .toInt()
+                                                      .formattedHMS,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: LiquidGlass(
+                                              shape: LiquidOval(),
+                                              child: Consumer<HabitProvider>(
+                                                builder: (context, provider, child) {
+                                                  final bool isRunning = provider.runningTimers[currentHabit.id] ?? false;
+
+                                                  return IconButton(
+                                                    style: IconButton.styleFrom(foregroundColor: Colors.grey),
+                                                    onPressed: () {
+                                                      provider.toggleTimer(currentHabit.id);
+                                                    },
+                                                    icon: Icon(
+                                                      isRunning ? Icons.pause : Icons.play_arrow,
+                                                      size: 25,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       )
                                     // Diğer tipler
                                     else
