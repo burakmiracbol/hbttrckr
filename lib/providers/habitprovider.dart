@@ -246,8 +246,31 @@ class HabitProvider with ChangeNotifier {
 
   int getCompletedCountForDay(DateTime day) {
     final normalized = DateTime(day.year, day.month, day.day);
-    return habits.where((h) => h.completedDates.any((d) =>
-    d.year == normalized.year && d.month == normalized.month && d.day == normalized.day)).length;
+
+    return habits.where((habit) {
+      // Task tipi → completedDates'te var mı?
+      if (habit.type == HabitType.task) {
+        return habit.completedDates.any((d) =>
+        d.year == normalized.year &&
+            d.month == normalized.month &&
+            d.day == normalized.day);
+      }
+
+      // Count tipi → bugünki progress >= targetCount mı?
+      if (habit.type == HabitType.count) {
+        final achieved = (habit.dailyProgress?[normalized] as int?) ?? 0;
+        return achieved >= (habit.targetCount ?? 1);
+      }
+
+      // Time tipi → bugünki saniye >= targetSeconds mı?
+      if (habit.type == HabitType.time) {
+        final achievedSeconds = (habit.dailyProgress?[normalized] as int?) ?? 0;
+        final targetSecs = habit.targetSeconds ?? 60;
+        return achievedSeconds >= targetSecs;
+      }
+
+      return false;
+    }).length;
   }
 
   void addHabit({

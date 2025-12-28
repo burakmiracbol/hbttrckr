@@ -20,7 +20,7 @@ import 'habits_page.dart';
 // TODO's
 //
 //  calendar yapılmalı ana sayfa için veya daha düzgün paket bulunmalı ama not edelim geçen güzel pakaet bulamadık
-//  her alışkanlığın kendi içinde de takvimi olacak ve eklenmesi acil
+//  her alışkanlığın kendi içinde de takvimi var ama skipped yok
 //  stats_view.dart ekranında da takvim lazım ve görsellik yükseltilmeli yapma sayısı oran felan
 //  alışkanlıklara yeni özellikler eklemeli notlar kısmı ikonu felan ayrıca ikon seçme özelliği eklenmeli
 //  alışkanlıklarda skip tuşu eklenmeli

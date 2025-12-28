@@ -63,8 +63,8 @@ Widget buildHabitsPage({
           
                     headerVisible: false,
                     // "Today" yazısını kaldırdık
-                    daysOfWeekHeight: 50,
-                    rowHeight: 76,
+                    daysOfWeekHeight: 40,
+                    rowHeight: 66,
           
                     // GÜN BAŞLIKLARI (Sun, Mon, Tue...)
                     daysOfWeekStyle: const DaysOfWeekStyle(

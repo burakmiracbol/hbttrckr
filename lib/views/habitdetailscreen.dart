@@ -7,6 +7,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:hbttrckr/views/statsview.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 
 import 'package:hbttrckr/providers/habitprovider.dart';
@@ -864,9 +865,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                               shape: LiquidRoundedRectangle(borderRadius: 16),
                                               child: ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
-                                                  backgroundColor: currentHabit.color.withValues(
-                                                    alpha: 0.2,
-                                                  ),
+                                                  backgroundColor: Colors.transparent,
                                                   shape: const StadiumBorder(),
                                                 ),
                                                 onPressed: () =>
@@ -1021,6 +1020,121 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       ),
                                     ),
                                   ],
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: TableCalendar(
+                                  firstDay: DateTime.utc(2020, 1, 1),
+                                  lastDay: DateTime.utc(2030, 12, 31),
+                                  focusedDay: DateTime.now(),
+                                  calendarFormat: CalendarFormat.month,
+                                  startingDayOfWeek: StartingDayOfWeek.monday,
+                                  headerStyle: const HeaderStyle(
+                                    formatButtonVisible: false,
+                                    titleCentered: true,
+                                  ),
+
+                                  // Günlerin nasıl renkleneceğini belirle
+                                  calendarBuilders: CalendarBuilders(
+                                    defaultBuilder: (context, day, focusedDay) {
+                                      // Gelecek günler → siyah / şeffaf
+                                      if (day.isAfter(DateTime.now())) {
+                                        return Center(
+                                          child: Text(
+                                            '${day.day}',
+                                            style: TextStyle(color: Colors.grey[600]),
+                                          ),
+                                        );
+                                      }
+                                      return null; // normal gün
+                                    },
+
+                                    todayBuilder: (context, day, focusedDay) {
+                                      return Center(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(color: Colors.pinkAccent, width: 2),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              '${day.day}',
+                                              style: const TextStyle(color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+
+                                    markerBuilder: (context, day, events) {
+                                      if (day.isAfter(DateTime.now())) return null; // gelecekte marker yok
+
+                                      final normalizedDay = DateTime(day.year, day.month, day.day);
+
+                                      bool isDone = false;
+                                      bool isSkipped = false;
+
+                                      // Task tipi
+                                      if (currentHabit.type == HabitType.task) {
+                                        isDone = currentHabit.completedDates.any((d) =>
+                                        d.year == normalizedDay.year &&
+                                            d.month == normalizedDay.month &&
+                                            d.day == normalizedDay.day);
+                                        isSkipped = currentHabit.skippedDates.any((d) =>
+                                        d.year == normalizedDay.year &&
+                                            d.month == normalizedDay.month &&
+                                            d.day == normalizedDay.day);
+                                      }
+
+                                      // Count tipi
+                                      else if (currentHabit.type == HabitType.count) {
+                                        final achieved = (currentHabit.dailyProgress?[normalizedDay] as int?) ?? 0;
+                                        isDone = achieved >= (currentHabit.targetCount ?? 1);
+                                      }
+
+                                      // Time tipi
+                                      else if (currentHabit.type == HabitType.time) {
+                                        final achievedSeconds = (currentHabit.dailyProgress?[normalizedDay] as int?) ?? 0;
+                                        final targetSecs = currentHabit.targetSeconds ?? 60;
+                                        isDone = achievedSeconds >= targetSecs;
+                                      }
+
+                                      Color? bgColor;
+                                      if (isDone) {
+                                        bgColor = Colors.green.withOpacity(0.8);
+                                      } else if (isSkipped) {
+                                        bgColor = Colors.grey.withOpacity(0.8);
+                                      } else if (day.isBefore(DateTime.now())) {
+                                        bgColor = Colors.red.withOpacity(0.8); // yapılmayan geçmiş gün
+                                      }
+
+                                      if (bgColor != null) {
+                                        return Center(
+                                          child: Container(
+                                            width: 36,
+                                            height: 36,
+                                            decoration: BoxDecoration(
+                                              color: bgColor,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '${day.day}',
+                                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+
+                                      return null;
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
