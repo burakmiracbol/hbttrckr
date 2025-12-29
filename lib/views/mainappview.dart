@@ -31,7 +31,6 @@ import 'habits_page.dart';
 //  alarm ve haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
 //  custom theme olsun ve şu an ki transparan butonu ve açık koyu tema butonu ayarlara doğru yol alsın
 //  tema açısından geliştirmeler yapılmalı
-//  daha önce bahsedildiği gibi şu anki calendarda tamamlanmış habitleri çekmede sıkıntı var sadece taskleri sayıyor
 //  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
 //  custom bildirim gönderme olmalı
 //  bir icon paketi oluşturlmalı veya bulunmalı ama bize uyumlu olsun

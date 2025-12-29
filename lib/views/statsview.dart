@@ -8,6 +8,7 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/classes/glasscard.dart';
 
+import '../classes/strengthgauge.dart';
 import 'mainappview.dart';
 
 
@@ -33,6 +34,20 @@ class StatisticsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Card(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        StrengthGauge(
+                          strength: (totalStrength / totalHabits.clamp(1, 999)).roundToDouble(), // 0-100 arası int
+                          size: 200,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(

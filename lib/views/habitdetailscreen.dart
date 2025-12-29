@@ -1,5 +1,4 @@
-
-
+import 'package:hbttrckr/classes/strengthgauge.dart';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/habit.dart'; // senin proje adına göre değiştir
 import 'package:hbttrckr/views/mainappview.dart';
@@ -951,6 +950,26 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                   ),
                                 ),
                               ),
+
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: LiquidGlass(
+                                  shape: LiquidRoundedRectangle(borderRadius: 24),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 16.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        StrengthGauge(
+                                          strength: currentHabit.strength.toDouble().roundToDouble(), // 0-100 arası int
+                                          size: 200,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+
                               Padding(
                                 padding: EdgeInsets.all(8),
                                 child: Row(
