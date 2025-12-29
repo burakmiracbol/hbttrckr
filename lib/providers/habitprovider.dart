@@ -375,4 +375,5 @@ class HabitProvider with ChangeNotifier {
     notifyListeners();
     _saveHabits();
   }
+
 }

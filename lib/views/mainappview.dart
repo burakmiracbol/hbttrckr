@@ -19,6 +19,7 @@ import 'habits_page.dart';
 
 // TODO's
 //
+//  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
 //  calendar yapılmalı ana sayfa için veya daha düzgün paket bulunmalı ama not edelim geçen güzel pakaet bulamadık
 //  her alışkanlığın kendi içinde de takvimi var ama skipped yok
 //  stats_view.dart ekranında da takvim lazım ve görsellik yükseltilmeli yapma sayısı oran felan
