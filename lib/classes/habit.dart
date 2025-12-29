@@ -60,6 +60,47 @@ class Habit {
 
 
 
+  // Seçilen tarihe göre count progress (bugün yerine)
+  int getCountProgressForDate(DateTime date) {
+    if (type != HabitType.count) return 0;
+    final normalized = DateTime(date.year, date.month, date.day);
+    return (dailyProgress?[normalized] as int?) ?? 0;
+  }
+
+// Seçilen tarihe göre time progress (saniye)
+  int getSecondsProgressForDate(DateTime date) {
+    if (type != HabitType.time) return 0;
+    final normalized = DateTime(date.year, date.month, date.day);
+    return (dailyProgress?[normalized] as int?) ?? 0;
+  }
+
+// Seçilen tarihte tamamlandı mı?
+  bool isCompletedOnDate(DateTime date) {
+    final normalized = DateTime(date.year, date.month, date.day);
+
+    if (type == HabitType.task) {
+      return completedDates.any((d) =>
+      d.year == normalized.year &&
+          d.month == normalized.month &&
+          d.day == normalized.day);
+    }
+
+    if (type == HabitType.count) {
+      final achieved = getCountProgressForDate(date);
+      return achieved >= (targetCount ?? 1);
+    }
+
+    if (type == HabitType.time) {
+      final achievedSeconds = getSecondsProgressForDate(date);
+      final targetSecs = targetSeconds ?? 60;
+      return achievedSeconds >= targetSecs;
+    }
+
+    return false;
+  }
+
+
+
   // === STRENGTH HESAPLAMASI (getter) ===
   /// Alışkanlığın genel gücü (0.0 - 100.0)
   /// Formül:

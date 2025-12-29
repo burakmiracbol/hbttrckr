@@ -50,13 +50,13 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.time) return;
 
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
 
-    final currentSeconds = (habit.dailyProgress?[today] as int?) ?? 0;
-    final newSeconds = currentSeconds + 1; // her çağrıda +1 saniye
+    final currentSeconds = (habit.dailyProgress?[targetDate] as int?) ?? 0;
+    final newSeconds = currentSeconds + 1;
 
     final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
-    newProgress[today] = newSeconds;
+    newProgress[targetDate] = newSeconds;
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
     notifyListeners();
@@ -84,23 +84,6 @@ class HabitProvider with ChangeNotifier {
     super.dispose();
   }
 
-
-  void changeCount(String habitId, int value ) {
-    final index = _habits.indexWhere((h) => h.id == habitId);
-    if (index == -1) return;
-    final habit = _habits[index];
-    if (habit.type != HabitType.count) return;
-
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    final newValue = value;
-
-    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress ?? {});
-    newProgress[today] = newValue;
-
-    _habits[index] = habit.copyWith(dailyProgress: newProgress);
-    notifyListeners();
-    _saveHabits();
-  }
 
   void incrementCount(String habitId) {
     final index = _habits.indexWhere((h) => h.id == habitId);
@@ -138,6 +121,7 @@ class HabitProvider with ChangeNotifier {
     _saveHabits();
   }
 
+
   void setTodaySeconds(String habitId, int totalSeconds) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
@@ -145,10 +129,27 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.time) return;
 
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
 
     final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
-    newProgress[today] = totalSeconds; // direkt toplamı yaz
+    newProgress[targetDate] = totalSeconds;
+
+    _habits[index] = habit.copyWith(dailyProgress: newProgress);
+    notifyListeners();
+    _saveHabits();
+  }
+
+  void changeCount(String habitId, int value) {
+    final index = _habits.indexWhere((h) => h.id == habitId);
+    if (index == -1) return;
+
+    final habit = _habits[index];
+    if (habit.type != HabitType.count) return;
+
+    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+
+    final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
+    newProgress[targetDate] = value;
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
     notifyListeners();
@@ -161,8 +162,9 @@ class HabitProvider with ChangeNotifier {
       return format == 'string' || format == 'hh:mm:ss' ? "0 dk" : 0;
     }
 
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    final totalSeconds = (habit.dailyProgress?[today] as int?) ?? 0;
+    // SEÇİLEN TARİH (bugün yerine)
+    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final totalSeconds = (habit.dailyProgress?[targetDate] as int?) ?? 0;
 
     switch (format) {
       case 'hours':
@@ -193,27 +195,24 @@ class HabitProvider with ChangeNotifier {
     if (index == -1) return;
 
     final habit = _habits[index];
-
-    // Sadece task tipi için çalışsın
     if (habit.type != HabitType.task) return;
 
-    final today = DateTime.now();
-    final todayDate = DateTime(today.year, today.month, today.day);
+    // BUGÜN yerine SEÇİLEN TARİH
+    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
 
     List<DateTime> newCompletedDates;
 
-    if (habit.isCompletedToday()) {
-      // BUGÜN TAMAMLANDIYSA → GERİ AL (Undo)
+    if (habit.completedDates.any((date) => date.isAtSameMomentAs(targetDate))) {
+      // BUGÜN TAMAMLANDIYSA → GERİ AL
       newCompletedDates = habit.completedDates
-          .where((date) => !date.isAtSameMomentAs(todayDate))
+          .where((date) => !date.isAtSameMomentAs(targetDate))
           .toList();
     } else {
-      // TAMAMLANMAMIŞSA → TAMAMLA (Do)
-      newCompletedDates = [...habit.completedDates, todayDate];
+      // TAMAMLANMAMIŞSA → TAMAMLA
+      newCompletedDates = [...habit.completedDates, targetDate];
     }
 
     _habits[index] = habit.copyWith(completedDates: newCompletedDates);
-
     notifyListeners();
     _saveHabits();
   }

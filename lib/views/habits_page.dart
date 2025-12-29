@@ -139,7 +139,11 @@ Widget buildHabitsPage({
           
                 ),
               ),
-          
+
+
+
+
+
               Expanded(
                 child: Consumer<HabitProvider>(
                   builder: (context, provider, child) {
@@ -150,7 +154,6 @@ Widget buildHabitsPage({
                       return !createdDate.isAfter(normalizedDate);
                     }).toList();
                     return ListView.builder(
-                      // TODO : istoolate de olsun habiti yedi gün önce ise düzenleme olmasın
                       padding: EdgeInsets.all(16),
                       itemCount: visibleHabits.length,
                       itemBuilder: (context, index) {
@@ -211,15 +214,15 @@ Widget buildHabitsPage({
                             ),
                             subtitle: Text(isFuture || isTooLate ? " " :
                               habit.type == HabitType.task
-                                  ? (habit.isCompletedToday()
+                                  ? (habit.isCompletedOnDate(selectedDate)
                                   ? 'Tamamlandı'
                                   : 'Yapılmadı')
                                   : habit.type == HabitType.count
-                                  ? '${habit.todayCountProgress} / ${habit
+                                  ? '${habit.getCountProgressForDate(selectedDate)} / ${habit
                                   .targetCount ?? '?'}'
                                   : habit.type == HabitType.time
-                                  ? '${habit.todaySecondsProgress.formattedHMS} / ${habit.targetSeconds.formattedHMS} '
-                                  : habit.isCompletedToday()
+                                  ? '${habit.getSecondsProgressForDate(selectedDate).formattedHMS} / ${habit.targetSeconds.formattedHMS} '
+                                  : habit.isCompletedOnDate(selectedDate)
                                   ? 'Tamamlandı'
                                   : 'Yapılmadı',
                             ),
@@ -275,12 +278,12 @@ Widget buildHabitsPage({
                                 ?
                             IconButton(
                               style: IconButton.styleFrom(
-                                foregroundColor: habit.isCompletedToday()
+                                foregroundColor: habit.isCompletedOnDate(selectedDate)
                                     ? Colors.green
                                     : Colors.grey,
                               ),
                               icon: Icon(
-                                habit.isCompletedToday()
+                                habit.isCompletedOnDate(selectedDate)
                                     ? Icons.check_circle
                                     : Icons.radio_button_unchecked,
                                 size: 25,
@@ -296,12 +299,12 @@ Widget buildHabitsPage({
 
                                 ? IconButton(
                               style: IconButton.styleFrom(
-                                foregroundColor: habit.isCompletedToday()
+                                foregroundColor: habit.isCompletedOnDate(selectedDate)
                                     ? Colors.green
                                     : Colors.grey,
                               ),
                               icon: Icon(
-                                habit.isCompletedToday()
+                                habit.isCompletedOnDate(selectedDate)
                                     ? Icons.add
                                     : Icons.add_outlined,
                                 size: 25,
@@ -334,12 +337,12 @@ Widget buildHabitsPage({
                             )
                                 :  IconButton(
                               style: IconButton.styleFrom(
-                                foregroundColor: habit.isCompletedToday()
+                                foregroundColor: habit.isCompletedOnDate(selectedDate)
                                     ? Colors.green
                                     : Colors.grey,
                               ),
                               icon: Icon(
-                                habit.isCompletedToday()
+                                habit.isCompletedOnDate(selectedDate)
                                     ? Icons.check_circle
                                     : Icons.radio_button_unchecked,
                                 size: 25,

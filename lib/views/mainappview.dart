@@ -19,6 +19,7 @@ import 'habits_page.dart';
 
 // TODO's
 //
+//  todaya göre olan fonksiyonlar tarihe dönderilmeli ve detail screen tarihe göre açılmalı
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
 //  calendar yapılmalı ana sayfa için veya daha düzgün paket bulunmalı ama not edelim geçen güzel pakaet bulamadık
 //  her alışkanlığın kendi içinde de takvimi var ama skipped yok
@@ -570,7 +571,6 @@ class MainAppViewState extends State<MainAppView> {
               },
               habits: habits,
               onHabitTapped: (habit) {
-                // TODO : push ile açılıyor sayfa sheet açılmama sorunu ise push üzerine eklenen şey hata veriyor veya burada gibi onHabittapped diye birşey kullanılabilir btw bundan dolayı değil galiba hallettim
                 Navigator.push(
                   context,
                   MaterialPageRoute(
