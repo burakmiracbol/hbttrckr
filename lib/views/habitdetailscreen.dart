@@ -26,11 +26,11 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 // TODO : Her habit detail screende kendi calendar istatistikleri ve sıralama istatistikleri olsun current streak best streak total sessions done sessions missed sessions skipped sessions planned hours counted hours missed hours
 // TODO : succes rate grafiği done missed skipped calendr istatistikleri haftalık süre sayı veya yaptı yapmadı grafiği ve aylık done missed skipped grafiği 
 
-void showTimeSelectorSheet(BuildContext context, Habit habit) {
+void showTimeSelectorSheet(BuildContext context, Habit habit , DateTime selectedDate) {
   // Başlangıç değerleri
-  num currentHours = habit.todaySecondsProgress.hours;
-  num currentMinutes = habit.todaySecondsProgress.minutes;
-  num currentSeconds = habit.todaySecondsProgress.seconds;
+  num currentHours = habit.getSecondsProgressForDate(selectedDate).hours;
+  num currentMinutes = habit.getSecondsProgressForDate(selectedDate).minutes;
+  num currentSeconds = habit.getSecondsProgressForDate(selectedDate).seconds;
 
   showModalBottomSheet(
     context: context,
@@ -95,7 +95,7 @@ void showTimeSelectorSheet(BuildContext context, Habit habit) {
                             (currentHours * 3600) +
                             (currentMinutes * 60) +
                             currentSeconds;
-                        context.read<HabitProvider>().setTodaySeconds(
+                        context.read<HabitProvider>().setSecondsForThatDate(
                           habit.id,
                           total.toInt(),
                         );
@@ -128,7 +128,7 @@ void showTimeSelectorSheet(BuildContext context, Habit habit) {
                             (currentHours * 3600) +
                             (currentMinutes * 60) +
                             currentSeconds;
-                        context.read<HabitProvider>().setTodaySeconds(
+                        context.read<HabitProvider>().setSecondsForThatDate(
                           habit.id,
                           total.toInt(),
                         );
@@ -153,7 +153,7 @@ void showTimeSelectorSheet(BuildContext context, Habit habit) {
                             (currentHours * 3600) +
                             (currentMinutes * 60) +
                             currentSeconds;
-                        context.read<HabitProvider>().setTodaySeconds(
+                        context.read<HabitProvider>().setSecondsForThatDate(
                           habit.id,
                           total.toInt(),
                         );
@@ -282,6 +282,7 @@ class HabitDetailScreen extends StatefulWidget {
 
 class _HabitDetailScreenState extends State<HabitDetailScreen> {
   late final currentHabit = Provider.of<HabitProvider>(context).getHabitById(widget.habitId);
+  late final selectedDate = Provider.of<HabitProvider>(context).selectedDate;
 
   @override
   void initState() {
@@ -403,30 +404,10 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
     );
   }
 
-  void habittoggleToday() {
-    setState(() {
-      final today = DateTime.now();
-      final todayDate = DateTime(today.year, today.month, today.day);
 
-      if (currentHabit.isCompletedToday()) {
-        currentHabit.completedDates.removeWhere(
-          (date) =>
-              date.year == todayDate.year &&
-              date.month == todayDate.month &&
-              date.day == todayDate.day,
-        );
-      } else {
-        currentHabit.completedDates.add(todayDate);
-      }
-    });
-
-    // ANA EKRANA GÜNCELLENMİŞ HALİNİ GÖNDER
-    widget.onHabitUpdated(currentHabit);
-  }
 
   @override
   Widget build(BuildContext context) {
-    final bool todayDone = currentHabit.isCompletedToday();
 
     return Consumer<HabitProvider>(
       builder: (context, provider, child) {
@@ -594,7 +575,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                             onPressed: () => context
                                                 .read<HabitProvider>()
                                                 .toggleTaskCompletion(currentHabit.id),
-                                            icon: currentHabit.isCompletedToday()
+                                            icon: currentHabit.isCompletedOnDate(selectedDate ?? DateTime.now())
                                                 ? const Icon(Icons.done, color: Colors.green)
                                                 : const Icon(Icons.circle_outlined),
                                             style: IconButton.styleFrom(
@@ -648,7 +629,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                     habit: currentHabit,
                                                   ),
                                                   child: Text(
-                                                    "${currentHabit.todayCountProgress}",
+                                                    "${currentHabit.getCountProgressForDate(selectedDate ?? DateTime.now())}",
                                                   ),
                                                 ),
                                               ),
@@ -715,9 +696,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                   shape: const StadiumBorder(),
                                                 ),
                                                 onPressed: () =>
-                                                    showTimeSelectorSheet(context, currentHabit),
+                                                    showTimeSelectorSheet(context, currentHabit, selectedDate ?? DateTime.now()),
                                                 child: Text(
-                                                  currentHabit.todayMinutesProgress
+                                                  currentHabit.getSecondsProgressForDate(selectedDate ?? DateTime.now())
                                                       .toInt()
                                                       .formattedHMS,
                                                 ),

@@ -60,6 +60,19 @@ class Habit {
 
 
 
+  @deprecated
+  int get todayCountProgress => getCountProgressForDate(DateTime.now());
+
+  @deprecated
+  int get todaySecondsProgress => getSecondsProgressForDate(DateTime.now());
+
+  @deprecated
+  bool get isDoneToday => isCompletedOnDate(DateTime.now());
+
+  @deprecated
+  bool isCompletedToday() => isCompletedOnDate(DateTime.now());
+
+
   // Seçilen tarihe göre count progress (bugün yerine)
   int getCountProgressForDate(DateTime date) {
     if (type != HabitType.count) return 0;
@@ -202,42 +215,7 @@ class Habit {
     return status.reversed.toList();
   }
 
-  int get todayCountProgress {
-    final todayKey = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    return (dailyProgress?[todayKey] as int?) ?? 0;
-  }
 
-  num get todayMinutesProgress {
-    final todayKey = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    return (dailyProgress?[todayKey] as int?) ?? 0.0;
-  }
-
-  bool get isDoneToday {
-    if (type == HabitType.task) {
-      return isCompletedToday();
-    }
-
-    if (type == HabitType.count) {
-      final todayCount = todayCountProgress;        // senin getter’ın
-      final target = targetCount ?? 1;
-      return todayCount >= target;                  // 5/5 → true, 8/5 → da true!
-    }
-
-    if (type == HabitType.time) {
-      final todayMinutes = todayMinutesProgress;     // senin getter’ın
-      final target = (targetSeconds ?? 1).toDouble();
-      return todayMinutes >= target;                // 35 dk / 30 dk → true
-    }
-
-    return false;
-  }
-
-  int get todaySecondsProgress {
-    if (type != HabitType.time) return 0;
-
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    return (dailyProgress?[today] as int?) ?? 0;
-  }
 
   bool _sameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
@@ -246,36 +224,22 @@ class Habit {
   // === DİĞER GETTER'LAR ===
   int get totalDays => completedDates.length;
 
-  bool isCompletedToday() {
-    final today = DateTime.now();
-    final todayDate = DateTime(today.year, today.month, today.day);
-    return completedDates.any((d) => _sameDay(d, todayDate));
-  }
 
-  bool isSkippedToday() {
-    final today = DateTime.now();
-    final todayDate = DateTime(today.year, today.month, today.day);
-    return skippedDates.any((d) => _sameDay(d, todayDate));
+  bool isSkippedThatDay(DateTime selectedDate) {
+    final targetDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    return skippedDates.any((d) => _sameDay(d, targetDate));
   }
 
   // === METODLAR ===
-  Habit markAsCompleted() {
-    final today = DateTime.now();
-    final todayDate = DateTime(today.year, today.month, today.day);
-    if (isCompletedToday()) return this;
+
+
+  Habit skipThatDay(DateTime selectedDate) {
+
+    final targetDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    if (isSkippedThatDay(selectedDate)) return this;
 
     return copyWith(
-      completedDates: [...completedDates, todayDate],
-    );
-  }
-
-  Habit skipToday() {
-    final today = DateTime.now();
-    final todayDate = DateTime(today.year, today.month, today.day);
-    if (isSkippedToday()) return this;
-
-    return copyWith(
-      skippedDates: [...skippedDates, todayDate],
+      skippedDates: [...skippedDates, targetDate],
     );
   }
 

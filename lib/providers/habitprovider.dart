@@ -26,6 +26,7 @@ class HabitProvider with ChangeNotifier {
     _loadHabits();
   }
 
+
   void resetTimer(String habitId) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
@@ -122,7 +123,7 @@ class HabitProvider with ChangeNotifier {
   }
 
 
-  void setTodaySeconds(String habitId, int totalSeconds) {
+  void setSecondsForThatDate(String habitId, int totalSeconds) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
 
@@ -310,10 +311,10 @@ class HabitProvider with ChangeNotifier {
     _saveHabits();
   }
 
-  void skipToday(String id) {
+  void skipToday(String id, DateTime selectedDate) {
     final index = _habits.indexWhere((h) => h.id == id);
     if (index != -1) {
-      _habits[index] = _habits[index].skipToday();
+      _habits[index] = _habits[index].skipThatDay(selectedDate);
       notifyListeners();
       _saveHabits();
     }
