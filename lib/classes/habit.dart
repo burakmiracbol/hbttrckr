@@ -33,7 +33,6 @@ class Habit {
   final int? targetSeconds;
   final int? maxSeconds;
   final List<DateTime> completedDates;
-  final List<DateTime> skippedDates;
   final Map<DateTime, dynamic> dailyProgress;
 
   Habit({
@@ -51,12 +50,10 @@ class Habit {
     this.achievedSeconds,
     this.targetSeconds,
     List<DateTime>? completedDates,
-    List<DateTime>? skippedDates,
     Map<DateTime, dynamic>? dailyProgress,
     this.maxSeconds,
   }) :  dailyProgress = dailyProgress ?? {},
-        completedDates = completedDates ?? [],
-        skippedDates = skippedDates ?? [];
+        completedDates = completedDates ?? [];
 
 
 
@@ -270,7 +267,6 @@ class Habit {
     int? targetMinutes,
     int? maxMinutes,
     List<DateTime>? completedDates,
-    List<DateTime>? skippedDates,
     Map<DateTime, dynamic>? dailyProgress,
   }) {
     return Habit(
@@ -289,7 +285,6 @@ class Habit {
       targetSeconds: targetMinutes ?? this.targetSeconds,
       maxSeconds: maxMinutes ?? this.maxSeconds,
       completedDates: completedDates ?? this.completedDates,
-      skippedDates: skippedDates ?? this.skippedDates,
       dailyProgress: dailyProgress ?? this.dailyProgress,
     );
   }
@@ -313,9 +308,6 @@ class Habit {
     'targetSeconds': targetSeconds,
     'maxSeconds' : maxSeconds,
     'completedDates': completedDates
-        .map((date) => date.millisecondsSinceEpoch)
-        .toList(),
-    'skippedDates': skippedDates
         .map((date) => date.millisecondsSinceEpoch)
         .toList(),
     'dailyProgress': dailyProgress.map((key, value) => MapEntry(
@@ -350,10 +342,6 @@ class Habit {
       targetSeconds: json['targetSeconds'],
       maxSeconds: json['maxSeconds'],
       completedDates: (json['completedDates'] as List?)
-          ?.map((ms) => DateTime.fromMillisecondsSinceEpoch(ms as int))
-          .toList() ??
-          [],
-      skippedDates: (json['skippedDates'] as List?)
           ?.map((ms) => DateTime.fromMillisecondsSinceEpoch(ms as int))
           .toList() ??
           [],
