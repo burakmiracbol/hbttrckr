@@ -19,6 +19,7 @@ import 'habits_page.dart';
 
 // TODO's
 //
+//  habitdetail screen hepsine bir glass glow ekle
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
 //  calendar yapılmalı ana sayfa için (stats view)
 //  her alışkanlığın kendi içinde de takvimi var ama skipped yok
