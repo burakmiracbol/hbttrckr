@@ -20,6 +20,7 @@ import 'habits_page.dart';
 // TODO's
 //
 //  habitdetail screen hepsine bir glass glow ekle
+//  windowsta uygulamanın o ent-yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
 //  calendar yapılmalı ana sayfa için (stats view)
 //  her alışkanlığın kendi içinde de takvimi var ama skipped yok
