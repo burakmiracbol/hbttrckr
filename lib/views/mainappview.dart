@@ -19,6 +19,7 @@ import 'habits_page.dart';
 
 // TODO's
 //
+//  habit içerisindeki created at kısmını özel takvimlerde kullan
 //  habitdetail screen hepsine bir glass glow ekle
 //  windowsta uygulamanın o ent-yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
@@ -26,7 +27,13 @@ import 'habits_page.dart';
 //  her alışkanlığın kendi içinde de takvimi var ama skipped yok
 //  stats_view.dart ekranında da takvim lazım ve görsellik yükseltilmeli yapma sayısı oran felan
 //  alışkanlıklara yeni özellikler eklemeli notlar kısmı ikonu felan ayrıca ikon seçme özelliği eklenmeli
+//
 //  alışkanlıklarda skip tuşu eklenmeli
+//    bunu için skippedDates kullanacağız ama skipped günlerde ekranda süre sayı vb seğiştirme olmamalı bunun için durumları ele düzgün almak lazım
+//    skipped olunca herhangi bir başka süre sayı ve yapılma durumu değiştirme tuşları ve butonları olmuyacak skipped kaldırma olacak
+//    ve skipped ederken ise o gün hehangi bir progress var ise onu sıfırlayıp skipped yapmalı ve skippeddan geri dönerken ise sıfırlamalı tercihen ise bu skipped öncesini saklayıp yeniden kullanma olabilir
+//    skipped durumunu daily progressde ele almak için o dynamic kısım string gibi bir veri tipi olacak ve biz o veri tipinin case lerine göre işlem yapacağız
+//
 //  haftanın hangi gününden başladığı eklenmeli
 //  habit gruplama olmalı
 //  kodu düzeltmeli hızımızı artırır eğer düzenler isek

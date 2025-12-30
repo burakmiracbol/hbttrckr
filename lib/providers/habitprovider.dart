@@ -311,13 +311,23 @@ class HabitProvider with ChangeNotifier {
     _saveHabits();
   }
 
-  void skipToday(String id, DateTime selectedDate) {
-    final index = _habits.indexWhere((h) => h.id == id);
-    if (index != -1) {
-      _habits[index] = _habits[index].skipThatDay(selectedDate);
-      notifyListeners();
-      _saveHabits();
+
+  void changeSkipHabit(String habitId) {
+    final index = _habits.indexWhere((h) => h.id == habitId);
+    if (index == -1) return;
+
+    final habit = _habits[index];
+    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+
+    if (habit.isSkippedOnDate(targetDate)) {
+      // zaten skip'liyse geri al
+      _habits[index] = habit.unskipOnDate(targetDate);
+    } else {
+      _habits[index] = habit.skipOnDate(targetDate);
     }
+
+    notifyListeners();
+    _saveHabits();
   }
 
   List<NeatCleanCalendarEvent> get calendarEvents {

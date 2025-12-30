@@ -159,9 +159,9 @@ class Habit {
 
   String get strengthLevel {
     if (strength >= 95) return "Efsane";
-    if (strength >= 85) return "Usta";
-    if (strength >= 70) return "Güçlü";
-    if (strength >= 50) return "Orta";
+    if (strength >= 75) return "Usta";
+    if (strength >= 50) return "Güçlü";
+    if (strength >= 30) return "Orta";
     if (strength >= 5) return "Zayıf";
     return "Yeni Başladı";
   }
@@ -225,23 +225,33 @@ class Habit {
   int get totalDays => completedDates.length;
 
 
-  bool isSkippedThatDay(DateTime selectedDate) {
-    final targetDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-    return skippedDates.any((d) => _sameDay(d, targetDate));
+  // Gün skip edildi mi?
+  bool isSkippedOnDate(DateTime date) {
+    final normalized = DateTime(date.year, date.month, date.day);
+    final value = dailyProgress?[normalized];
+    return value == -1;
   }
 
-  // === METODLAR ===
+// Gün skip et
+  Habit skipOnDate(DateTime date) {
+    final normalized = DateTime(date.year, date.month, date.day);
+    final newProgress = Map<DateTime, dynamic>.from(dailyProgress ?? {});
+    newProgress[normalized] = -1; // skip işaretle
 
-
-  Habit skipThatDay(DateTime selectedDate) {
-
-    final targetDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-    if (isSkippedThatDay(selectedDate)) return this;
-
-    return copyWith(
-      skippedDates: [...skippedDates, targetDate],
-    );
+    return copyWith(dailyProgress: newProgress);
   }
+
+// Skip’i geri al (normal hale getir, progress 0 olsun)
+  Habit unskipOnDate(DateTime date) {
+    final normalized = DateTime(date.year, date.month, date.day);
+    if (!isSkippedOnDate(date)) return this;
+
+    final newProgress = Map<DateTime, dynamic>.from(dailyProgress ?? {});
+    newProgress[normalized] = 0; // sıfırla
+
+    return copyWith(dailyProgress: newProgress);
+  }
+
 
   // === COPYWITH (TÜM ALANLAR) ===
   Habit copyWith({
