@@ -296,7 +296,6 @@ class HabitProvider with ChangeNotifier {
       reminderTime: reminderTime,
       reminderDays: reminderDays,
       completedDates: [],
-      skippedDates: [],
       achievedCount: 0,
     );
 
@@ -321,7 +320,7 @@ class HabitProvider with ChangeNotifier {
 
     if (habit.isSkippedOnDate(targetDate)) {
       // zaten skip'liyse geri al
-      _habits[index] = habit.unskipOnDate(targetDate);
+      _habits[index] = habit.unSkipOnDate(targetDate);
     } else {
       _habits[index] = habit.skipOnDate(targetDate);
     }

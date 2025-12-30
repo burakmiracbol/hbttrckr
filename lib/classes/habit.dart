@@ -239,7 +239,7 @@ class Habit {
   }
 
 // Skip’i geri al (normal hale getir, progress 0 olsun)
-  Habit unskipOnDate(DateTime date) {
+  Habit unSkipOnDate(DateTime date) {
     final normalized = DateTime(date.year, date.month, date.day);
     if (!isSkippedOnDate(date)) return this;
 

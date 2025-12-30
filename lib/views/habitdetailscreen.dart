@@ -24,9 +24,13 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 // TODO : calendarda ileri gidince habit değerleri gözükmesin ve geri gidince eski günlerin yapılmış değerleri görüntülene bilsin ve beş gün önceki değerler değiştirilemesin
 
 // TODO : Her habit detail screende kendi calendar istatistikleri ve sıralama istatistikleri olsun current streak best streak total sessions done sessions missed sessions skipped sessions planned hours counted hours missed hours
-// TODO : succes rate grafiği done missed skipped calendr istatistikleri haftalık süre sayı veya yaptı yapmadı grafiği ve aylık done missed skipped grafiği 
+// TODO : succes rate grafiği done missed skipped calendr istatistikleri haftalık süre sayı veya yaptı yapmadı grafiği ve aylık done missed skipped grafiği
 
-void showTimeSelectorSheet(BuildContext context, Habit habit , DateTime selectedDate) {
+void showTimeSelectorSheet(
+  BuildContext context,
+  Habit habit,
+  DateTime selectedDate,
+) {
   // Başlangıç değerleri
   num currentHours = habit.getSecondsProgressForDate(selectedDate).hours;
   num currentMinutes = habit.getSecondsProgressForDate(selectedDate).minutes;
@@ -268,10 +272,10 @@ class HabitDetailScreen extends StatefulWidget {
   final OnHabitUpdated onHabitUpdated;
   final OnHabitDeleted? onHabitDeleted;
 
-   HabitDetailScreen({
+  HabitDetailScreen({
     Key? key,
     required this.habitId,
-     required this.selectedDate,
+    required this.selectedDate,
     required this.onHabitUpdated,
     required this.onHabitDeleted,
   }) : super(key: key);
@@ -281,7 +285,9 @@ class HabitDetailScreen extends StatefulWidget {
 }
 
 class _HabitDetailScreenState extends State<HabitDetailScreen> {
-  late final currentHabit = Provider.of<HabitProvider>(context).getHabitById(widget.habitId);
+  late final currentHabit = Provider.of<HabitProvider>(
+    context,
+  ).getHabitById(widget.habitId);
   late final selectedDate = Provider.of<HabitProvider>(context).selectedDate;
 
   @override
@@ -336,7 +342,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                           ),
                           actions: [
                             TextButton(
-                              child:  const Text('İptal'),
+                              child: const Text('İptal'),
                               onPressed: () => Navigator.pop(ctx),
                             ),
                             TextButton(
@@ -404,15 +410,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
     return Consumer<HabitProvider>(
       builder: (context, provider, child) {
         final currentHabit = provider.getHabitById(widget.habitId);
-
 
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -423,6 +425,15 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
             actions: [
               Row(
                 children: [
+                  IconButton(
+                    onPressed: () {
+                      context.read<HabitProvider>().changeSkipHabit(
+                        currentHabit.id,
+                      );
+                    },
+                    icon: Icon(Icons.skip_previous),
+                  ),
+                  SizedBox(width: 4),
                   IconButton(
                     icon: Icon(Icons.edit),
                     onPressed: () {
@@ -465,8 +476,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                     },
                   ),
                 ],
-              )
-
+              ),
             ],
           ),
           body: SingleChildScrollView(
@@ -476,14 +486,20 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                   child: Stack(
                     children: [
                       Positioned(
-                        top: MediaQuery.of(context).size.width * -0.5, // üstten ne kadar taşacak (negatif = yukarı taşır)
-                        left: MediaQuery.of(context).size.width * -0.2, // soldan taşma
-                        right: MediaQuery.of(context).size.width * -0.2, // sağdan taşma
+                        top:
+                            MediaQuery.of(context).size.width *
+                            -0.5, // üstten ne kadar taşacak (negatif = yukarı taşır)
+                        left:
+                            MediaQuery.of(context).size.width *
+                            -0.2, // soldan taşma
+                        right:
+                            MediaQuery.of(context).size.width *
+                            -0.2, // sağdan taşma
                         child: Container(
                           width: MediaQuery.of(context).size.width * 1.2,
                           height: MediaQuery.of(context).size.width * 1.2,
                           decoration: BoxDecoration(
-                            color: currentHabit.color.withValues(alpha:0.2),
+                            color: currentHabit.color.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -501,9 +517,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: CircleAvatar(
                                       radius: 60,
-                                      backgroundColor: currentHabit.color.withValues(
-                                        alpha: 0.3,
-                                      ),
+                                      backgroundColor: currentHabit.color
+                                          .withValues(alpha: 0.3),
                                       child: Icon(
                                         Icons.flag,
                                         size: 60,
@@ -516,11 +531,16 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: LiquidGlass(
-                                  shape : LiquidRoundedRectangle(borderRadius: 16),
+                                  shape: LiquidRoundedRectangle(
+                                    borderRadius: 16,
+                                  ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
-                                      margin: EdgeInsets.only(left: 8.0 , right: 8.0),
+                                      margin: EdgeInsets.only(
+                                        left: 8.0,
+                                        right: 8.0,
+                                      ),
                                       child: Text(
                                         currentHabit.name,
                                         style: TextStyle(
@@ -535,12 +555,17 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: LiquidGlass(
-                                  shape: LiquidRoundedRectangle(borderRadius: 4),
+                                  shape: LiquidRoundedRectangle(
+                                    borderRadius: 4,
+                                  ),
                                   child: Container(
-                                    margin: EdgeInsets.only(left: 4,right: 4),
+                                    margin: EdgeInsets.only(left: 4, right: 4),
                                     child: Text(
                                       currentHabit.description,
-                                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.grey,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -549,9 +574,14 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: GlassGlow(
                                   child: LiquidGlass(
-                                    shape: LiquidRoundedRectangle(borderRadius: 6),
+                                    shape: LiquidRoundedRectangle(
+                                      borderRadius: 6,
+                                    ),
                                     child: Container(
-                                      margin: EdgeInsets.only(left: 8.0 , right: 8.0),
+                                      margin: EdgeInsets.only(
+                                        left: 8.0,
+                                        right: 8.0,
+                                      ),
                                       child: Text(
                                         'Toplam ${currentHabit.totalDays} gün',
                                         style: TextStyle(fontSize: 20),
@@ -567,182 +597,381 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                   children: [
                                     // TASK
                                     if (currentHabit.type == HabitType.task)
-                                      LiquidGlass(
-                                        shape: LiquidOval(),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: IconButton(
-                                            onPressed: () => context
-                                                .read<HabitProvider>()
-                                                .toggleTaskCompletion(currentHabit.id),
-                                            icon: currentHabit.isCompletedOnDate(selectedDate ?? DateTime.now())
-                                                ? const Icon(Icons.done, color: Colors.green)
-                                                : const Icon(Icons.circle_outlined),
-                                            style: IconButton.styleFrom(
-                                              padding: const EdgeInsets.all(10),
-                                            ),
-                                          ),
-                                        ),
-                                      )
+                                      currentHabit.isSkippedOnDate(
+                                            selectedDate ?? DateTime.now(),
+                                          )
+                                          ? LiquidGlass(
+                                              shape: LiquidOval(),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(
+                                                  4.0,
+                                                ),
+                                                child: IconButton(
+                                                  onPressed: () {},
+                                                  icon: Icon(Icons.skip_next),
+                                                  style: IconButton.styleFrom(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          10,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : LiquidGlass(
+                                              shape: LiquidOval(),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(
+                                                  4.0,
+                                                ),
+                                                child: IconButton(
+                                                  onPressed: () => context
+                                                      .read<HabitProvider>()
+                                                      .toggleTaskCompletion(
+                                                        currentHabit.id,
+                                                      ),
+                                                  icon:
+                                                      currentHabit
+                                                          .isCompletedOnDate(
+                                                            selectedDate ??
+                                                                DateTime.now(),
+                                                          )
+                                                      ? const Icon(
+                                                          Icons.done,
+                                                          color: Colors.green,
+                                                        )
+                                                      : const Icon(
+                                                          Icons.circle_outlined,
+                                                        ),
+                                                  style: IconButton.styleFrom(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          10,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
                                     // COUNT
-                                    else if (currentHabit.type == HabitType.count)
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: LiquidGlass(
-                                              shape: LiquidRoundedRectangle(borderRadius: 16 ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(4.0),
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: currentHabit.color
-                                                        .withValues(alpha: 0.2),
-                                                    shape: const StadiumBorder(),
-                                                  ),
-                                                  onPressed: () {
-                                                    context.read<HabitProvider>().incrementCount(
-                                                      currentHabit.id,
-                                                    );
-                                                  },
-                                                  child: const Icon(Icons.add),
-                                                ),
+                                    else if (currentHabit.type ==
+                                        HabitType.count)
+                                      currentHabit.isSkippedOnDate(
+                                            selectedDate ?? DateTime.now(),
+                                          )
+                                          ? Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
                                               ),
-                                            ),
-                                          ),
-
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: LiquidGlass(
-                                              shape: LiquidRoundedRectangle(borderRadius: 16),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(4.0),
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: currentHabit.color
-                                                        .withValues(alpha: 0.2),
-                                                    shape: const StadiumBorder(),
-                                                  ),
-                                                  onPressed: () => showCountSelectorSheet(
-                                                    context,
-                                                    currentHabit,
-                                                    habit: currentHabit,
-                                                  ),
-                                                  child: Text(
-                                                    "${currentHabit.getCountProgressForDate(selectedDate ?? DateTime.now())}",
-                                                  ),
+                                              child: LiquidGlass(
+                                                shape: LiquidRoundedRectangle(
+                                                  borderRadius: 16,
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: LiquidGlass(
-                                              shape: LiquidRoundedRectangle(borderRadius: 16),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(4.0),
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: currentHabit.color
-                                                        .withValues(alpha: 0.2),
-                                                    shape: const StadiumBorder(),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    4.0,
                                                   ),
-                                                  onPressed: () {
-                                                    context.read<HabitProvider>().decrementCount(
-                                                      currentHabit.id,
-                                                    );
-                                                  },
-                                                  child: const Icon(Icons.remove),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    // TIME
-                                    else if (currentHabit.type == HabitType.time)
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: LiquidGlass(
-                                              shape: LiquidOval(),
-                                              child: Consumer<HabitProvider>(
-                                                builder: (context, provider, child) {
-                                                  final bool isRunning = provider.runningTimers[currentHabit.id] ?? false;
-
-                                                  return IconButton(
-                                                    style: IconButton.styleFrom(foregroundColor: Colors.grey),
-                                                    onPressed: () {
-                                                      provider.resetTimer(currentHabit.id); // sıfırla
-                                                      if (isRunning) {
-                                                        provider.toggleTimer(currentHabit.id); // timer'ı da durdur
-                                                      }
-                                                    },
-                                                    icon: const Icon(Icons.refresh, size: 25),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: LiquidGlass(
-                                              shape: LiquidRoundedRectangle(borderRadius: 16),
-                                              child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.transparent,
-                                                  shape: const StadiumBorder(),
-                                                ),
-                                                onPressed: () =>
-                                                    showTimeSelectorSheet(context, currentHabit, selectedDate ?? DateTime.now()),
-                                                child: Text(
-                                                  currentHabit.getSecondsProgressForDate(selectedDate ?? DateTime.now())
-                                                      .toInt()
-                                                      .formattedHMS,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: LiquidGlass(
-                                              shape: LiquidOval(),
-                                              child: Consumer<HabitProvider>(
-                                                builder: (context, provider, child) {
-                                                  final bool isRunning = provider.runningTimers[currentHabit.id] ?? false;
-
-                                                  return IconButton(
-                                                    style: IconButton.styleFrom(foregroundColor: Colors.grey),
-                                                    onPressed: () {
-                                                      provider.toggleTimer(currentHabit.id);
-                                                    },
-                                                    icon: Icon(
-                                                      isRunning ? Icons.pause : Icons.play_arrow,
-                                                      size: 25,
+                                                  child: ElevatedButton(
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor:
+                                                          currentHabit.color
+                                                              .withValues(
+                                                                alpha: 0.2,
+                                                              ),
+                                                      shape:
+                                                          const StadiumBorder(),
                                                     ),
-                                                  );
-                                                },
+                                                    onPressed: () {},
+                                                    child: Text("Atlandı"),
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
+                                            )
+                                          : Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    4.0,
+                                                  ),
+                                                  child: LiquidGlass(
+                                                    shape:
+                                                        LiquidRoundedRectangle(
+                                                          borderRadius: 16,
+                                                        ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            4.0,
+                                                          ),
+                                                      child: ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              currentHabit.color
+                                                                  .withValues(
+                                                                    alpha: 0.2,
+                                                                  ),
+                                                          shape:
+                                                              const StadiumBorder(),
+                                                        ),
+                                                        onPressed: () {
+                                                          context
+                                                              .read<
+                                                                HabitProvider
+                                                              >()
+                                                              .incrementCount(
+                                                                currentHabit.id,
+                                                              );
+                                                        },
+                                                        child: const Icon(
+                                                          Icons.add,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: LiquidGlass(
+                                                    shape:
+                                                        LiquidRoundedRectangle(
+                                                          borderRadius: 16,
+                                                        ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            4.0,
+                                                          ),
+                                                      child: ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              currentHabit.color
+                                                                  .withValues(
+                                                                    alpha: 0.2,
+                                                                  ),
+                                                          shape:
+                                                              const StadiumBorder(),
+                                                        ),
+                                                        onPressed: () =>
+                                                            showCountSelectorSheet(
+                                                              context,
+                                                              currentHabit,
+                                                              habit:
+                                                                  currentHabit,
+                                                            ),
+                                                        child: Text(
+                                                          "${currentHabit.getCountProgressForDate(selectedDate ?? DateTime.now())}",
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    4.0,
+                                                  ),
+                                                  child: LiquidGlass(
+                                                    shape:
+                                                        LiquidRoundedRectangle(
+                                                          borderRadius: 16,
+                                                        ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            4.0,
+                                                          ),
+                                                      child: ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              currentHabit.color
+                                                                  .withValues(
+                                                                    alpha: 0.2,
+                                                                  ),
+                                                          shape:
+                                                              const StadiumBorder(),
+                                                        ),
+                                                        onPressed: () {
+                                                          context
+                                                              .read<
+                                                                HabitProvider
+                                                              >()
+                                                              .decrementCount(
+                                                                currentHabit.id,
+                                                              );
+                                                        },
+                                                        child: const Icon(
+                                                          Icons.remove,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                    // TIME
+                                    else if (currentHabit.type ==
+                                        HabitType.time)
+                                      currentHabit.isSkippedOnDate(
+                                            selectedDate ?? DateTime.now(),
+                                          )
+                                          ? Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: LiquidGlass(
+                                                shape: LiquidRoundedRectangle(
+                                                  borderRadius: 16,
+                                                ),
+                                                child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    shape:
+                                                        const StadiumBorder(),
+                                                  ),
+                                                  onPressed: () {},
+                                                  child: Text("Atlandı"),
+                                                ),
+                                              ),
+                                            )
+                                          : Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: LiquidGlass(
+                                                    shape: LiquidOval(),
+                                                    child: Consumer<HabitProvider>(
+                                                      builder: (context, provider, child) {
+                                                        final bool isRunning =
+                                                            provider
+                                                                .runningTimers[currentHabit
+                                                                .id] ??
+                                                            false;
+
+                                                        return IconButton(
+                                                          style:
+                                                              IconButton.styleFrom(
+                                                                foregroundColor:
+                                                                    Colors.grey,
+                                                              ),
+                                                          onPressed: () {
+                                                            provider.resetTimer(
+                                                              currentHabit.id,
+                                                            ); // sıfırla
+                                                            if (isRunning) {
+                                                              provider.toggleTimer(
+                                                                currentHabit.id,
+                                                              ); // timer'ı da durdur
+                                                            }
+                                                          },
+                                                          icon: const Icon(
+                                                            Icons.refresh,
+                                                            size: 25,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: LiquidGlass(
+                                                    shape:
+                                                        LiquidRoundedRectangle(
+                                                          borderRadius: 16,
+                                                        ),
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        shape:
+                                                            const StadiumBorder(),
+                                                      ),
+                                                      onPressed: () =>
+                                                          showTimeSelectorSheet(
+                                                            context,
+                                                            currentHabit,
+                                                            selectedDate ??
+                                                                DateTime.now(),
+                                                          ),
+                                                      child: Text(
+                                                        currentHabit
+                                                            .getSecondsProgressForDate(
+                                                              selectedDate ??
+                                                                  DateTime.now(),
+                                                            )
+                                                            .toInt()
+                                                            .formattedHMS,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: LiquidGlass(
+                                                    shape: LiquidOval(),
+                                                    child: Consumer<HabitProvider>(
+                                                      builder: (context, provider, child) {
+                                                        final bool isRunning =
+                                                            provider
+                                                                .runningTimers[currentHabit
+                                                                .id] ??
+                                                            false;
+
+                                                        return IconButton(
+                                                          style:
+                                                              IconButton.styleFrom(
+                                                                foregroundColor:
+                                                                    Colors.grey,
+                                                              ),
+                                                          onPressed: () {
+                                                            provider
+                                                                .toggleTimer(
+                                                                  currentHabit
+                                                                      .id,
+                                                                );
+                                                          },
+                                                          icon: Icon(
+                                                            isRunning
+                                                                ? Icons.pause
+                                                                : Icons
+                                                                      .play_arrow,
+                                                            size: 25,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                     // Diğer tipler
                                     else
                                       const Placeholder(),
                                   ],
                                 ),
                               ),
-                        
+
                               SizedBox(height: 40),
-                              Text('Son 21 gün', style: TextStyle(fontSize: 18)),
+                              Text(
+                                'Son 21 gün',
+                                style: TextStyle(fontSize: 18),
+                              ),
                               SizedBox(height: 10),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: LiquidGlass(
-                                  shape: LiquidRoundedRectangle(borderRadius: 16),
+                                  shape: LiquidRoundedRectangle(
+                                    borderRadius: 16,
+                                  ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Wrap(
@@ -751,26 +980,36 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         final date = DateTime.now().subtract(
                                           Duration(days: 20 - index),
                                         );
-                                        final done = currentHabit.completedDates.any(
-                                          (d) =>
-                                              d.year == date.year &&
-                                              d.month == date.month &&
-                                              d.day == date.day,
-                                        );
+                                        final done = currentHabit.completedDates
+                                            .any(
+                                              (d) =>
+                                                  d.year == date.year &&
+                                                  d.month == date.month &&
+                                                  d.day == date.day,
+                                            );
                                         return Container(
                                           width: 30,
                                           height: 30,
                                           decoration: ShapeDecoration(
                                             shape: RoundedRectangleBorder(
-                                              side: BorderSide(color: Colors.grey),
-                                              borderRadius: BorderRadius.circular(8),
+                                              side: BorderSide(
+                                                color: Colors.grey,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
                                             color: done
                                                 ? currentHabit.color
-                                                : Colors.black12.withValues(alpha: 0.1),
+                                                : Colors.black12.withValues(
+                                                    alpha: 0.1,
+                                                  ),
                                           ),
                                           child: done
-                                              ? Icon(Icons.check, size: 20, color: Colors.white)
+                                              ? Icon(
+                                                  Icons.check,
+                                                  size: 20,
+                                                  color: Colors.white,
+                                                )
                                               : null,
                                         );
                                       }),
@@ -782,14 +1021,19 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: LiquidGlass(
-                                  shape: LiquidRoundedRectangle(borderRadius: 24),
+                                  shape: LiquidRoundedRectangle(
+                                    borderRadius: 24,
+                                  ),
                                   child: Padding(
                                     padding: const EdgeInsets.only(top: 16.0),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         StrengthGauge(
-                                          strength: currentHabit.strength.toDouble().roundToDouble(), // 0-100 arası int
+                                          strength: currentHabit.strength
+                                              .toDouble()
+                                              .roundToDouble(), // 0-100 arası int
                                           size: 200,
                                         ),
                                       ],
@@ -801,13 +1045,16 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               Padding(
                                 padding: EdgeInsets.all(8),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: LiquidGlass(
-                                          shape: LiquidRoundedRectangle(borderRadius: 16),
+                                          shape: LiquidRoundedRectangle(
+                                            borderRadius: 16,
+                                          ),
                                           child: StatCard(
                                             "Aktif Streak",
                                             "${currentHabit.currentStreak}",
@@ -822,7 +1069,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: LiquidGlass(
-                                          shape: LiquidRoundedRectangle(borderRadius: 16),
+                                          shape: LiquidRoundedRectangle(
+                                            borderRadius: 16,
+                                          ),
                                           child: StatCard(
                                             "Güç Seviyesi",
                                             "%${currentHabit.strength}",
@@ -839,25 +1088,33 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               Padding(
                                 padding: EdgeInsets.all(8),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: LiquidGlass(
-                                          shape: LiquidRoundedRectangle(borderRadius: 16),
+                                          shape: LiquidRoundedRectangle(
+                                            borderRadius: 16,
+                                          ),
                                           child: StatCard(
                                             "Alışkanlık Seviyesi",
                                             "${currentHabit.strengthLevel}",
-                                            currentHabit.strengthLevel == "Efsane"
+                                            currentHabit.strengthLevel ==
+                                                    "Efsane"
                                                 ? Icons.hotel_class
-                                                : currentHabit.strengthLevel == "Usta"
+                                                : currentHabit.strengthLevel ==
+                                                      "Usta"
                                                 ? Icons.star
-                                                : currentHabit.strengthLevel == "Güçlü"
+                                                : currentHabit.strengthLevel ==
+                                                      "Güçlü"
                                                 ? Icons.star_half
-                                                : currentHabit.strengthLevel == "Orta"
+                                                : currentHabit.strengthLevel ==
+                                                      "Orta"
                                                 ? Icons.favorite
-                                                : currentHabit.strengthLevel == "Zayıf"
+                                                : currentHabit.strengthLevel ==
+                                                      "Zayıf"
                                                 ? Icons.all_out
                                                 : Icons.question_mark,
                                             Colors.blue,
@@ -894,7 +1151,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         return Center(
                                           child: Text(
                                             '${day.day}',
-                                            style: TextStyle(color: Colors.grey[600]),
+                                            style: TextStyle(
+                                              color: Colors.grey[600],
+                                            ),
                                           ),
                                         );
                                       }
@@ -906,12 +1165,17 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         child: Container(
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            border: Border.all(color: Colors.pinkAccent, width: 2),
+                                            border: Border.all(
+                                              color: Colors.pinkAccent,
+                                              width: 2,
+                                            ),
                                           ),
                                           child: Center(
                                             child: Text(
                                               '${day.day}',
-                                              style: const TextStyle(color: Colors.white),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -919,35 +1183,52 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                     },
 
                                     markerBuilder: (context, day, events) {
-                                      if (day.isAfter(DateTime.now())) return null; // gelecekte marker yok
+                                      if (day.isAfter(DateTime.now()))
+                                        return null; // gelecekte marker yok
 
-                                      final normalizedDay = DateTime(day.year, day.month, day.day);
+                                      final normalizedDay = DateTime(
+                                        day.year,
+                                        day.month,
+                                        day.day,
+                                      );
 
                                       bool isDone = false;
                                       bool isSkipped = false;
 
                                       // Task tipi
                                       if (currentHabit.type == HabitType.task) {
-                                        isDone = currentHabit.completedDates.any((d) =>
-                                        d.year == normalizedDay.year &&
-                                            d.month == normalizedDay.month &&
-                                            d.day == normalizedDay.day);
-                                        isSkipped = currentHabit.skippedDates.any((d) =>
-                                        d.year == normalizedDay.year &&
-                                            d.month == normalizedDay.month &&
-                                            d.day == normalizedDay.day);
+                                        isDone = currentHabit.completedDates
+                                            .any(
+                                              (d) =>
+                                                  d.year ==
+                                                      normalizedDay.year &&
+                                                  d.month ==
+                                                      normalizedDay.month &&
+                                                  d.day == normalizedDay.day,
+                                            );
                                       }
-
                                       // Count tipi
-                                      else if (currentHabit.type == HabitType.count) {
-                                        final achieved = (currentHabit.dailyProgress?[normalizedDay] as int?) ?? 0;
-                                        isDone = achieved >= (currentHabit.targetCount ?? 1);
+                                      else if (currentHabit.type ==
+                                          HabitType.count) {
+                                        final achieved =
+                                            (currentHabit
+                                                    .dailyProgress?[normalizedDay]
+                                                as int?) ??
+                                            0;
+                                        isDone =
+                                            achieved >=
+                                            (currentHabit.targetCount ?? 1);
                                       }
-
                                       // Time tipi
-                                      else if (currentHabit.type == HabitType.time) {
-                                        final achievedSeconds = (currentHabit.dailyProgress?[normalizedDay] as int?) ?? 0;
-                                        final targetSecs = currentHabit.targetSeconds ?? 60;
+                                      else if (currentHabit.type ==
+                                          HabitType.time) {
+                                        final achievedSeconds =
+                                            (currentHabit
+                                                    .dailyProgress?[normalizedDay]
+                                                as int?) ??
+                                            0;
+                                        final targetSecs =
+                                            currentHabit.targetSeconds ?? 60;
                                         isDone = achievedSeconds >= targetSecs;
                                       }
 
@@ -957,7 +1238,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       } else if (isSkipped) {
                                         bgColor = Colors.grey.withOpacity(0.8);
                                       } else if (day.isBefore(DateTime.now())) {
-                                        bgColor = Colors.red.withOpacity(0.8); // yapılmayan geçmiş gün
+                                        bgColor = Colors.red.withOpacity(
+                                          0.8,
+                                        ); // yapılmayan geçmiş gün
                                       }
 
                                       if (bgColor != null) {
@@ -972,7 +1255,10 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                             child: Center(
                                               child: Text(
                                                 '${day.day}',
-                                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
                                           ),
