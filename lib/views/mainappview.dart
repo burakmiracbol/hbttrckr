@@ -19,15 +19,13 @@ import 'habits_page.dart';
 
 // TODO's
 //
-//  todaya göre olan fonksiyonlar tarihe dönderilmeli ve detail screen tarihe göre açılmalı
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
-//  calendar yapılmalı ana sayfa için veya daha düzgün paket bulunmalı ama not edelim geçen güzel pakaet bulamadık
+//  calendar yapılmalı ana sayfa için (stats view)
 //  her alışkanlığın kendi içinde de takvimi var ama skipped yok
 //  stats_view.dart ekranında da takvim lazım ve görsellik yükseltilmeli yapma sayısı oran felan
 //  alışkanlıklara yeni özellikler eklemeli notlar kısmı ikonu felan ayrıca ikon seçme özelliği eklenmeli
 //  alışkanlıklarda skip tuşu eklenmeli
 //  haftanın hangi gününden başladığı eklenmeli
-//  o güne göre habit çekme olmalı (şu an sadece yaşadığımız günü çekme var o yüzden calendarda geçmiş tarihe gidince bugün tamamlanma oranı var) ve habitlerin saklanma şekli çok şüpheci onlara bakılmalı
 //  habit gruplama olmalı
 //  kodu düzeltmeli hızımızı artırır eğer düzenler isek
 //  alarm ve haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
