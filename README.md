@@ -1,4 +1,7 @@
 # hbttrckr
+Bu README dosyasını hala düzenlemedim kusura kalmayın lütfen (I haven't edited this README file yet, sorry.)
+
+
 şu an hala türkçe readme ama yakında ingilizceye de çevirecem
 nasıl özgün proje ismi ama "habit tracker"'ın ünsüz harfleri (habit tracker alışkanlık takip eden demek)
 
