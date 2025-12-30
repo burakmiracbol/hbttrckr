@@ -179,161 +179,6 @@ void showTimeSelectorSheet(BuildContext context, Habit habit) {
   );
 }
 
-// void showTimeSelectorSheet(
-//   BuildContext context,
-//   Habit currentHabit, {
-//   required Function(int minutes) onSelected,
-//   required Habit habit,
-// }) {
-//   final initialSeconds = habit.todaySecondsProgress; // senin getter’ın
-//   int hours = initialSeconds.hours;
-//   int minutes = initialSeconds.minutes;
-//   int seconds = initialSeconds.seconds;
-//   num? nCurrentValue1;
-//   num? nCurrentValue2;
-//   num? nCurrentValue3;
-//   showModalBottomSheet(
-//     useSafeArea: true,
-//     enableDrag: false,
-//     context: context,
-//     isScrollControlled: true,
-//     backgroundColor: Colors.transparent,
-//     builder: (ctx) => Material(
-//       child: Container(
-//         height: 400,
-//         decoration: const BoxDecoration(
-//           color: Colors.black87,
-//           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//         ),
-//         child: StatefulBuilder(
-//           builder: (ctx, setStateSheet) => Column(
-//           children: [
-//             Padding(
-//               padding: const EdgeInsets.all(16),
-//               child: Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                 children: [
-//                   ElevatedButton(
-//                     onPressed: () {
-//                       Navigator.pop(ctx);
-//                     },
-//                     child: const Icon(Icons.cancel_outlined),
-//                   ),
-//                   Text(
-//                     "Dakika Seç",
-//                     style: TextStyle(color: Colors.white, fontSize: 18),
-//                   ),
-//                   ElevatedButton(
-//                     onPressed: () {
-//                       Navigator.pop(ctx);
-//                     },
-//                     child: Icon(Icons.done),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             // BURAYA SEN TASARIM YAPACAKSIN
-//             Expanded(
-//               child: Column(
-//                 children: [
-//                   Row(
-//                     children: [
-//                       //
-//                       WheelSlider.number(
-//                         horizontal: false,
-//                         isInfinite: false,
-//                         pointerColor: Colors.white,
-//                         showPointer: false,
-//                         perspective: 0.01,
-//                         verticalListHeight: double.infinity,
-//                         totalCount: 24,
-//                         initValue: hours,
-//                         selectedNumberStyle: TextStyle(
-//                           fontSize: 13.0,
-//                           color: Colors.white,
-//                         ),
-//                         unSelectedNumberStyle: TextStyle(
-//                           fontSize: 12.0,
-//                           color: Colors.white.withValues(alpha: 200),
-//                         ),
-//                         currentIndex: nCurrentValue1,
-//                         onValueChanged: (val) {
-//                           Provider.of<HabitProvider>(
-//                             context,
-//                             listen: false,
-//                           ).addTimeById(habit.id, hours: val);
-//                         },
-//                         hapticFeedbackType: HapticFeedbackType.heavyImpact,
-//                       ),
-//                       //
-//                       WheelSlider.number(
-//                         horizontal: false,
-//                         isInfinite: false,
-//                         pointerColor: Colors.white,
-//                         showPointer: false,
-//                         perspective: 0.01,
-//                         verticalListHeight: double.infinity,
-//                         totalCount: 59,
-//                         initValue: minutes,
-//                         selectedNumberStyle: TextStyle(
-//                           fontSize: 13.0,
-//                           color: Colors.white,
-//                         ),
-//                         unSelectedNumberStyle: TextStyle(
-//                           fontSize: 12.0,
-//                           color: Colors.white.withValues(alpha: 200),
-//                         ),
-//                         currentIndex: nCurrentValue2,
-//                         onValueChanged: (val) {
-//                           Provider.of<HabitProvider>(
-//                             context,
-//                             listen: false,
-//                           ).addTimeById(habit.id, minutes : val);
-//                         },
-//                         hapticFeedbackType: HapticFeedbackType.heavyImpact,
-//                       ),
-//                       //
-//                       WheelSlider.number(
-//                         horizontal: false,
-//                         isInfinite: false,
-//                         pointerColor: Colors.white,
-//                         showPointer: false,
-//                         perspective: 0.01,
-//                         verticalListHeight: double.infinity,
-//                         totalCount: 59,
-//                         initValue: seconds,
-//                         selectedNumberStyle: TextStyle(
-//                           fontSize: 13.0,
-//                           color: Colors.white,
-//                         ),
-//                         unSelectedNumberStyle: TextStyle(
-//                           fontSize: 12.0,
-//                           color: Colors.white.withValues(alpha: 200),
-//                         ),
-//                         currentIndex: nCurrentValue3,
-//                         onValueChanged: (val) {
-//                           Provider.of<HabitProvider>(
-//                             context,
-//                             listen: false,
-//                           ).addTimeById(habit.id, seconds: val);
-//                         },
-//                         hapticFeedbackType: HapticFeedbackType.heavyImpact,
-//                       ),
-//
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ), // boş alan
-//             const SizedBox(height: 20),
-//           ],
-//          ),
-//         ),
-//       ),
-//     ),
-//   );
-// }
-
 void showCountSelectorSheet(
   BuildContext context,
   Habit currentHabit, {
@@ -419,12 +264,14 @@ void showCountSelectorSheet(
 
 class HabitDetailScreen extends StatefulWidget {
   final String habitId;
+  final DateTime selectedDate;
   final OnHabitUpdated onHabitUpdated;
   final OnHabitDeleted? onHabitDeleted;
 
    HabitDetailScreen({
     Key? key,
     required this.habitId,
+     required this.selectedDate,
     required this.onHabitUpdated,
     required this.onHabitDeleted,
   }) : super(key: key);

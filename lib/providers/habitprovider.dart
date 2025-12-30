@@ -33,10 +33,10 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.time) return;
 
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
 
     final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
-    newProgress[today] = 0; // bugünki süreyi sıfırla
+    newProgress[targetDate] = 0; // bugünki süreyi sıfırla
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
     notifyListeners();
@@ -91,12 +91,12 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.count) return;
 
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    final current = habit.dailyProgress?[today] as int? ?? 0;
+    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final current = habit.dailyProgress?[targetDate] as int? ?? 0;
     final newValue = current + 1;
 
     final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress ?? {});
-    newProgress[today] = newValue;
+    newProgress[targetDate] = newValue;
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
     notifyListeners();
@@ -109,12 +109,12 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.count) return;
 
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    final current = habit.dailyProgress?[today] as int? ?? 0;
+    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final current = habit.dailyProgress?[targetDate] as int? ?? 0;
     final newValue = current -1 ;
 
     final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress ?? {});
-    newProgress[today] = newValue;
+    newProgress[targetDate] = newValue;
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
     notifyListeners();
@@ -308,15 +308,6 @@ class HabitProvider with ChangeNotifier {
     _habits.removeWhere((h) => h.id == id);
     notifyListeners();
     _saveHabits();
-  }
-
-  void markAsCompleted(String id) {
-    final index = _habits.indexWhere((h) => h.id == id);
-    if (index != -1) {
-      _habits[index] = _habits[index].markAsCompleted();
-      notifyListeners();
-      _saveHabits();
-    }
   }
 
   void skipToday(String id) {

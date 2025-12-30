@@ -576,6 +576,7 @@ class MainAppViewState extends State<MainAppView> {
                   MaterialPageRoute(
                     builder: (context) => HabitDetailScreen(
                       habitId: habit.id,
+                      selectedDate: context.read<HabitProvider>().selectedDate ?? DateTime.now(),
                       onHabitUpdated: (updatedHabit) {
                         setState(() {
                           final index = habits.indexWhere(
