@@ -8,11 +8,7 @@ import 'dart:convert';
 // TODO: today olan fonksiyonların that day veya that time halini yapalım çünkü her zaman bugüne bakmıyoruz
 // TODO: isdonetoday buraya da ekle
 
-enum TimeElements {
-  minute,
-  second,
-  hour,
-}
+enum TimeElements { minute, second, hour }
 
 class HabitProvider with ChangeNotifier {
   List<Habit> _habits = [];
@@ -26,7 +22,6 @@ class HabitProvider with ChangeNotifier {
     _loadHabits();
   }
 
-
   void resetTimer(String habitId) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
@@ -34,7 +29,11 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.time) return;
 
-    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
 
     final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
     newProgress[targetDate] = 0; // bugünki süreyi sıfırla
@@ -51,7 +50,11 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.time) return;
 
-    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
 
     final currentSeconds = (habit.dailyProgress?[targetDate] as int?) ?? 0;
     final newSeconds = currentSeconds + 1;
@@ -85,14 +88,17 @@ class HabitProvider with ChangeNotifier {
     super.dispose();
   }
 
-
   void incrementCount(String habitId) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
     final habit = _habits[index];
     if (habit.type != HabitType.count) return;
 
-    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
     final current = habit.dailyProgress?[targetDate] as int? ?? 0;
     final newValue = current + 1;
 
@@ -110,9 +116,13 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.count) return;
 
-    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
     final current = habit.dailyProgress?[targetDate] as int? ?? 0;
-    final newValue = current -1 ;
+    final newValue = current - 1;
 
     final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress ?? {});
     newProgress[targetDate] = newValue;
@@ -122,7 +132,6 @@ class HabitProvider with ChangeNotifier {
     _saveHabits();
   }
 
-
   void setSecondsForThatDate(String habitId, int totalSeconds) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
@@ -130,7 +139,11 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.time) return;
 
-    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
 
     final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
     newProgress[targetDate] = totalSeconds;
@@ -147,7 +160,11 @@ class HabitProvider with ChangeNotifier {
     final habit = _habits[index];
     if (habit.type != HabitType.count) return;
 
-    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
 
     final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
     newProgress[targetDate] = value;
@@ -164,7 +181,11 @@ class HabitProvider with ChangeNotifier {
     }
 
     // SEÇİLEN TARİH (bugün yerine)
-    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
     final totalSeconds = (habit.dailyProgress?[targetDate] as int?) ?? 0;
 
     switch (format) {
@@ -199,7 +220,11 @@ class HabitProvider with ChangeNotifier {
     if (habit.type != HabitType.task) return;
 
     // BUGÜN yerine SEÇİLEN TARİH
-    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
 
     List<DateTime> newCompletedDates;
 
@@ -250,10 +275,12 @@ class HabitProvider with ChangeNotifier {
     return habits.where((habit) {
       // Task tipi → completedDates'te var mı?
       if (habit.type == HabitType.task) {
-        return habit.completedDates.any((d) =>
-        d.year == normalized.year &&
-            d.month == normalized.month &&
-            d.day == normalized.day);
+        return habit.completedDates.any(
+          (d) =>
+              d.year == normalized.year &&
+              d.month == normalized.month &&
+              d.day == normalized.day,
+        );
       }
 
       // Count tipi → bugünki progress >= targetCount mı?
@@ -310,13 +337,16 @@ class HabitProvider with ChangeNotifier {
     _saveHabits();
   }
 
-
   void changeSkipHabit(String habitId) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
 
     final habit = _habits[index];
-    final targetDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
 
     if (habit.isSkippedOnDate(targetDate)) {
       // zaten skip'liyse geri al
@@ -333,18 +363,19 @@ class HabitProvider with ChangeNotifier {
     List<NeatCleanCalendarEvent> events = [];
     for (var habit in habits) {
       for (var date in habit.completedDates) {
-        events.add(NeatCleanCalendarEvent(
-          habit.name,
-          startTime: date,
-          endTime: date,
-          color: habit.color,
-          isDone: true,
-        ));
+        events.add(
+          NeatCleanCalendarEvent(
+            habit.name,
+            startTime: date,
+            endTime: date,
+            color: habit.color,
+            isDone: true,
+          ),
+        );
       }
     }
     return events;
   }
-
 
   void setSelectedDate(DateTime date) {
     selectedDate = date;
@@ -352,7 +383,7 @@ class HabitProvider with ChangeNotifier {
   }
 
   Habit getHabitById(String id) {
-      return _habits.firstWhere((h) => h.id == id);
+    return _habits.firstWhere((h) => h.id == id);
   }
 
   void addHabitFromObject(Habit habit) {
@@ -375,5 +406,4 @@ class HabitProvider with ChangeNotifier {
     notifyListeners();
     _saveHabits();
   }
-
 }

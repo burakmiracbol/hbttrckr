@@ -11,8 +11,6 @@ import 'package:hbttrckr/classes/glasscard.dart';
 import '../classes/strengthgauge.dart';
 import 'mainappview.dart';
 
-
-
 class StatisticsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -41,7 +39,8 @@ class StatisticsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         StrengthGauge(
-                          strength: (totalStrength / totalHabits.clamp(1, 999)).roundToDouble(), // 0-100 arası int
+                          strength: (totalStrength / totalHabits.clamp(1, 999))
+                              .roundToDouble(), // 0-100 arası int
                           size: 200,
                         ),
                       ],
@@ -138,8 +137,6 @@ class StatisticsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-
-
               ],
             ),
           ),

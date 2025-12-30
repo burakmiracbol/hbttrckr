@@ -4,11 +4,7 @@ class StrengthGauge extends StatelessWidget {
   final double strength; // 0-100 arası
   final double size;
 
-  const StrengthGauge({
-    super.key,
-    required this.strength,
-    this.size = 200,
-  });
+  const StrengthGauge({super.key, required this.strength, this.size = 200});
 
   // 0-100 arası değerden kırmızı → sarı → yeşil gradyan renk hesapla
   Color get _progressColor {
@@ -57,18 +53,11 @@ class StrengthGauge extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                "Strength",
-                style: TextStyle(
-
-                  fontSize: size * 0.07,
-                ),
-              ),
+              Text("Strength", style: TextStyle(fontSize: size * 0.07)),
               const SizedBox(height: 4),
               Text(
                 "$strength%",
                 style: TextStyle(
-
                   fontSize: size * 0.18,
                   fontWeight: FontWeight.bold,
                 ),

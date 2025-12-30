@@ -11,9 +11,15 @@ class WeekChartWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(icon: Icon(Icons.arrow_left, color: Colors.white), onPressed: () {}),
+            IconButton(
+              icon: Icon(Icons.arrow_left, color: Colors.white),
+              onPressed: () {},
+            ),
             Text('Bu Hafta', style: TextStyle(color: Colors.white)),
-            IconButton(icon: Icon(Icons.arrow_right, color: Colors.white), onPressed: () {}),
+            IconButton(
+              icon: Icon(Icons.arrow_right, color: Colors.white),
+              onPressed: () {},
+            ),
           ],
         ),
         Container(height: 100, color: Colors.white.withOpacity(0.1)),
@@ -33,7 +39,9 @@ class MonthlyCalendarWidget extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+      ),
       itemCount: 35,
       itemBuilder: (context, i) => Container(
         margin: EdgeInsets.all(4),
@@ -41,7 +49,12 @@ class MonthlyCalendarWidget extends StatelessWidget {
           color: Colors.white.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Center(child: Text('${i + 1}', style: TextStyle(color: Colors.white70, fontSize: 12))),
+        child: Center(
+          child: Text(
+            '${i + 1}',
+            style: TextStyle(color: Colors.white70, fontSize: 12),
+          ),
+        ),
       ),
     );
   }

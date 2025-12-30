@@ -229,47 +229,50 @@ class MainAppViewState extends State<MainAppView> {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
-                builder: (sheetContext) =>
-                    Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Center(child: Column(
-                          children: [
-                            Text(
-                              "Tüm Alışkanlıklar",
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            ...habits.map(
-                                  (h) => Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Card(
-                                  color: isMica
-                                      ? Theme.of(context).cardColor
-                                      : Theme.of(context).cardColor.withValues(alpha: 0.2),
-                                  elevation: 3,
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundColor: h.color,
-                                      child: Text(h.name[0].toUpperCase()),
-                                    ),
-                                    title: Text(h.name),
-                                    subtitle: Text(
-                                      "${h.currentStreak} gün streak • ${h.strength}% güç",
-                                    ),
-                                    trailing: h.currentStreak > 0
-                                        ? Icon(
-                                      Icons.local_fire_department,
-                                    ) // TODO : lottie ekle
-                                        : const Icon(
-                                      Icons.local_fire_department_outlined,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
+                builder: (sheetContext) => Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          "Tüm Alışkanlıklar",
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        ...habits.map(
+                          (h) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Card(
+                              color: isMica
+                                  ? Theme.of(context).cardColor
+                                  : Theme.of(
+                                      context,
+                                    ).cardColor.withValues(alpha: 0.2),
+                              elevation: 3,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: h.color,
+                                  child: Text(h.name[0].toUpperCase()),
                                 ),
+                                title: Text(h.name),
+                                subtitle: Text(
+                                  "${h.currentStreak} gün streak • ${h.strength}% güç",
+                                ),
+                                trailing: h.currentStreak > 0
+                                    ? Icon(
+                                        Icons.local_fire_department,
+                                      ) // TODO : lottie ekle
+                                    : const Icon(
+                                        Icons.local_fire_department_outlined,
+                                        color: Colors.grey,
+                                      ),
                               ),
                             ),
-                          ],
-                        ),)
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+                ),
               );
             },
             icon: Icon(Icons.panorama_fisheye),
@@ -581,7 +584,9 @@ class MainAppViewState extends State<MainAppView> {
                   MaterialPageRoute(
                     builder: (context) => HabitDetailScreen(
                       habitId: habit.id,
-                      selectedDate: context.read<HabitProvider>().selectedDate ?? DateTime.now(),
+                      selectedDate:
+                          context.read<HabitProvider>().selectedDate ??
+                          DateTime.now(),
                       onHabitUpdated: (updatedHabit) {
                         setState(() {
                           final index = habits.indexWhere(

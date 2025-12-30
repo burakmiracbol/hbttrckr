@@ -54,27 +54,34 @@ final colorScheme2 = ColorScheme(
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
-
-  }else if (defaultTargetPlatform == TargetPlatform.android) {
-
-  }else if (defaultTargetPlatform == TargetPlatform.iOS) {
-
-  }else if (defaultTargetPlatform == TargetPlatform.macOS) {
+  } else if (defaultTargetPlatform == TargetPlatform.android) {
+  } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+  } else if (defaultTargetPlatform == TargetPlatform.macOS) {
     await Window.initialize();
-    await Window.setEffect(effect:  isMica ? WindowEffect.mica :WindowEffect.transparent);
-  }else if (defaultTargetPlatform == TargetPlatform.windows) {
+    await Window.setEffect(
+      effect: isMica ? WindowEffect.mica : WindowEffect.transparent,
+    );
+  } else if (defaultTargetPlatform == TargetPlatform.windows) {
     await Window.initialize();
-    await Window.setEffect(effect:  isMica ? WindowEffect.mica :WindowEffect.transparent);
-  }else if (defaultTargetPlatform == TargetPlatform.linux) {
+    await Window.setEffect(
+      effect: isMica ? WindowEffect.mica : WindowEffect.transparent,
+    );
+  } else if (defaultTargetPlatform == TargetPlatform.linux) {
     await Window.initialize();
-    await Window.setEffect(effect:  isMica ? WindowEffect.mica :WindowEffect.transparent);
+    await Window.setEffect(
+      effect: isMica ? WindowEffect.mica : WindowEffect.transparent,
+    );
   }
   initializeDateFormatting('tr_TR', null);
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => CurrentThemeMode()),
-    ChangeNotifierProvider(create: (_) => HabitProvider()),
-  ],
-  child: const MyApp()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CurrentThemeMode()),
+        ChangeNotifierProvider(create: (_) => HabitProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -84,7 +91,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeMode = Provider.of<CurrentThemeMode>(context).currentMode;
     return MaterialApp(
-
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: [
         const Locale('en'),
