@@ -21,9 +21,8 @@ import 'habits_page.dart';
 //
 //  habit içerisindeki created at kısmını özel takvimlerde kullan
 //  habitdetail screen hepsine bir glass glow ekle
-//  windowsta uygulamanın o ent-yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
+//  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
-//  calendar yapılmalı ana sayfa için (stats view)
 //  her alışkanlığın kendi içinde de takvimi var ama skipped yok
 //  stats_view.dart ekranında da takvim lazım ve görsellik yükseltilmeli yapma sayısı oran felan
 //  alışkanlıklara yeni özellikler eklemeli notlar kısmı ikonu felan ayrıca ikon seçme özelliği eklenmeli
@@ -228,48 +227,62 @@ class MainAppViewState extends State<MainAppView> {
           IconButton(
             onPressed: () {
               showModalBottomSheet(
+                enableDrag: true,
+                useSafeArea: true,
+                isScrollControlled: true,
                 context: context,
-                builder: (sheetContext) => Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Text(
-                          "Tüm Alışkanlıklar",
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        ...habits.map(
-                          (h) => Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Card(
-                              color: isMica
-                                  ? Theme.of(context).cardColor
-                                  : Theme.of(
-                                      context,
-                                    ).cardColor.withValues(alpha: 0.2),
-                              elevation: 3,
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: h.color,
-                                  child: Text(h.name[0].toUpperCase()),
-                                ),
-                                title: Text(h.name),
-                                subtitle: Text(
-                                  "${h.currentStreak} gün streak • ${h.strength}% güç",
-                                ),
-                                trailing: h.currentStreak > 0
-                                    ? Icon(
-                                        Icons.local_fire_department,
-                                      ) // TODO : lottie ekle
-                                    : const Icon(
-                                        Icons.local_fire_department_outlined,
-                                        color: Colors.grey,
-                                      ),
-                              ),
-                            ),
+                builder: (sheetContext) => DraggableScrollableSheet(
+                  expand: false,
+                  initialChildSize: 0.5, // başlangıçta ekranın %50'si
+                  minChildSize: 0.25,
+                  maxChildSize: 0.95,
+                  builder: (context, scrollController) => Padding(
+                    padding: EdgeInsets.all(8),
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Column(
+                        children: [
+                          Text(
+                            "Tüm Alışkanlıklar",
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
-                        ),
-                      ],
+                          Column(
+                            children: [
+                              ...habits.map(
+                                (h) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Card(
+                                    color: isMica
+                                        ? Theme.of(context).cardColor
+                                        : Theme.of(
+                                            context,
+                                          ).cardColor.withValues(alpha: 0.2),
+                                    elevation: 3,
+                                    child: ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: h.color,
+                                        child: Text(h.name[0].toUpperCase()),
+                                      ),
+                                      title: Text(h.name),
+                                      subtitle: Text(
+                                        "${h.currentStreak} gün streak • ${h.strength}% güç",
+                                      ),
+                                      trailing: h.currentStreak > 0
+                                          ? Icon(
+                                              Icons.local_fire_department,
+                                            ) // TODO : lottie ekle
+                                          : const Icon(
+                                              Icons.local_fire_department_outlined,
+                                              color: Colors.grey,
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -536,9 +549,8 @@ class MainAppViewState extends State<MainAppView> {
                         ),
                       ],
                     ),
-                  ),
-                ),
-              );
+                  ),)
+                );
             },
             icon: Icon(Icons.settings),
           ),

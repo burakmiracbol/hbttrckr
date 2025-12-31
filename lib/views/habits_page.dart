@@ -100,7 +100,7 @@ Widget buildHabitsPage({
                       final completedCount = Provider.of<HabitProvider>(context)
                           .getCompletedCountForDay(
                             date,
-                          ); // TODO: what the fuck is that we already have function to use but what is that because that we only get tasks
+                          );
                       if (completedCount > 0) {
                         return Align(
                           alignment: Alignment.bottomCenter,
