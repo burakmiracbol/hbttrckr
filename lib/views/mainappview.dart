@@ -19,6 +19,8 @@ import 'habits_page.dart';
 
 // TODO's
 //
+//  time habit skipde hata var
+//
 //  habit içerisindeki created at kısmını özel takvimlerde kullan
 //  habitdetail screen hepsine bir glass glow ekle
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
