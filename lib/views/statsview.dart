@@ -240,16 +240,12 @@ class StatisticsScreen extends StatelessWidget {
                                   d.month == normalizedDay.month &&
                                   d.day == normalizedDay.day);
                             } else if (habit.type == HabitType.count) {
-                              final achieved =
-                                  (habit.dailyProgress[normalizedDay]
-                                  as int?) ??
-                                      0;
+                              final v = habit.dailyProgress[normalizedDay];
+                              final achieved = (v is num) ? v.toInt() : 0;
                               isDone = achieved >= (habit.targetCount ?? 1);
                             } else if (habit.type == HabitType.time) {
-                              final achievedSeconds =
-                                  (habit.dailyProgress[normalizedDay]
-                                  as int?) ??
-                                      0;
+                              final v = habit.dailyProgress[normalizedDay];
+                              final achievedSeconds = (v is num) ? v.toInt() : 0;
                               final targetSecs = habit.targetSeconds ?? 60;
                               isDone = achievedSeconds >= targetSecs;
                             }

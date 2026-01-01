@@ -97,10 +97,9 @@ Widget buildHabitsPage({
                   // GÜN ÜZERİNDEKİ NOKTALAR (tamamlanan alışkanlık varsa)
                   calendarBuilders: CalendarBuilders(
                     markerBuilder: (context, date, events) {
-                      final completedCount = Provider.of<HabitProvider>(context)
-                          .getCompletedCountForDay(
-                            date,
-                          );
+                      final completedCount = Provider.of<HabitProvider>(
+                        context,
+                      ).getCompletedCountForDay(date);
                       if (completedCount > 0) {
                         return Align(
                           alignment: Alignment.bottomCenter,
@@ -236,13 +235,19 @@ Widget buildHabitsPage({
                             isFuture || isTooLate
                                 ? " "
                                 : habit.type == HabitType.task
-                                ? (habit.isCompletedOnDate(selectedDate)
-                                      ? 'Tamamlandı'
-                                      : 'Yapılmadı')
+                                ? habit.isSkippedOnDate(selectedDate)
+                                      ? "Atlandı"
+                                      : (habit.isCompletedOnDate(selectedDate)
+                                            ? 'Tamamlandı'
+                                            : 'Yapılmadı')
                                 : habit.type == HabitType.count
-                                ? '${habit.getCountProgressForDate(selectedDate)} / ${habit.targetCount ?? '?'}'
+                                ? habit.isSkippedOnDate(selectedDate)
+                                      ? "Atlandı"
+                                      : '${habit.getCountProgressForDate(selectedDate)} / ${habit.targetCount ?? '?'}'
                                 : habit.type == HabitType.time
-                                ? '${habit.getSecondsProgressForDate(selectedDate).formattedHMS} / ${habit.targetSeconds.formattedHMS} '
+                                ? habit.isSkippedOnDate(selectedDate)
+                                      ? "Atlandı"
+                                      : '${habit.getSecondsProgressForDate(selectedDate).formattedHMS} / ${habit.targetSeconds.formattedHMS} '
                                 : habit.isCompletedOnDate(selectedDate)
                                 ? 'Tamamlandı'
                                 : 'Yapılmadı',

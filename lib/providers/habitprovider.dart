@@ -35,7 +35,7 @@ class HabitProvider with ChangeNotifier {
       selectedDate!.day,
     );
 
-    final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
+    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
     newProgress[targetDate] = 0; // bugünki süreyi sıfırla
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
@@ -56,10 +56,11 @@ class HabitProvider with ChangeNotifier {
       selectedDate!.day,
     );
 
-    final currentSeconds = (habit.dailyProgress?[targetDate] as int?) ?? 0;
+    final v = habit.dailyProgress[targetDate];
+    final currentSeconds = (v is num) ? v.toInt() : 0;
     final newSeconds = currentSeconds + 1;
 
-    final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
+    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
     newProgress[targetDate] = newSeconds;
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
@@ -99,10 +100,11 @@ class HabitProvider with ChangeNotifier {
       selectedDate!.month,
       selectedDate!.day,
     );
-    final current = habit.dailyProgress?[targetDate] as int? ?? 0;
+    final v = habit.dailyProgress[targetDate];
+    final current = (v is num) ? v.toInt() : 0;
     final newValue = current + 1;
 
-    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress ?? {});
+    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
     newProgress[targetDate] = newValue;
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
@@ -121,10 +123,11 @@ class HabitProvider with ChangeNotifier {
       selectedDate!.month,
       selectedDate!.day,
     );
-    final current = habit.dailyProgress?[targetDate] as int? ?? 0;
+    final v = habit.dailyProgress[targetDate];
+    final current = (v is num) ? v.toInt() : 0;
     final newValue = current - 1;
 
-    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress ?? {});
+    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
     newProgress[targetDate] = newValue;
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
@@ -145,7 +148,7 @@ class HabitProvider with ChangeNotifier {
       selectedDate!.day,
     );
 
-    final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
+    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
     newProgress[targetDate] = totalSeconds;
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
@@ -166,7 +169,7 @@ class HabitProvider with ChangeNotifier {
       selectedDate!.day,
     );
 
-    final newProgress = Map<DateTime, int>.from(habit.dailyProgress ?? {});
+    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
     newProgress[targetDate] = value;
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
@@ -176,7 +179,7 @@ class HabitProvider with ChangeNotifier {
 
   dynamic getTimeProgress(String habitId, {String format = 'seconds'}) {
     final habit = _habits.firstWhere((h) => h.id == habitId);
-    if (habit == null || habit.type != HabitType.time) {
+    if (habit.type != HabitType.time) {
       return format == 'string' || format == 'hh:mm:ss' ? "0 dk" : 0;
     }
 
@@ -186,7 +189,8 @@ class HabitProvider with ChangeNotifier {
       selectedDate!.month,
       selectedDate!.day,
     );
-    final totalSeconds = (habit.dailyProgress?[targetDate] as int?) ?? 0;
+    final v = habit.dailyProgress[targetDate];
+    final totalSeconds = (v is num) ? v.toInt() : 0;
 
     switch (format) {
       case 'hours':
@@ -212,69 +216,15 @@ class HabitProvider with ChangeNotifier {
     }
   }
 
-  void toggleTaskCompletion(String habitId) {
-    final index = _habits.indexWhere((h) => h.id == habitId);
-    if (index == -1) return;
-
-    final habit = _habits[index];
-    if (habit.type != HabitType.task) return;
-
-    // BUGÜN yerine SEÇİLEN TARİH
-    final targetDate = DateTime(
-      selectedDate!.year,
-      selectedDate!.month,
-      selectedDate!.day,
-    );
-
-    List<DateTime> newCompletedDates;
-
-    if (habit.completedDates.any((date) => date.isAtSameMomentAs(targetDate))) {
-      // BUGÜN TAMAMLANDIYSA → GERİ AL
-      newCompletedDates = habit.completedDates
-          .where((date) => !date.isAtSameMomentAs(targetDate))
-          .toList();
-    } else {
-      // TAMAMLANMAMIŞSA → TAMAMLA
-      newCompletedDates = [...habit.completedDates, targetDate];
-    }
-
-    _habits[index] = habit.copyWith(completedDates: newCompletedDates);
-    notifyListeners();
-    _saveHabits();
-  }
-
-  Future<void> _loadHabits() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final String? data = prefs.getString('habits');
-      if (data != null && data.isNotEmpty) {
-        final List<dynamic> jsonList = jsonDecode(data);
-        _habits = jsonList
-            .map((json) => Habit.fromJson(json as Map<String, dynamic>))
-            .toList();
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint('HabitProvider: Load error → $e');
-    }
-  }
-
-  Future<void> _saveHabits() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final String data = jsonEncode(_habits.map((h) => h.toJson()).toList());
-      await prefs.setString('habits', data);
-    } catch (e) {
-      debugPrint('HabitProvider: Save error → $e');
-    }
-  }
-
   int getCompletedCountForDay(DateTime day) {
     final normalized = DateTime(day.year, day.month, day.day);
 
     return habits.where((habit) {
-      // Task tipi → completedDates'te var mı?
+      // Task tipi → dailyProgress üzerinde true mu?
       if (habit.type == HabitType.task) {
+        final val = habit.dailyProgress[normalized];
+        if (val == true) return true;
+        // backward compatibility: fallback to completedDates
         return habit.completedDates.any(
           (d) =>
               d.year == normalized.year &&
@@ -285,13 +235,15 @@ class HabitProvider with ChangeNotifier {
 
       // Count tipi → bugünki progress >= targetCount mı?
       if (habit.type == HabitType.count) {
-        final achieved = (habit.dailyProgress?[normalized] as int?) ?? 0;
+        final v = habit.dailyProgress[normalized];
+        final achieved = (v is num) ? v.toInt() : 0;
         return achieved >= (habit.targetCount ?? 1);
       }
 
       // Time tipi → bugünki saniye >= targetSeconds mı?
       if (habit.type == HabitType.time) {
-        final achievedSeconds = (habit.dailyProgress?[normalized] as int?) ?? 0;
+        final v = habit.dailyProgress[normalized];
+        final achievedSeconds = (v is num) ? v.toInt() : 0;
         final targetSecs = habit.targetSeconds ?? 60;
         return achievedSeconds >= targetSecs;
       }
@@ -362,16 +314,33 @@ class HabitProvider with ChangeNotifier {
   List<NeatCleanCalendarEvent> get calendarEvents {
     List<NeatCleanCalendarEvent> events = [];
     for (var habit in habits) {
-      for (var date in habit.completedDates) {
-        events.add(
-          NeatCleanCalendarEvent(
-            habit.name,
-            startTime: date,
-            endTime: date,
-            color: habit.color,
-            isDone: true,
-          ),
-        );
+      // Derive events from dailyProgress (works for task/count/time)
+      for (var entry in habit.dailyProgress.entries) {
+        final date = entry.key;
+        final val = entry.value;
+
+        var shouldAdd = false;
+        if (habit.type == HabitType.task) {
+          shouldAdd = val == true;
+        } else if (habit.type == HabitType.count) {
+          final int achieved = (val is num) ? val.toInt() : 0;
+          shouldAdd = achieved >= (habit.targetCount ?? 1);
+        } else if (habit.type == HabitType.time) {
+          final int achievedSeconds = (val is num) ? val.toInt() : 0;
+          shouldAdd = achievedSeconds >= (habit.targetSeconds ?? 60);
+        }
+
+        if (shouldAdd) {
+          events.add(
+            NeatCleanCalendarEvent(
+              habit.name,
+              startTime: date,
+              endTime: date,
+              color: habit.color,
+              isDone: true,
+            ),
+          );
+        }
       }
     }
     return events;
@@ -406,4 +375,69 @@ class HabitProvider with ChangeNotifier {
     notifyListeners();
     _saveHabits();
   }
+
+  void toggleTaskCompletion(String habitId) {
+    final index = _habits.indexWhere((h) => h.id == habitId);
+    if (index == -1) return;
+
+    final habit = _habits[index];
+    if (habit.type != HabitType.task) return;
+
+    // BUGÜN yerine SEÇİLEN TARİH
+    final targetDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
+
+    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
+
+    final currentlyDone = (newProgress[targetDate] == true) ||
+        habit.completedDates.any((d) =>
+        d.year == targetDate.year && d.month == targetDate.month && d.day == targetDate.day);
+
+    if (currentlyDone) {
+      // GERİ AL
+      newProgress[targetDate] = false;
+    } else {
+      // TAMAMLA
+      newProgress[targetDate] = true;
+    }
+
+    final newCompletedDates = newProgress.entries
+        .where((e) => e.value == true)
+        .map((e) => e.key)
+        .toList();
+
+    _habits[index] = habit.copyWith(dailyProgress: newProgress, completedDates: newCompletedDates);
+    notifyListeners();
+    _saveHabits();
+  }
+
+  Future<void> _loadHabits() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? data = prefs.getString('habits');
+      if (data != null && data.isNotEmpty) {
+        final List<dynamic> jsonList = jsonDecode(data);
+        _habits = jsonList
+            .map((json) => Habit.fromJson(json as Map<String, dynamic>))
+            .toList();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('HabitProvider: Load error → $e');
+    }
+  }
+
+  Future<void> _saveHabits() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String data = jsonEncode(_habits.map((h) => h.toJson()).toList());
+      await prefs.setString('habits', data);
+    } catch (e) {
+      debugPrint('HabitProvider: Save error → $e');
+    }
+  }
+
 }

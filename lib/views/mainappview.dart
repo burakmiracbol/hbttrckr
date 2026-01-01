@@ -19,20 +19,13 @@ import 'habits_page.dart';
 
 // TODO's
 //
-//  time habit skipde hata var
-//
 //  habit içerisindeki created at kısmını özel takvimlerde kullan
 //  habitdetail screen hepsine bir glass glow ekle
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
 //  her alışkanlığın kendi içinde de takvimi var ama skipped yok
-//  stats_view.dart ekranında da takvim lazım ve görsellik yükseltilmeli yapma sayısı oran felan
+//  stats_view.dart ekranında da takvimi düzeltmek lazım (skipped olan günler gösterme felan) ve görsellik yükseltilmeli yapma sayısı oran felan
 //  alışkanlıklara yeni özellikler eklemeli notlar kısmı ikonu felan ayrıca ikon seçme özelliği eklenmeli
-//
-//  alışkanlıklarda skip tuşu eklenmeli
-//
-//    task completedDates denen ayrı bir değişkende saklanıyor bunu düzeltmeliyiz
-//
 //  haftanın hangi gününden başladığı eklenmeli
 //  habit gruplama olmalı
 //  kodu düzeltmeli hızımızı artırır eğer düzenler isek

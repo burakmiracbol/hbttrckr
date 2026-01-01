@@ -1210,26 +1210,19 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       // Count tipi
                                       else if (currentHabit.type ==
                                           HabitType.count) {
-                                        final achieved =
-                                            (currentHabit
-                                                    .dailyProgress?[normalizedDay]
-                                                as int?) ??
-                                            0;
-                                        isDone =
-                                            achieved >=
-                                            (currentHabit.targetCount ?? 1);
+                                        final v = currentHabit.dailyProgress[normalizedDay];
+                                        final achieved = (v is num) ? v.toInt() : 0;
+                                        isDone = achieved >= (currentHabit.targetCount ?? 1);
+                                        isSkipped = v == "skipped";
                                       }
                                       // Time tipi
                                       else if (currentHabit.type ==
                                           HabitType.time) {
-                                        final achievedSeconds =
-                                            (currentHabit
-                                                    .dailyProgress?[normalizedDay]
-                                                as int?) ??
-                                            0;
-                                        final targetSecs =
-                                            currentHabit.targetSeconds ?? 60;
+                                        final v = currentHabit.dailyProgress[normalizedDay];
+                                        final achievedSeconds = (v is num) ? v.toInt() : 0;
+                                        final targetSecs = currentHabit.targetSeconds ?? 60;
                                         isDone = achievedSeconds >= targetSecs;
+                                        isSkipped = v == "skipped";
                                       }
 
                                       Color? bgColor;
