@@ -19,6 +19,8 @@ import 'habits_page.dart';
 
 // TODO's
 //
+//  habitler için not kısmında hatalar düzeltilsin
+//  countlarda ve timelarda strength tamamalama oranına göre verilsin (mevcut hal ise tamamlama durumu) yani durum değil oran ile yapacağız
 //  habit içerisindeki created at kısmını özel takvimlerde kullan
 //  habitdetail screen hepsine bir glass glow ekle
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor

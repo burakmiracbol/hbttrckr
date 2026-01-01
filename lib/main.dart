@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_acrylic/window.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:hbttrckr/views/adaptivescaffoldmainview.dart';
 import 'package:hbttrckr/views/navigationrail.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:hbttrckr/views/mainappview.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:image_picker/image_picker.dart';
 
 final schemelight = SchemeMonochrome(
   isDark: false,
@@ -53,6 +55,26 @@ final colorScheme2 = ColorScheme(
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Recover any lost image picker data (Android may kill MainActivity during pick)
+  try {
+    final picker = ImagePicker();
+    final LostDataResponse response = await picker.retrieveLostData();
+    if (!response.isEmpty) {
+      // If there are lost files, the app may want to process or store them.
+      // We'll just log them for now; the Habit notes editor will handle loading images from file paths or data URLs.
+      if (response.files != null) {
+        for (final f in response.files!) {
+          debugPrint('Recovered lost image: ${f.path}');
+        }
+      } else if (response.exception != null) {
+        debugPrint('ImagePicker lost-data exception: ${response.exception}');
+      }
+    }
+  } catch (_) {
+    // ignore
+  }
+
   if (kIsWeb) {
   } else if (defaultTargetPlatform == TargetPlatform.android) {
   } else if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -91,7 +113,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeMode = Provider.of<CurrentThemeMode>(context).currentMode;
     return MaterialApp(
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        FlutterQuillLocalizations.delegate,
+      ],
       supportedLocales: [
         const Locale('en'),
         const Locale('fr'),

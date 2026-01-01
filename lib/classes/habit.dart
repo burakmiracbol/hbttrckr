@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 enum HabitType {
@@ -23,6 +25,7 @@ class Habit {
   final int? maxSeconds;
   final List<DateTime> completedDates;
   final Map<DateTime, dynamic> dailyProgress;
+  final String? notesDelta;
 
   Habit({
     required this.id,
@@ -41,6 +44,7 @@ class Habit {
     List<DateTime>? completedDates,
     Map<DateTime, dynamic>? dailyProgress,
     this.maxSeconds,
+    this.notesDelta,
   }) : dailyProgress = dailyProgress ?? {},
        completedDates = completedDates ?? [];
 
@@ -278,6 +282,7 @@ class Habit {
     int? maxMinutes,
     List<DateTime>? completedDates,
     Map<DateTime, dynamic>? dailyProgress,
+    String? notesDelta,
   }) {
     return Habit(
       id: id ?? this.id,
@@ -296,6 +301,7 @@ class Habit {
       maxSeconds: maxMinutes ?? this.maxSeconds,
       completedDates: completedDates ?? this.completedDates,
       dailyProgress: dailyProgress ?? this.dailyProgress,
+      notesDelta: notesDelta ?? this.notesDelta,
     );
   }
 
@@ -325,6 +331,7 @@ class Habit {
     'dailyProgress': dailyProgress.map(
       (key, value) => MapEntry(key.millisecondsSinceEpoch.toString(), value),
     ),
+    'notesDelta': notesDelta,
   };
 
   factory Habit.fromJson(Map<String, dynamic> json) {
@@ -338,6 +345,20 @@ class Habit {
     final parsedDaily = (json['dailyProgress'] as Map<String, dynamic>?)?.map(
       (k, v) => MapEntry(DateTime.fromMillisecondsSinceEpoch(int.parse(k)), v),
     ) ?? {};
+
+    String? parsedNotes;
+    final rawNotes = json['notesDelta'];
+    if (rawNotes is String) {
+      parsedNotes = rawNotes;
+    } else if (rawNotes is Map) {
+      try {
+        parsedNotes = jsonEncode(rawNotes);
+      } catch (_) {
+        parsedNotes = null;
+      }
+    } else {
+      parsedNotes = null;
+    }
 
     // Eski completedDates alanı varsa onu da al, ancak öncelik dailyProgress'teki true değerlerinde
     final legacyCompleted = (json['completedDates'] as List?)
@@ -372,6 +393,7 @@ class Habit {
       maxSeconds: json['maxSeconds'],
       completedDates: combinedCompleted,
       dailyProgress: parsedDaily,
+      notesDelta: parsedNotes,
     );
   }
 

@@ -10,6 +10,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 
 import 'package:hbttrckr/providers/habitprovider.dart';
+import 'package:hbttrckr/sheets/habit_notes_editor_sheet.dart';
 
 // TODO ERROR : düzenleme oluyor iki iptal tuşu var
 
@@ -473,6 +474,25 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                           ],
                         ),
                       );
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.note_alt_outlined),
+                    onPressed: () async {
+                      final provider = context.read<HabitProvider>();
+                      final current = provider.getHabitById(currentHabit.id);
+                      final result = await showModalBottomSheet<String?>(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (ctx) => HabitNotesEditorSheet(initialDeltaJson: current.notesDelta),
+                      );
+
+                      if (result != null) {
+                        final updated = current.copyWith(notesDelta: result);
+                        provider.updateHabit(updated);
+                        widget.onHabitUpdated.call(updated);
+                      }
                     },
                   ),
                 ],
@@ -1071,7 +1091,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               Container(
                                 margin: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.1),
+                                  color: Colors.grey.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: TableCalendar(
@@ -1169,13 +1189,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
 
                                       Color? bgColor;
                                       if (isDone) {
-                                        bgColor = Colors.green.withOpacity(0.8);
+                                        bgColor = Colors.green.withValues(alpha: 0.8);
                                       } else if (isSkipped) {
-                                        bgColor = Colors.grey.withOpacity(0.8);
+                                        bgColor = Colors.grey.withValues(alpha: 0.8);
                                       } else if (day.isBefore(DateTime.now())) {
-                                        bgColor = Colors.red.withOpacity(
-                                          0.8,
-                                        ); // yapılmayan geçmiş gün
+                                        bgColor = Colors.red.withValues(alpha: 0.8); // yapılmayan geçmiş gün
                                       }
 
                                       if (bgColor != null) {

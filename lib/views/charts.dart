@@ -22,7 +22,7 @@ class WeekChartWidget extends StatelessWidget {
             ),
           ],
         ),
-        Container(height: 100, color: Colors.white.withOpacity(0.1)),
+        Container(height: 100, color: Colors.white.withValues(alpha: 0.1)),
       ],
     );
   }
@@ -46,7 +46,7 @@ class MonthlyCalendarWidget extends StatelessWidget {
       itemBuilder: (context, i) => Container(
         margin: EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(

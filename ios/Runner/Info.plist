@@ -45,5 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- Image Picker / Camera usage descriptions - replace with app-specific reasons -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Bu uygulama fotoğraf kütüphanesine erişerek notlarına resim eklemene izin verir.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Bu uygulama kamerayı kullanarak doğrudan fotoğraf çekip notlarına eklemene izin verir.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Video kaydı yaparken mikrofona erişim gerekmektedir.</string>
 </dict>
 </plist>

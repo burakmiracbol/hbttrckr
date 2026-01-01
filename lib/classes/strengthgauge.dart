@@ -34,7 +34,7 @@ class StrengthGauge extends StatelessWidget {
             size: Size(size, size),
             painter: _GaugePainter(
               progress: 1.0,
-              color: Colors.grey.withOpacity(0.4),
+              color: Colors.grey.withValues(alpha: 0.4),
               strokeWidth: size * 0.08,
             ),
           ),
