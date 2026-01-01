@@ -960,64 +960,6 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                 ),
                               ),
 
-                              SizedBox(height: 40),
-                              Text(
-                                'Son 21 gün',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: LiquidGlass(
-                                  shape: LiquidRoundedRectangle(
-                                    borderRadius: 16,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Wrap(
-                                      spacing: 8,
-                                      children: List.generate(21, (index) {
-                                        final date = DateTime.now().subtract(
-                                          Duration(days: 20 - index),
-                                        );
-                                        final done = currentHabit.completedDates
-                                            .any(
-                                              (d) =>
-                                                  d.year == date.year &&
-                                                  d.month == date.month &&
-                                                  d.day == date.day,
-                                            );
-                                        return Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: ShapeDecoration(
-                                            shape: RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                color: Colors.grey,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            color: done
-                                                ? currentHabit.color
-                                                : Colors.black12.withValues(
-                                                    alpha: 0.1,
-                                                  ),
-                                          ),
-                                          child: done
-                                              ? Icon(
-                                                  Icons.check,
-                                                  size: 20,
-                                                  color: Colors.white,
-                                                )
-                                              : null,
-                                        );
-                                      }),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: LiquidGlass(
