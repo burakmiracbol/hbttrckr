@@ -23,7 +23,6 @@ class Habit {
   final int? achievedSeconds;
   final int? targetSeconds;
   final int? maxSeconds;
-  final List<DateTime> completedDates;
   final Map<DateTime, dynamic> dailyProgress;
   final String? notesDelta;
 
@@ -41,12 +40,10 @@ class Habit {
     this.targetCount,
     this.achievedSeconds,
     this.targetSeconds,
-    List<DateTime>? completedDates,
     Map<DateTime, dynamic>? dailyProgress,
     this.maxSeconds,
     this.notesDelta,
-  }) : dailyProgress = dailyProgress ?? {},
-       completedDates = completedDates ?? [];
+  }) : dailyProgress = dailyProgress ?? {};
 
   @deprecated
   int get todayCountProgress => getCountProgressForDate(DateTime.now());
@@ -86,13 +83,7 @@ class Habit {
       // Öncelikle dailyProgress üzerinden kontrol et (true ise yapıldı)
       final val = dailyProgress[normalized];
       if (val == true) return true;
-      // geriye dönük uyumluluk için completedDates'e de bak
-      return completedDates.any(
-        (d) =>
-            d.year == normalized.year &&
-            d.month == normalized.month &&
-            d.day == normalized.day,
-      );
+      return false;;
     }
 
     if (type == HabitType.count) {
@@ -193,9 +184,7 @@ class Habit {
 
       if (type == HabitType.task) {
         final val = dailyProgress[day];
-        doneThatDay = val == true || completedDates.any(
-          (d) => d.year == day.year && d.month == day.month && d.day == day.day,
-        );
+        doneThatDay = val == true;
       } else if (type == HabitType.count) {
         final value = dailyProgress[day];
         final int achieved = (value is num) ? value.toInt() : 0;
@@ -216,7 +205,6 @@ class Habit {
   }
 
   // === DİĞER GETTER'LAR ===
-  int get totalDays => completedDates.length;
 
   // Gün skip edildi mi?
   bool isSkippedOnDate(DateTime date) {
@@ -231,12 +219,7 @@ class Habit {
     final newProgress = Map<DateTime, dynamic>.from(dailyProgress);
     newProgress[normalized] = "skipped"; // skip işaretle
 
-    // Ayrıca completedDates'ten temizle (tutarlılık için)
-    final newCompletedDates = List<DateTime>.from(completedDates);
-    newCompletedDates.removeWhere((d) =>
-        d.year == normalized.year && d.month == normalized.month && d.day == normalized.day);
-
-    return copyWith(dailyProgress: newProgress, completedDates: newCompletedDates);
+    return copyWith(dailyProgress: newProgress);
   }
 
   // Skip’i geri al (normal hale getir, progress 0 olsun)
@@ -247,16 +230,9 @@ class Habit {
     final newProgress = Map<DateTime, dynamic>.from(dailyProgress);
 
     if (type == HabitType.task) {
-      // For task habits, mark as not completed and remove from completedDates
       newProgress[normalized] = false;
 
-      final newCompletedDates = List<DateTime>.from(completedDates);
-      newCompletedDates.removeWhere((d) =>
-          d.year == normalized.year &&
-          d.month == normalized.month &&
-          d.day == normalized.day);
-
-      return copyWith(dailyProgress: newProgress, completedDates: newCompletedDates);
+      return copyWith(dailyProgress: newProgress);
     } else {
       // For count/time habits, set progress to 0
       newProgress[normalized] = 0;
@@ -280,7 +256,6 @@ class Habit {
     int? achievedMinutes,
     int? targetMinutes,
     int? maxMinutes,
-    List<DateTime>? completedDates,
     Map<DateTime, dynamic>? dailyProgress,
     String? notesDelta,
   }) {
@@ -299,7 +274,6 @@ class Habit {
       achievedSeconds: achievedMinutes ?? this.achievedSeconds,
       targetSeconds: targetMinutes ?? this.targetSeconds,
       maxSeconds: maxMinutes ?? this.maxSeconds,
-      completedDates: completedDates ?? this.completedDates,
       dailyProgress: dailyProgress ?? this.dailyProgress,
       notesDelta: notesDelta ?? this.notesDelta,
     );
@@ -323,7 +297,6 @@ class Habit {
     'achievedSeconds': achievedSeconds,
     'targetSeconds': targetSeconds,
     'maxSeconds': maxSeconds,
-    // completedDates artık dailyProgress üzerinden türetiliyor (backward uyumluluk için eski listeden de al)
     'completedDates': dailyProgress.entries
         .where((e) => e.value == true)
         .map((e) => e.key.millisecondsSinceEpoch)
@@ -360,7 +333,6 @@ class Habit {
       parsedNotes = null;
     }
 
-    // Eski completedDates alanı varsa onu da al, ancak öncelik dailyProgress'teki true değerlerinde
     final legacyCompleted = (json['completedDates'] as List?)
         ?.map((ms) => DateTime.fromMillisecondsSinceEpoch(ms as int))
         .toList() ?? [];
@@ -391,7 +363,6 @@ class Habit {
       achievedSeconds: json['achievedSeconds'],
       targetSeconds: json['targetSeconds'],
       maxSeconds: json['maxSeconds'],
-      completedDates: combinedCompleted,
       dailyProgress: parsedDaily,
       notesDelta: parsedNotes,
     );

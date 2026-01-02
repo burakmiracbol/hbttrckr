@@ -185,12 +185,7 @@ Widget buildHabitsPage({
                         const Duration(days: 7),
                       );
                       bool isTooLate = selectedDate.isBefore(sevenDaysAgo);
-                      final isCompleted = habit.completedDates.any(
-                        (d) =>
-                            d.year == normalizedDate.year &&
-                            d.month == normalizedDate.month &&
-                            d.day == normalizedDate.day,
-                      );
+                      final isCompleted = habit.dailyProgress[normalizedDate];
                       return Card(
                         color: habit.color.withValues(alpha: 0.2),
                         child: ListTile(

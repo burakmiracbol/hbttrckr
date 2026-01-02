@@ -12,11 +12,30 @@ class StatisticsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final habits = context.watch<HabitProvider>().habits;
 
+    // Normalize today (date-only) to avoid time-of-day issues when comparing
+    final now = DateTime.now();
+    final todayDate = DateTime(now.year, now.month, now.day);
+
+    // Determine the earliest habit creation date safely
+    DateTime firstHabitCreatedTime;
+    if (habits.isEmpty) {
+      firstHabitCreatedTime = todayDate;
+    } else {
+      // pick the earliest createdAt among habits and normalize to date-only
+      final earliest = habits
+          .map((h) => h.createdAt)
+          .reduce((a, b) => a.isBefore(b) ? a : b);
+      firstHabitCreatedTime = DateTime(
+        earliest.year,
+        earliest.month,
+        earliest.day,
+      );
+    }
+
     final totalHabits = habits.length;
     final activeHabits = habits.where((h) => h.currentStreak > 0).length;
     final perfectHabits = habits.where((h) => h.strength >= 90).length;
     final totalStrength = habits.fold(0.0, (sum, h) => sum + h.strength);
-    final firstHabitCreatedTime = habits.first.createdAt;
 
     return GlassGlowLayer(
       child: LiquidGlassLayer(
@@ -30,21 +49,20 @@ class StatisticsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0) ,
+                  padding: EdgeInsets.all(8.0),
                   child: Card(
-                    color: isMica
+                    color: context.read<CurrentThemeMode>().isMica
                         ? Theme.of(context).cardColor
-                        : Theme.of(
-                      context,
-                    ).cardColor.withValues(alpha: 0.2),
+                        : Theme.of(context).cardColor.withValues(alpha: 0.2),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 24.0),
+                          padding: EdgeInsets.only(top: 24.0),
                           child: StrengthGauge(
-                            strength: (totalStrength / totalHabits.clamp(1, 999))
-                                .roundToDouble(), // 0-100 arası int
+                            strength:
+                                (totalStrength / totalHabits.clamp(1, 999))
+                                    .roundToDouble(), // 0-100 arası int
                             size: 200,
                           ),
                         ),
@@ -53,14 +71,14 @@ class StatisticsScreen extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Row(
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(8.0),
                           child: Card(
-                            color: isMica
+                            color: context.read<CurrentThemeMode>().isMica
                                 ? Theme.of(context).cardColor
                                 : Theme.of(
                                     context,
@@ -77,9 +95,9 @@ class StatisticsScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(8.0),
                           child: Card(
-                            color: isMica
+                            color: context.read<CurrentThemeMode>().isMica
                                 ? Theme.of(context).cardColor
                                 : Theme.of(
                                     context,
@@ -98,14 +116,14 @@ class StatisticsScreen extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Row(
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(8.0),
                           child: Card(
-                            color: isMica
+                            color: context.read<CurrentThemeMode>().isMica
                                 ? Theme.of(context).cardColor
                                 : Theme.of(
                                     context,
@@ -122,9 +140,9 @@ class StatisticsScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(8.0),
                           child: Card(
-                            color: isMica
+                            color: context.read<CurrentThemeMode>().isMica
                                 ? Theme.of(context).cardColor
                                 : Theme.of(
                                     context,
@@ -139,25 +157,22 @@ class StatisticsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Card(
-                    color: isMica
+                    color: context.read<CurrentThemeMode>().isMica
                         ? Theme.of(context).cardColor
-                        : Theme.of(
-                      context,
-                    ).cardColor.withValues(alpha: 0.2),
+                        : Theme.of(context).cardColor.withValues(alpha: 0.2),
                     child: TableCalendar(
                       firstDay: DateTime.utc(2020, 1, 1),
                       lastDay: DateTime.utc(2030, 12, 31),
                       focusedDay: DateTime.now(),
                       calendarFormat: CalendarFormat.month,
                       startingDayOfWeek: StartingDayOfWeek.monday,
-                      headerStyle: const HeaderStyle(
+                      headerStyle: HeaderStyle(
                         formatButtonVisible: false,
                         titleCentered: true,
                       ),
@@ -166,13 +181,11 @@ class StatisticsScreen extends StatelessWidget {
                       calendarBuilders: CalendarBuilders(
                         defaultBuilder: (context, day, focusedDay) {
                           // Gelecek günler → siyah / şeffaf
-                          if (day.isAfter(DateTime.now())) {
+                          if (day.isAfter(todayDate)) {
                             return Center(
                               child: Text(
                                 '${day.day}',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                ),
+                                style: TextStyle(color: Colors.grey[600]),
                               ),
                             );
                           }
@@ -192,9 +205,7 @@ class StatisticsScreen extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   '${day.day}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             ),
@@ -202,7 +213,7 @@ class StatisticsScreen extends StatelessWidget {
                         },
 
                         markerBuilder: (context, day, events) {
-                          if (day.isAfter(DateTime.now()))
+                          if (day.isAfter(todayDate))
                             return null; // gelecekte marker yok
 
                           final normalizedDay = DateTime(
@@ -212,40 +223,64 @@ class StatisticsScreen extends StatelessWidget {
                           );
 
                           // Gün için tüm habitleri kontrol et
-                          final habits =
-                              context.read<HabitProvider>().habits;
+                          final habits = context.read<HabitProvider>().habits;
 
                           if (habits.isEmpty) return null;
 
                           int doneCount = 0;
                           int skippedCount = 0;
 
+                          bool sameDate(DateTime a, DateTime b) =>
+                              a.year == b.year &&
+                              a.month == b.month &&
+                              a.day == b.day;
+
                           for (final habit in habits) {
-                            // normalize edilmiş gün için o habit'in yapılıp yapılmadığını belirle
+                            // normalize edilmiş gün için o habit'in yapılıp yapılmadığını güvenli şekilde belirle
                             bool isDone = false;
                             bool isSkipped = false;
 
                             // skipped kontrolü (varsa)
                             try {
-                              isSkipped = habit.isSkippedOnDate(
-                                normalizedDay,
-                              );
+                              isSkipped = habit.isSkippedOnDate(normalizedDay);
                             } catch (_) {
                               isSkipped = false;
                             }
 
+                            // Güvenli günlük veri okuma: doğrudan map lookup yerine tarihe göre eşleme
+                            dynamic v;
+                            try {
+                              for (final entry in habit.dailyProgress.entries) {
+                                final dynamic k = entry
+                                    .key; // treat as dynamic to allow legacy string keys
+                                if (k is DateTime) {
+                                  if (sameDate(k, normalizedDay)) {
+                                    v = entry.value;
+                                    break;
+                                  }
+                                } else if (k is String) {
+                                  try {
+                                    final parsed = DateTime.parse(k);
+                                    if (sameDate(parsed, normalizedDay)) {
+                                      v = entry.value;
+                                      break;
+                                    }
+                                  } catch (_) {}
+                                }
+                              }
+                            } catch (_) {
+                              v = null;
+                            }
+
                             if (habit.type == HabitType.task) {
-                              isDone = habit.completedDates.any((d) =>
-                              d.year == normalizedDay.year &&
-                                  d.month == normalizedDay.month &&
-                                  d.day == normalizedDay.day);
+                              isDone = v == true;
                             } else if (habit.type == HabitType.count) {
-                              final v = habit.dailyProgress[normalizedDay];
                               final achieved = (v is num) ? v.toInt() : 0;
                               isDone = achieved >= (habit.targetCount ?? 1);
                             } else if (habit.type == HabitType.time) {
-                              final v = habit.dailyProgress[normalizedDay];
-                              final achievedSeconds = (v is num) ? v.toInt() : 0;
+                              final achievedSeconds = (v is num)
+                                  ? v.toInt()
+                                  : 0;
                               final targetSecs = habit.targetSeconds ?? 60;
                               isDone = achievedSeconds >= targetSecs;
                             }
@@ -260,7 +295,9 @@ class StatisticsScreen extends StatelessWidget {
                           // - Hiçbiri yapılmamış ve atlanmış ise → içi boş açık gri çember
                           // - Hiçbiri yapılmamış ve geçmiş gün ise → dolu kırmızı
 
-                          if (day.isBefore(firstHabitCreatedTime.subtract(Duration(days: 1)))) {
+                          if (normalizedDay.isBefore(
+                            firstHabitCreatedTime.subtract(Duration(days: 1)),
+                          )) {
                             return Center(
                               child: Container(
                                 width: 36,
@@ -272,7 +309,7 @@ class StatisticsScreen extends StatelessWidget {
                                 child: Center(
                                   child: Text(
                                     '${day.day}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -295,7 +332,7 @@ class StatisticsScreen extends StatelessWidget {
                                 child: Center(
                                   child: Text(
                                     '${day.day}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -323,7 +360,9 @@ class StatisticsScreen extends StatelessWidget {
                                   child: Text(
                                     '${day.day}',
                                     style: TextStyle(
-                                      color: Colors.green.withValues(alpha: 0.9),
+                                      color: Colors.green.withValues(
+                                        alpha: 0.9,
+                                      ),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -371,7 +410,7 @@ class StatisticsScreen extends StatelessWidget {
                                 child: Center(
                                   child: Text(
                                     '${day.day}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -380,7 +419,6 @@ class StatisticsScreen extends StatelessWidget {
                               ),
                             );
                           }
-
 
                           return null;
                         },

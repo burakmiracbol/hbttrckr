@@ -16,53 +16,25 @@ bilgisayar ile çok alakası olmayan insanlarıbilgisayarla ilgili işlere alı�
 
 OPEN SOURCE IS LOVE . 
 
+Bu proje: basit, açık kaynak bir alışkanlık takip uygulamasıdır (Flutter ile yazılmıştır). Amaç: kişisel alışkanlıkları; "task", "count" ve "time" tipleriyle takip etmek, günlük ilerlemeyi kaydetmek ve istatistikler sunmaktır. Proje hem mobil hem de masaüstü hedefleri için geliştirilmektedir ve katkılar, hata raporları ve öneriler için açıktır.
 
+Hızlı başlangıç
 
+- Gereksinimler: Flutter SDK, Dart, (isteğe bağlı) Visual Studio veya Android Studio.
+- Kurulum:
+  1. Repoyu klonlayın: git clone <repo>
+  2. Bağımlılıkları yükleyin: flutter pub get
+  3. Uygulamayı çalıştırın: flutter run
 
+Özellikler (planlanan/aktif)
 
+- Habit tipleri: task (yapıldı/bool), count (sayı), time (süre)
+- Günlük ilerleme takibi ve atlama (skip) desteği
+- Basit takvim görünümü ve haftalık/aylık özetler
+- Masaüstü için pencere efekti (mica/transparency) kontrolü
+- Açık kaynak: katkılar hoş karşılanır
 
+Katkıda bulunmak
 
+Issue açabilir, PR gönderebilir veya README'de belirtilen TODO'ları üzerinde çalışabilirsiniz. Her katkı değerlidir.
 
-### kendime ve geliştiricilere notlar (arada burayı düzenlemeyi unutuyorum btw mesela şu an düzenli değil)
-
-
-
-statistik sayfası yapılacak strength hesaplama yapılacak habit classı düzemlenecek habitprovider kullanılacak skip eklenecek habit detail screen de farklı alışkanlık tipleri için ayrı tamamlama kısmı
-
- habit türlerine göre ayrı tamamlama biçimi olacak task count time 
-
- navigation view kullanılacak ve adaptive scaffold şu an es geçildi 
-
- arkaplana foto koyma özelliği eklenmeli
-
- iç parçalarda istenilirse cam benzeri efekt olsun
-
- çoğu yerde set state yerine  provider kullanmalı ki kodu farklı dosyalara bölünce sıkıntı olmaasın 
-
- habit sınıfı özelllikler eklenmeli örneğin habit türü gücü felan filan 
-
- provider kullanmaya başlandı 
-
- apativescaffold geçişi yapılmalı ama fab ve backgroundcolor gibi property ler yok 
-
- tamamen material 3 tasarım stili kullanılmalı
-
- eski tarihlere bakma olmalı 
-
- bildirim eklenmeli
-
- sadece karanlık açık tema değil tüm tema rengi seçimi kullanıcıya bırakılmalı renk ve hangi şema türü kullanılacağı dahil 
-
- ana ekrandaki habit sayfasında yukarıda tarihle alakalı widget olmalı eski ve yeni tarihlera arasında geçiş yapma lazım
-
- habit ekleme ekranında habit türü seçme ekranı olmalı örneğin su içme, egzersiz, meditasyon gibi türler seçilebilmeli ve bu türlere göre ikon ve renk otomatik atanmalı
-
- habit detay ekranında o habit ile alakalı istatistikler gösterilmeli örneğin kaç gün yapıldı, en uzun süreli devam etme gibi bilgiler olmalı
-
- hesap bağlama olmalı hesapsız kullanma olmalı hesap yedekleme olmalı ve o hesap yedekleme her nasıl ya buluta ya da lokal olarak kaydedilecekse bellirli bir veri türü olmalı
-
- widget olmalı (ana ekarana eklenenden ) mobil cihazlarda 
-
- desktop uygulamaları için ayrı tasarım olmalı ve başta sormalı adaptif mi istiyorsunuz yoksa desktop mı 
-
- eğer olursa özellikle desktop uygulamlarında şeffaflık özelliği olmalı 

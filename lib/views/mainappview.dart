@@ -1,24 +1,35 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/window.dart';
 import 'package:flutter_acrylic/window_effect.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flutter_neat_and_clean_calendar/flutter_neat_and_clean_calendar.dart';
-import 'package:hbttrckr/classes/glasscard.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/views/habitdetailscreen.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:custom_adaptive_scaffold/custom_adaptive_scaffold.dart';
 import 'package:hbttrckr/views/statsview.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 import 'habits_page.dart';
 
+// TODO's taken from README:
+//  Implement statistics page and strengthen strength calculation
+//  Refactor Habit class and HabitProvider behavior
+//  Add 'skip' support and reflect skipped days in detail calendar
+//  Make detail screen completion UIs per habit type (task/count/time)
+//  Add navigation/adaptive scaffold improvements (navigation view)
+//  Background image and glass-like effects in parts
+//  Replace many setState usages with Provider where appropriate
+//  Add more habit properties (types, strength, icons) and auto-assign types
+//  Add backup/account linking for syncing or local export
+//  Add widgets for home screen and make desktop-specific designs
+//  Extend theme options beyond dark/light (color schemes)
+//  Add notifications
+
 // TODO's
 //
+//  ALARM: edit dialog çalışmıyor ve edit dialog artık dialog olarak değil de modal botom sheet olarak kullanmak daha iyi olur
+//  habit paylaşma özelliği olsun
+//  detail screende appbar şeffaf yapalım
+//  detail scrrende appbarda actionsda iki tuş bulunsun biri notes biri ise diğerlerini görmek için sheet açan kısım
 //  habitler için not kısmında hatalar düzeltilsin
 //  countlarda ve timelarda strength tamamalama oranına göre verilsin (mevcut hal ise tamamlama durumu) yani durum değil oran ile yapacağız
 //  habit içerisindeki created at kısmını özel takvimlerde kullan
@@ -49,7 +60,8 @@ import 'habits_page.dart';
 
 // TODO: habit yazı rengi de transparan olmaya göre bakılacak ayrıca bottom app bar a sonradan dönülecek çünkü rengi şüpheli
 
-bool isMica = true;
+// isMica taşıdı: artık CurrentThemeMode içinde tutuluyor ve provider ile erişiliyor
+// bool isMica = true;
 
 // TODO : kod düzenlemesi yapılması lazım. Birgün alıp bu tüm belirli widgetları sayfaları felan ayrı dosyalara ayıralım
 
@@ -59,13 +71,25 @@ typedef OnHabitDeleted = void Function(String id);
 
 class CurrentThemeMode with ChangeNotifier {
   bool isDarkMode = true;
-  ThemeMode currentMode = ThemeMode.dark;
+  ThemeMode currentMode = ThemeMode.system;
+
+  bool isMica = true;
+
   void changeThemeMode() {
     isDarkMode = !isDarkMode;
-    if (isDarkMode) {
-      currentMode = ThemeMode.dark;
+    currentMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+  }
+
+  Future<void> toggleMica() async {
+    if (isMica) {
+      await Window.setEffect(effect: WindowEffect.disabled);
+      await Future.delayed(const Duration(milliseconds: 100));
+      await Window.setEffect(effect: WindowEffect.transparent);
+      isMica = false;
     } else {
-      currentMode = ThemeMode.light;
+      await Window.setEffect(effect: WindowEffect.aero, dark: false);
+      isMica = true;
     }
     notifyListeners();
   }
@@ -87,7 +111,9 @@ class MainAppViewState extends State<MainAppView> {
       .watch<CurrentThemeMode>()
       .currentMode;
 
-  String title = "Today";
+  String titleForToday = "Today";
+  String titleForYesterday = "Yesterday";
+  String titleForTomorrow = "Tomorrow";
 
   bool isDarkMode = true;
 
@@ -109,7 +135,7 @@ class MainAppViewState extends State<MainAppView> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(
             parentContext,
-          ).viewInsets.bottom, // parentContext!
+          ).viewInsets.bottom,
         ),
         child: AddHabitSheet(
           onAdd:
@@ -124,7 +150,7 @@ class MainAppViewState extends State<MainAppView> {
                 TimeOfDay? reminderTime,
                 Set<int>? reminderDays,
               }) {
-                // DOĞRU CONTEXT → parentContext!
+
                 parentContext.read<HabitProvider>().addHabit(
                   name: name,
                   description: description,
@@ -156,19 +182,43 @@ class MainAppViewState extends State<MainAppView> {
     });
   }
 
+  String _titleForSelectedDate(BuildContext context) {
+    final sel = context.read<HabitProvider>().selectedDate ?? DateTime.now();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final selected = DateTime(sel.year, sel.month, sel.day);
+    final diff = selected.difference(today).inDays;
+
+    final lang = Localizations.localeOf(context).languageCode;
+
+    if (lang == 'tr') {
+      if (diff == 0) return 'Bugün';
+      if (diff == 1) return 'Yarın';
+      if (diff == -1) return 'Dün';
+      if (diff > 1) return '${diff} gün sonra';
+      return '${-diff} gün önce';
+    }
+
+    if (diff == 0) return 'Today';
+    if (diff == 1) return 'Tomorrow';
+    if (diff == -1) return 'Yesterday';
+    if (diff > 1) return 'In $diff days';
+    return '${-diff} days ago';
+  }
+
   @override
   Widget build(BuildContext context) {
     final habits = context.watch<HabitProvider>().habits;
     return Scaffold(
-      backgroundColor: isMica
+      backgroundColor: context.watch<CurrentThemeMode>().isMica
           ? Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 1)
           : Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.3),
       floatingActionButton: FloatingActionButton(
-        foregroundColor: isMica
+        foregroundColor: context.watch<CurrentThemeMode>().isMica
             ? Theme.of(context).floatingActionButtonTheme.foregroundColor
             : Theme.of(context).floatingActionButtonTheme.foregroundColor
                   ?.withValues(alpha: 0.2),
-        backgroundColor: isMica
+        backgroundColor: context.watch<CurrentThemeMode>().isMica
             ? Theme.of(context).floatingActionButtonTheme.backgroundColor
             : Theme.of(context).floatingActionButtonTheme.backgroundColor
                   ?.withValues(alpha: 0.2),
@@ -180,8 +230,16 @@ class MainAppViewState extends State<MainAppView> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
       appBar: AppBar(
-        backgroundColor: isMica
+
+        title: Center(
+          child: Text(
+            '  ${_titleForSelectedDate(context)}',
+          ),
+        ),
+
+        backgroundColor: context.watch<CurrentThemeMode>().isMica
             ? Theme.of(
                 context,
               ).appBarTheme.backgroundColor?.withValues(alpha: 1)
@@ -193,361 +251,451 @@ class MainAppViewState extends State<MainAppView> {
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: Icon(isMica ? Icons.blur_off : Icons.blur_on),
-              onPressed: () async {
-                if (isMica) {
-                  await Window.setEffect(
-                    effect: WindowEffect.disabled,
-                  ); // önce tüm efekti sıfırla
-                  await Future.delayed(const Duration(milliseconds: 100));
-                  await Window.setEffect(effect: WindowEffect.transparent);
-
-                  setState(() {
-                    isMica = false;
-                  });
-                } else {
-                  await Window.setEffect(
-                    effect: WindowEffect.aero,
-                    dark: false,
-                  );
-
-                  setState(() {
-                    isMica = true;
-                  });
-                }
+              icon: Icon(Icons.format_list_bulleted),
+              onPressed: () {
+                showModalBottomSheet(
+                  enableDrag: true,
+                  useSafeArea: true,
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (sheetContext) => DraggableScrollableSheet(
+                    expand: false,
+                    initialChildSize: 0.5, // başlangıçta ekranın %50'si
+                    minChildSize: 0.25,
+                    maxChildSize: 0.95,
+                    builder: (context, scrollController) => Padding(
+                      padding: EdgeInsets.all(8),
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Tüm Alışkanlıklar",
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            Column(
+                              children: [
+                                ...habits.map(
+                                  (h) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: Card(
+                                      color:
+                                          context
+                                              .watch<CurrentThemeMode>()
+                                              .isMica
+                                          ? Theme.of(context).cardColor
+                                          : Theme.of(
+                                              context,
+                                            ).cardColor.withValues(alpha: 0.2),
+                                      elevation: 3,
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: h.color,
+                                          child: Text(h.name[0].toUpperCase()),
+                                        ),
+                                        title: Text(h.name),
+                                        subtitle: Text(
+                                          "${h.currentStreak} gün streak • ${h.strength}% güç",
+                                        ),
+                                        trailing: h.currentStreak > 0
+                                            ? Icon(
+                                                Icons.local_fire_department,
+                                              ) // TODO : lottie ekle
+                                            : const Icon(
+                                                Icons
+                                                    .local_fire_department_outlined,
+                                                color: Colors.grey,
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
               },
             );
           },
         ),
-        title: Center(child: Text(title)),
+
         actions: [
           IconButton(
-            onPressed: () {
-              showModalBottomSheet(
+            onPressed: () async {
+              await showModalBottomSheet(
                 enableDrag: true,
                 useSafeArea: true,
                 isScrollControlled: true,
                 context: context,
-                builder: (sheetContext) => DraggableScrollableSheet(
-                  expand: false,
-                  initialChildSize: 0.5, // başlangıçta ekranın %50'si
-                  minChildSize: 0.25,
-                  maxChildSize: 0.95,
-                  builder: (context, scrollController) => Padding(
-                    padding: EdgeInsets.all(8),
+                builder: (sheetContext) {
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      top: 16,
+                      left: 8,
+                      right: 8,
+                      bottom: 8,
+                    ),
                     child: SingleChildScrollView(
-                      controller: scrollController,
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text(
-                            "Tüm Alışkanlıklar",
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          Column(
-                            children: [
-                              ...habits.map(
-                                (h) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Card(
-                                    color: isMica
-                                        ? Theme.of(context).cardColor
-                                        : Theme.of(
-                                            context,
-                                          ).cardColor.withValues(alpha: 0.2),
-                                    elevation: 3,
-                                    child: ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: h.color,
-                                        child: Text(h.name[0].toUpperCase()),
-                                      ),
-                                      title: Text(h.name),
-                                      subtitle: Text(
-                                        "${h.currentStreak} gün streak • ${h.strength}% güç",
-                                      ),
-                                      trailing: h.currentStreak > 0
-                                          ? Icon(
-                                              Icons.local_fire_department,
-                                            ) // TODO : lottie ekle
-                                          : const Icon(
-                                              Icons.local_fire_department_outlined,
-                                              color: Colors.grey,
-                                            ),
-                                    ),
-                                  ),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(
+                                "Ayarlar",
+                                style: TextStyle(
+                                  fontSize: Theme.of(
+                                    context,
+                                  ).textTheme.headlineSmall?.fontSize,
                                 ),
                               ),
-                            ],
-                          )
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  child: Icon(Icons.account_circle_outlined),
+                                ),
+                                title: Text("Hesap Bilgileri"),
+                                trailing: Icon(Icons.chevron_right),
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    enableDrag: true,
+                                    useSafeArea: true,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (sheetContext) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 16,
+                                          left: 8,
+                                          right: 8,
+                                          bottom: 8,
+                                        ),
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Stack(
+                                                children: [
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.topLeft,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            4.0,
+                                                          ),
+                                                      child: IconButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                            sheetContext,
+                                                          );
+                                                        },
+                                                        icon: Icon(Icons.close),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Center(
+                                                    child: Text(
+                                                      "Account",
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headlineSmall
+                                                                ?.fontSize,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                  4.0,
+                                                ),
+                                                child: Card(
+                                                  child: TextField(
+                                                    controller:
+                                                        accountController,
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      hintText: 'Account name',
+                                                      hintStyle: TextStyle(
+                                                        color: Colors.grey,
+                                                      ),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
+                                                      ),
+                                                      filled: true,
+                                                      fillColor:
+                                                          Colors.grey[900],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                  4.0,
+                                                ),
+                                                child: Card(
+                                                  child: TextField(
+                                                    controller:
+                                                        passwordController,
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      hintText:
+                                                          'Password (that is secret don\'t share it)',
+                                                      hintStyle: TextStyle(
+                                                        color: Colors.grey,
+                                                      ),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
+                                                      ),
+                                                      filled: true,
+                                                      fillColor:
+                                                          Colors.grey[900],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                  4.0,
+                                                ),
+                                                child: TextButton(
+                                                  onPressed: () {},
+                                                  child: Text(
+                                                    "Forgot your password ?\n(okay that is normal but we are tired)",
+                                                  ),
+                                                ),
+                                              ),
+
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                  4.0,
+                                                ),
+                                                child: SizedBox(
+                                                  width: double.infinity,
+                                                  child: ElevatedButton(
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Color.fromARGB(
+                                                                255,
+                                                                140,
+                                                                140,
+                                                                73,
+                                                              ),
+                                                        ),
+                                                    onPressed: () {},
+                                                    child: Text("Log in"),
+                                                  ),
+                                                ),
+                                              ),
+
+                                              Stack(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          top: 6.0,
+                                                        ),
+                                                    child: Center(
+                                                      child: Divider(),
+                                                    ),
+                                                  ),
+                                                  Center(
+                                                    child: Card(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 8.0,
+                                                              vertical: 4.0,
+                                                            ),
+                                                        child: Text("  or  "),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              Card(
+                                                child: TextButton(
+                                                  onPressed: () {},
+                                                  child: Text("Create Account"),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  child: Icon(Icons.notifications_outlined),
+                                ),
+                                title: Text("Bildirimler"),
+                                trailing: Icon(Icons.chevron_right),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Card(
+                              child: ListTile(
+                                leading: CircleAvatar(child: Icon(Icons.tune)),
+                                title: Text("Tercihler"),
+                                trailing: Icon(Icons.chevron_right),
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    enableDrag: true,
+                                    useSafeArea: true,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (sheetContext) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 16,
+                                          left: 8,
+                                          right: 8,
+                                          bottom: 8,
+                                        ),
+                                        child: SingleChildScrollView(
+                                          child: Stack(
+                                            children: [
+                                              Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  ListTile(
+                                                    onTap: () => context
+                                                        .read<
+                                                          CurrentThemeMode
+                                                        >()
+                                                        .changeThemeMode(),
+                                                    leading: IconButton(
+                                                      icon: Icon(
+                                                        context
+                                                                .watch<
+                                                                  CurrentThemeMode
+                                                                >()
+                                                                .isDarkMode
+                                                            ? Icons.light_mode
+                                                            : Icons.dark_mode,
+                                                      ),
+                                                      onPressed: () => context
+                                                          .read<
+                                                            CurrentThemeMode
+                                                          >()
+                                                          .changeThemeMode(),
+                                                    ),
+                                                    title: Text(
+                                                      "Tema Modunu Değiştirin",
+                                                    ),
+                                                    subtitle: Text(
+                                                      "şu anki tema modu ${context.watch<CurrentThemeMode>().isDarkMode ? "karanlık" : "açık"}",
+                                                    ),
+                                                  ),
+                                                  ListTile(
+                                                    leading:
+                                                        Consumer<
+                                                          CurrentThemeMode
+                                                        >(
+                                                          builder:
+                                                              (
+                                                                ctx,
+                                                                theme,
+                                                                child,
+                                                              ) => Icon(
+                                                                theme.isMica
+                                                                    ? Icons
+                                                                          .blur_off
+                                                                    : Icons
+                                                                          .blur_on,
+                                                              ),
+                                                        ),
+                                                    title: Text(
+                                                      "Uygulamanın Şeffaflığını Değiştirin",
+                                                    ),
+                                                    subtitle: Text(
+                                                      "şu anki görüntü modu ${context.watch<CurrentThemeMode>().isMica ? "normal" : "şeffaf"}",
+                                                    ),
+                                                    onTap: () async {
+                                                      await context
+                                                          .read<
+                                                            CurrentThemeMode
+                                                          >()
+                                                          .toggleMica();
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  child: Icon(Icons.message_outlined),
+                                ),
+                                title: Text("Destek Hattı"),
+                                trailing: Icon(Icons.chevron_right),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  child: Icon(Icons.star_outline),
+                                ),
+                                title: Text("Bizi Değerlendir"),
+                                trailing: Icon(Icons.chevron_right),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
-            },
-            icon: Icon(Icons.panorama_fisheye),
-          ),
-          IconButton(
-            icon: Icon(
-              context.watch<CurrentThemeMode>().isDarkMode
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
-            ),
-            onPressed: () => context.read<CurrentThemeMode>().changeThemeMode(),
-          ),
-          IconButton.outlined(
-            onPressed: () {
-              showModalBottomSheet(
-                enableDrag: true,
-                useSafeArea: true,
-                isScrollControlled: true,
-                context: context,
-                builder: (sheetContext) => Padding(
-                  padding: const EdgeInsets.only(
-                    top: 16,
-                    left: 8,
-                    right: 8,
-                    bottom: 8,
-                  ),
-                  child: Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Text(
-                              "Ayarlar",
-                              style: TextStyle(
-                                fontSize: Theme.of(
-                                  context,
-                                ).textTheme.headlineSmall?.fontSize,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                child: Icon(Icons.account_circle_outlined),
-                              ),
-                              title: Text("Hesap Bilgileri"),
-                              trailing: Icon(Icons.chevron_right),
-                              onTap: () {
-                                showModalBottomSheet(
-                                  enableDrag: true,
-                                  useSafeArea: true,
-                                  isScrollControlled: true,
-                                  context: context,
-                                  builder: (sheetContext) => Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 16,
-                                      left: 8,
-                                      right: 8,
-                                      bottom: 8,
-                                    ),
-                                    child: Expanded(
-                                      child: Column(
-                                        children: [
-                                          Stack(
-                                            children: [
-                                              Align(
-                                                alignment: Alignment.topLeft,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    4.0,
-                                                  ),
-                                                  child: IconButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    icon: Icon(Icons.close),
-                                                  ),
-                                                ),
-                                              ),
-                                              Center(
-                                                child: Text(
-                                                  "Account",
-                                                  style: TextStyle(
-                                                    fontSize: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall
-                                                        ?.fontSize,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Card(
-                                              child: TextField(
-                                                controller: accountController,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                                decoration: InputDecoration(
-                                                  hintText: 'Account name',
-                                                  hintStyle: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12,
-                                                        ),
-                                                  ),
-                                                  filled: true,
-                                                  fillColor: Colors.grey[900],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Card(
-                                              child: TextField(
-                                                controller: passwordController,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                                decoration: InputDecoration(
-                                                  hintText:
-                                                      'Password (that is secret don\'t share it)',
-                                                  hintStyle: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12,
-                                                        ),
-                                                  ),
-                                                  filled: true,
-                                                  fillColor: Colors.grey[900],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: TextButton(
-                                              onPressed: () {},
-                                              child: Text(
-                                                "Forgot your password ?\n(okay that is normal but we are tired)",
-                                              ),
-                                            ),
-                                          ),
-
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Expanded(
-                                              child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Color.fromARGB(
-                                                        255,
-                                                        140,
-                                                        140,
-                                                        73,
-                                                      ),
-                                                ),
-                                                onPressed: () {},
-                                                child: Expanded(
-                                                  child: Text("Log in"),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-
-                                          Stack(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 6.0,
-                                                ),
-                                                child: Center(child: Divider()),
-                                              ),
-                                              Center(
-                                                child: Card(
-                                                  child: Expanded(
-                                                    child: Text("  or  "),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          Card(
-                                            child: Expanded(
-                                              child: TextButton(
-                                                onPressed: () {},
-                                                child: Text("Create Account"),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                child: Icon(Icons.notifications_outlined),
-                              ),
-                              title: Text("Bildirimler"),
-                              trailing: Icon(Icons.chevron_right),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Card(
-                            child: ListTile(
-                              leading: CircleAvatar(child: Icon(Icons.tune)),
-                              title: Text("Tercihler"),
-                              trailing: Icon(Icons.chevron_right),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                child: Icon(Icons.message_outlined),
-                              ),
-                              title: Text("Destek Hattı"),
-                              trailing: Icon(Icons.chevron_right),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                child: Icon(Icons.star_outline),
-                              ),
-                              title: Text("Bizi Değerlendir"),
-                              trailing: Icon(Icons.chevron_right),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),)
-                );
             },
             icon: Icon(Icons.settings),
           ),
@@ -665,7 +813,7 @@ class MainAppViewState extends State<MainAppView> {
             ) // 1. sayfa: alışkanlıklar
           : StatisticsScreen(), // 2. sayfa: istatistikler
       bottomNavigationBar: BottomAppBar(
-        color: isMica
+        color: context.watch<CurrentThemeMode>().isMica
             ? Theme.of(context).bottomAppBarTheme.color?.withValues(alpha: 1)
             : Theme.of(context).bottomAppBarTheme.color?.withValues(alpha: 0.2),
         elevation: 10,
@@ -762,10 +910,6 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
 
   @override
   Widget build(BuildContext context) {
-    num currentHours = 0;
-    num currentMinutes = 0;
-    num currentSeconds = 0;
-    num totalSeconds = 0;
     return Container(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
@@ -1059,7 +1203,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                           child: ColorPicker(
                             pickerColor: tempColor,
                             onColorChanged: (color) => tempColor = color,
-                            showLabel: false,
+                            labelTypes: [],
                             pickerAreaHeightPercent: 0.8,
                           ),
                         ),

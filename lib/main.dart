@@ -2,8 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_acrylic/window.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:hbttrckr/views/adaptivescaffoldmainview.dart';
-import 'package:hbttrckr/views/navigationrail.dart';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:provider/provider.dart';
@@ -16,13 +14,14 @@ import 'package:image_picker/image_picker.dart';
 final schemelight = SchemeMonochrome(
   isDark: false,
   contrastLevel: 0.4,
-  sourceColorHct: Hct.fromInt(Colors.teal.value),
+  // use explicit ARGB int for teal to avoid deprecated accessors
+  sourceColorHct: Hct.fromInt(0xFF009688), // Colors.teal ARGB
 );
 
 final schemedark = SchemeMonochrome(
   isDark: true,
   contrastLevel: 1.0,
-  sourceColorHct: Hct.fromInt(Colors.teal.value),
+  sourceColorHct: Hct.fromInt(0xFF009688), // Colors.teal ARGB
 );
 
 final colorScheme1 = ColorScheme(
@@ -33,8 +32,7 @@ final colorScheme1 = ColorScheme(
   onSecondary: Color(schemelight.onSecondary),
   error: Color(schemelight.error),
   onError: Color(schemelight.onError),
-  background: Color(schemelight.background),
-  onBackground: Color(schemelight.onBackground),
+  // use surface/onSurface instead of deprecated background/onBackground
   surface: Color(schemelight.surface),
   onSurface: Color(schemelight.onSurface),
 );
@@ -47,8 +45,6 @@ final colorScheme2 = ColorScheme(
   onSecondary: Color(schemedark.onSecondary),
   error: Color(schemedark.error),
   onError: Color(schemedark.onError),
-  background: Color(schemedark.background),
-  onBackground: Color(schemedark.onBackground),
   surface: Color(schemedark.surface),
   onSurface: Color(schemedark.onSurface),
 );
@@ -75,30 +71,34 @@ Future<void> main() async {
     // ignore
   }
 
+  // Create the theme provider instance here so we can read its initial isMica
+  final initialTheme = CurrentThemeMode();
+
   if (kIsWeb) {
   } else if (defaultTargetPlatform == TargetPlatform.android) {
   } else if (defaultTargetPlatform == TargetPlatform.iOS) {
   } else if (defaultTargetPlatform == TargetPlatform.macOS) {
     await Window.initialize();
     await Window.setEffect(
-      effect: isMica ? WindowEffect.mica : WindowEffect.transparent,
+      effect: initialTheme.isMica ? WindowEffect.mica : WindowEffect.transparent,
     );
   } else if (defaultTargetPlatform == TargetPlatform.windows) {
     await Window.initialize();
     await Window.setEffect(
-      effect: isMica ? WindowEffect.mica : WindowEffect.transparent,
+      effect: initialTheme.isMica ? WindowEffect.mica : WindowEffect.transparent,
     );
   } else if (defaultTargetPlatform == TargetPlatform.linux) {
     await Window.initialize();
     await Window.setEffect(
-      effect: isMica ? WindowEffect.mica : WindowEffect.transparent,
+      effect: initialTheme.isMica ? WindowEffect.mica : WindowEffect.transparent,
     );
   }
   initializeDateFormatting('tr_TR', null);
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CurrentThemeMode()),
+        // provide the same instance so MyApp and widgets read the same object
+        ChangeNotifierProvider<CurrentThemeMode>.value(value: initialTheme),
         ChangeNotifierProvider(create: (_) => HabitProvider()),
       ],
       child: const MyApp(),
@@ -129,7 +129,7 @@ class MyApp extends StatelessWidget {
       ],
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      themeMode: context.watch<CurrentThemeMode>().currentMode,
+      themeMode: themeMode,
       theme: ThemeData(
         useMaterial3: true,
         bottomAppBarTheme: BottomAppBarThemeData(

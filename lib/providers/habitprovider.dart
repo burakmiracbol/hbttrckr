@@ -224,13 +224,7 @@ class HabitProvider with ChangeNotifier {
       if (habit.type == HabitType.task) {
         final val = habit.dailyProgress[normalized];
         if (val == true) return true;
-        // backward compatibility: fallback to completedDates
-        return habit.completedDates.any(
-          (d) =>
-              d.year == normalized.year &&
-              d.month == normalized.month &&
-              d.day == normalized.day,
-        );
+        return false;
       }
 
       // Count tipi → bugünki progress >= targetCount mı?
@@ -274,7 +268,6 @@ class HabitProvider with ChangeNotifier {
       targetSeconds: targetSeconds,
       reminderTime: reminderTime,
       reminderDays: reminderDays,
-      completedDates: [],
       achievedCount: 0,
     );
 
@@ -392,9 +385,7 @@ class HabitProvider with ChangeNotifier {
 
     final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
 
-    final currentlyDone = (newProgress[targetDate] == true) ||
-        habit.completedDates.any((d) =>
-        d.year == targetDate.year && d.month == targetDate.month && d.day == targetDate.day);
+    final currentlyDone = (newProgress[targetDate] == true);
 
     if (currentlyDone) {
       // GERİ AL
@@ -409,7 +400,7 @@ class HabitProvider with ChangeNotifier {
         .map((e) => e.key)
         .toList();
 
-    _habits[index] = habit.copyWith(dailyProgress: newProgress, completedDates: newCompletedDates);
+    _habits[index] = habit.copyWith(dailyProgress: newProgress);
     notifyListeners();
     _saveHabits();
   }
