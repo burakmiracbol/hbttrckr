@@ -291,135 +291,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
   ).getHabitById(widget.habitId);
   late final selectedDate = Provider.of<HabitProvider>(context).selectedDate;
 
+  late String howManyDaysBeforeCreated = "${DateTime.now().difference(currentHabit.createdAt).inDays}";
+
   @override
   void initState() {
     super.initState();
-  }
-
-  void _showEditDialog() {
-    // Use a modal bottom sheet for editing — more robust when other sheets are open
-    final nameController = TextEditingController(text: currentHabit.name);
-    final descriptionController = TextEditingController(text: currentHabit.description);
-    Color selectedColor = currentHabit.color;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-        child: StatefulBuilder(
-          builder: (ctx2, setStateSheet) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).dialogBackgroundColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-              ),
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          child: const Text('İptal'),
-                        ),
-                        Text(
-                          'Alışkanlığı Düzenle',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            final provider = context.read<HabitProvider>();
-                            final updatedHabit = provider
-                                .getHabitById(widget.habitId)
-                                .copyWith(
-                                  name: nameController.text.trim().isNotEmpty
-                                      ? nameController.text.trim()
-                                      : provider.getHabitById(widget.habitId).name,
-                                  description: descriptionController.text.trim().isNotEmpty
-                                      ? descriptionController.text.trim()
-                                      : provider.getHabitById(widget.habitId).description,
-                                  color: selectedColor,
-                                );
-
-                            provider.updateHabit(updatedHabit);
-                            widget.onHabitUpdated.call(updatedHabit);
-                            Navigator.pop(ctx);
-                          },
-                          child: const Text('Kaydet'),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    TextField(
-                      controller: nameController,
-                      decoration: InputDecoration(labelText: 'İsim'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: descriptionController,
-                      decoration: InputDecoration(labelText: 'Açıklama'),
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 12),
-
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            // open color picker as a dialog over sheet
-                            Color temp = selectedColor;
-                            await showDialog(
-                              context: context,
-                              builder: (dCtx) => AlertDialog(
-                                title: Text('Renk Seç'),
-                                content: SingleChildScrollView(
-                                  child: ColorPicker(
-                                    pickerColor: temp,
-                                    onColorChanged: (c) => temp = c,
-                                    pickerAreaHeightPercent: 0.8,
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(onPressed: () => Navigator.pop(dCtx), child: Text('İptal')),
-                                  TextButton(onPressed: () {
-                                    setStateSheet(() => selectedColor = temp);
-                                    Navigator.pop(dCtx);
-                                  }, child: Text('Seç')),
-                                ],
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: selectedColor,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.white24),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        const Text('Renk seç'),
-                      ],
-                    ),
-                    const SizedBox(height: 18),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
   }
 
   @override
@@ -522,109 +398,328 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                     ),
                                   ),
                                   Card(
-                                      child: ListTile(
-                                        leading: Icon(Icons.double_arrow_rounded),
-                                        title: Text("Bu Oturumu Atla"),
-                                        subtitle: Text("Bu oturum şu an ${currentHabit.isSkippedOnDate(selectedDate ?? DateTime.now()) ? "atlanmış" : "atlanmamış" }"),
-                                        onTap: () {
-                                          context.read<HabitProvider>().changeSkipHabit(
-                                            currentHabit.id,
-                                          );
-                                        },
-                                      )
+                                    child: ListTile(
+                                      leading: Icon(Icons.double_arrow_rounded),
+                                      title: Text("Bu Oturumu Atla"),
+                                      subtitle: Text(
+                                        "Bu oturum şu an ${currentHabit.isSkippedOnDate(selectedDate ?? DateTime.now()) ? "atlanmış" : "atlanmamış"}",
+                                      ),
+                                      onTap: () {
+                                        context
+                                            .read<HabitProvider>()
+                                            .changeSkipHabit(currentHabit.id);
+                                      },
+                                    ),
                                   ),
                                   Card(
-                                      child: ListTile(
-                                        leading: Icon(Icons.edit),
-                                        title: Text("Bu Alışkanlığı Düzenle"),
-                                        subtitle: Text("Mesela renk değiştirmeye ne dersin"),
-                                        onTap: () {
-                                          // Close the actions bottom sheet first then push edit page
-                                          try {
-                                            Navigator.pop(sheetContext);
-                                          } catch (_) {}
-                                          // schedule push after pop
-                                          Future.microtask(() {
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (_) => EditHabitPage(habitId: currentHabit.id, onSaved: (h) {
-                                                  widget.onHabitUpdated.call(h);
-                                                }),
-                                              ),
+                                    child: ListTile(
+                                      leading: Icon(Icons.edit),
+                                      title: Text("Bu Alışkanlığı Düzenle"),
+                                      subtitle: Text(
+                                        "Mesela renk değiştirmeye ne dersin",
+                                      ),
+                                      onTap: () {
+                                        final nameController =
+                                            TextEditingController(
+                                              text: currentHabit.name,
                                             );
-                                          });
-                                        },
-                                      )
-                                  ),
-                                  Card(
-                                      child: ListTile(
-                                        leading: Icon(Icons.share),
-                                        title: Text("Bu Alışkanlığı Paylaş"),
-                                        subtitle: Text("Ve ya fotosunu kaydet sana kalmış"),
-                                        onTap: () {
-                                          SnackBarAction(label: 'valla şu an bunu geliştirmedik', onPressed: () {  },);
-                                        },
-                                      )
-                                  ),
-                                  Card(
-                                      child: ListTile(
-                                        leading: Icon(Icons.delete),
-                                        title: Text("Bu alışkanlığı Sil"),
-                                        subtitle: Text("silmesen iyi olurdu ama ..."),
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (ctx) => AlertDialog(
-                                              title: Text('Alışkanlığı Sil'),
-                                              content: Text(
-                                                '"${currentHabit.name}" alışkanlığını silmek istediğine emin misin?',
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () => Navigator.pop(ctx),
-                                                  child: Text('İptal'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    context.read<HabitProvider>().deleteHabit(
-                                                      currentHabit.id,
-                                                    );
+                                        final descriptionController =
+                                            TextEditingController(
+                                              text: currentHabit.description,
+                                            );
+                                        Color selectedColor =
+                                            currentHabit.color;
+                                        Color tempColor = context
+                                            .read<HabitProvider>()
+                                            .getHabitById(currentHabit.id)
+                                            .color;
 
-                                                    Navigator.of(context).pushAndRemoveUntil(
-                                                      MaterialPageRoute(
-                                                        builder: (context) => MainAppView(),
+                                        showModalBottomSheet(
+                                          context: context,
+                                          useRootNavigator: true,
+                                          builder: (ctx) => StatefulBuilder(
+                                            builder: (context, setStateSheet) {
+                                              return Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          8.0,
+                                                        ),
+                                                    child: Text(
+                                                      "Alışkanlığı Düzenle",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headlineMedium
+                                                                ?.fontSize,
                                                       ),
-                                                      (route) => false,
-                                                    );
-                                                  },
-                                                  child: Text(
-                                                    'Sil',
-                                                    style: TextStyle(color: Colors.red),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          8.0,
+                                                        ),
+                                                    child: TextField(
+                                                      controller:
+                                                          nameController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                            labelText: 'İsim',
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          8.0,
+                                                        ),
+                                                    child: TextField(
+                                                      controller:
+                                                          descriptionController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                            labelText:
+                                                                'Açıklama',
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          8.0,
+                                                        ),
+                                                    child: Row(
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (ctx) {
+                                                                return AlertDialog(
+                                                                  title: Text(
+                                                                    'Renk Seç',
+                                                                  ),
+                                                                  content: SingleChildScrollView(
+                                                                    child: ColorPicker(
+                                                                      pickerColor:
+                                                                          tempColor,
+                                                                      onColorChanged: (color) {
+                                                                        tempColor =
+                                                                            color;
+                                                                      },
+                                                                      pickerAreaHeightPercent:
+                                                                          0.8,
+                                                                    ),
+                                                                  ),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      child: const Text(
+                                                                        'İptal',
+                                                                      ),
+                                                                      onPressed: () =>
+                                                                          Navigator.pop(
+                                                                            ctx,
+                                                                          ),
+                                                                    ),
+                                                                    TextButton(
+                                                                      child:
+                                                                          const Text(
+                                                                            'Seç',
+                                                                          ),
+                                                                      onPressed: () {
+                                                                        setState(() {
+                                                                          selectedColor =
+                                                                              tempColor;
+                                                                        });
+                                                                        Navigator.pop(
+                                                                          ctx,
+                                                                        );
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            width: 40,
+                                                            height: 40,
+                                                            decoration: BoxDecoration(
+                                                              color:
+                                                                  selectedColor,
+                                                              shape: BoxShape
+                                                                  .rectangle,
+                                                              border: Border.all(
+                                                                color: Colors
+                                                                    .black,
+                                                                width: 3,
+                                                              ),
+                                                            ),
+                                                            child: Icon(
+                                                              Icons.color_lens,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 12),
+                                                        Text(
+                                                          'Seçilen renk',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 24),
+                                                  Row(
+                                                    children: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(ctx),
+                                                        child: Text('İptal'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          final provider =
+                                                              context
+                                                                  .read<
+                                                                    HabitProvider
+                                                                  >();
+                                                          final updatedHabit = provider
+                                                              .getHabitById(
+                                                                widget.habitId,
+                                                              )
+                                                              .copyWith(
+                                                                name:
+                                                                    nameController
+                                                                        .text
+                                                                        .trim()
+                                                                        .isNotEmpty
+                                                                    ? nameController
+                                                                          .text
+                                                                          .trim()
+                                                                    : provider
+                                                                          .getHabitById(
+                                                                            widget.habitId,
+                                                                          )
+                                                                          .name,
+                                                                description:
+                                                                    descriptionController
+                                                                        .text
+                                                                        .trim()
+                                                                        .isNotEmpty
+                                                                    ? descriptionController
+                                                                          .text
+                                                                          .trim()
+                                                                    : provider
+                                                                          .getHabitById(
+                                                                            widget.habitId,
+                                                                          )
+                                                                          .description,
+                                                                color:
+                                                                    selectedColor,
+                                                              );
+
+                                                          provider.updateHabit(
+                                                            updatedHabit,
+                                                          );
+
+                                                          widget.onHabitUpdated
+                                                              .call(
+                                                                updatedHabit,
+                                                              );
+                                                          Navigator.pop(ctx);
+                                                        },
+                                                        child: const Text(
+                                                          'Kaydet',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  Card(
+                                    child: ListTile(
+                                      leading: Icon(Icons.share),
+                                      title: Text("Bu Alışkanlığı Paylaş"),
+                                      subtitle: Text(
+                                        "Ve ya fotosunu kaydet sana kalmış",
+                                      ),
+                                      onTap: () {
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("valla şu an bunu geliştirmedik")));
+                                      },
+                                    ),
+                                  ),
+                                  Card(
+                                    child: ListTile(
+                                      leading: Icon(Icons.delete),
+                                      title: Text("Bu alışkanlığı Sil"),
+                                      subtitle: Text(
+                                        "silmesen iyi olurdu ama ...",
+                                      ),
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            title: Text('Alışkanlığı Sil'),
+                                            content: Text(
+                                              '"${currentHabit.name}" alışkanlığını silmek istediğine emin misin?',
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(ctx),
+                                                child: Text('İptal'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  context
+                                                      .read<HabitProvider>()
+                                                      .deleteHabit(
+                                                        currentHabit.id,
+                                                      );
+
+                                                  Navigator.of(
+                                                    context,
+                                                  ).pushAndRemoveUntil(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MainAppView(),
+                                                    ),
+                                                    (route) => false,
+                                                  );
+                                                },
+                                                child: Text(
+                                                  'Sil',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      )
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(width: 4),
-                  IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => EditHabitPage(habitId: currentHabit.id, onSaved: (h) {
-                            widget.onHabitUpdated.call(h);
-                          }),
                         ),
                       );
                     },
@@ -737,8 +832,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         right: 8.0,
                                       ),
                                       child: Text(
-                                        'Toplam (ekle) gün',
-                                        style: TextStyle(fontSize: 20),
+                                        'Toplam ${howManyDaysBeforeCreated} gün önce oluşturuldu',
+                                        style: TextStyle(fontSize: 15),
                                       ),
                                     ),
                                   ),
@@ -1107,9 +1202,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                 ),
                                               ],
                                             )
-                                    // Diğer tipler
                                     else
                                       const Placeholder(),
+                                    // durum yçnetiminde bizdir
                                   ],
                                 ),
                               ),
@@ -1293,73 +1388,190 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                           day.day,
                                         );
 
-                                        bool isDone = false;
-                                        bool isSkipped = false;
+                                        // Kurallar:
+                                        // - Tüm habitler yapılmış → dolu yeşil
+                                        // - Bazısı yapılmış → içi boş yeşil çember
+                                        // - Hiçbiri yapılmamış ve atlanmış ise → içi boş açık gri çember
+                                        // - Hiçbiri yapılmamış ve geçmiş gün ise → dolu kırmızı
 
-                                        // Task tipi
-                                        if (currentHabit.type ==
-                                            HabitType.task) {
-                                          isDone = currentHabit
-                                              .dailyProgress[normalizedDay];
-                                        }
-                                        // Count tipi
-                                        else if (currentHabit.type ==
-                                            HabitType.count) {
-                                          final v = currentHabit
-                                              .dailyProgress[normalizedDay];
-                                          final achieved = (v is num)
-                                              ? v.toInt()
-                                              : 0;
-                                          isDone =
-                                              achieved >=
-                                              (currentHabit.targetCount ?? 1);
-                                          isSkipped = v == "skipped";
-                                        }
-                                        // Time tipi
-                                        else if (currentHabit.type ==
-                                            HabitType.time) {
-                                          final v = currentHabit
-                                              .dailyProgress[normalizedDay];
-                                          final achievedSeconds = (v is num)
-                                              ? v.toInt()
-                                              : 0;
-                                          final targetSecs =
-                                              currentHabit.targetSeconds ?? 60;
-                                          isDone =
-                                              achievedSeconds >= targetSecs;
-                                          isSkipped = v == "skipped";
-                                        }
-
-                                        Color? bgColor;
-                                        if (isDone) {
-                                          bgColor = Colors.green.withValues(
-                                            alpha: 0.8,
-                                          );
-                                        } else if (isSkipped) {
-                                          bgColor = Colors.grey.withValues(
-                                            alpha: 0.8,
-                                          );
-                                        } else if (day.isBefore(
-                                          DateTime.now(),
+                                        if (normalizedDay.isBefore(
+                                          currentHabit.createdAt.subtract(
+                                            Duration(days: 1),
+                                          ),
                                         )) {
-                                          bgColor = Colors.red.withValues(
-                                            alpha: 0.8,
-                                          ); // yapılmayan geçmiş gün
-                                        }
-
-                                        if (bgColor != null) {
                                           return Center(
                                             child: Container(
                                               width: 36,
                                               height: 36,
                                               decoration: BoxDecoration(
-                                                color: bgColor,
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.8,
+                                                ),
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Center(
                                                 child: Text(
                                                   '${day.day}',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+
+                                        // Tamamı yapılmış
+                                        if (currentHabit.isCompletedOnDate(
+                                              normalizedDay,
+                                            ) ||
+                                            currentHabit
+                                                    .getCountProgressForDate(
+                                                      normalizedDay,
+                                                    ) ==
+                                                (currentHabit.targetCount
+                                                    ?.toInt()) ||
+                                            currentHabit
+                                                    .getSecondsProgressForDate(
+                                                      normalizedDay,
+                                                    ) ==
+                                                (currentHabit.targetSeconds
+                                                    ?.toInt())) {
+                                          return Center(
+                                            child: Container(
+                                              width: 36,
+                                              height: 36,
+                                              decoration: BoxDecoration(
+                                                color: Colors.green.withValues(
+                                                  alpha: 0.8,
+                                                ),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '${day.day}',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+
+                                        if (currentHabit.type == HabitType.time
+                                            ? currentHabit.getSecondsProgressForDate(
+                                                        normalizedDay,
+                                                      ) <
+                                                      (currentHabit
+                                                          .targetSeconds!
+                                                          .toInt()) &&
+                                                  currentHabit
+                                                          .getSecondsProgressForDate(
+                                                            normalizedDay,
+                                                          ) >
+                                                      0
+                                            : currentHabit.type ==
+                                                  HabitType.count
+                                            ? currentHabit.getCountProgressForDate(
+                                                        normalizedDay,
+                                                      ) <
+                                                      (currentHabit.targetCount!
+                                                          .toInt()) &&
+                                                  currentHabit
+                                                          .getCountProgressForDate(
+                                                            normalizedDay,
+                                                          ) >
+                                                      0
+                                            : false) {
+                                          return Center(
+                                            child: Container(
+                                              width: 36,
+                                              height: 36,
+                                              decoration: BoxDecoration(
+                                                color: Colors.transparent,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Colors.green
+                                                      .withValues(alpha: 0.9),
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '${day.day}',
+                                                  style: TextStyle(
+                                                    color: Colors.green
+                                                        .withValues(alpha: 0.9),
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+
+                                        if (currentHabit.isSkippedOnDate(
+                                          normalizedDay,
+                                        )) {
+                                          return Center(
+                                            child: Container(
+                                              width: 36,
+                                              height: 36,
+                                              decoration: BoxDecoration(
+                                                color: Colors.transparent,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Colors.grey.withValues(
+                                                    alpha: 0.6,
+                                                  ),
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '${day.day}',
+                                                  style: TextStyle(
+                                                    color: Colors.grey
+                                                        .withValues(alpha: 0.8),
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+
+                                        if (currentHabit.isCompletedOnDate(
+                                                  normalizedDay,
+                                                ) ==
+                                                false ||
+                                            currentHabit
+                                                    .getCountProgressForDate(
+                                                      normalizedDay,
+                                                    ) ==
+                                                0 ||
+                                            currentHabit
+                                                    .getSecondsProgressForDate(
+                                                      normalizedDay,
+                                                    ) ==
+                                                0) {
+                                          return Center(
+                                            child: Container(
+                                              width: 36,
+                                              height: 36,
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.withValues(
+                                                  alpha: 0.8,
+                                                ),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '${day.day}',
+                                                  style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -1387,90 +1599,6 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
           ),
         );
       },
-    );
-  }
-}
-
-// Full-screen edit page to avoid overlay conflicts with other sheets
-class EditHabitPage extends StatefulWidget {
-  final String habitId;
-  final void Function(Habit) onSaved;
-  const EditHabitPage({Key? key, required this.habitId, required this.onSaved}) : super(key: key);
-
-  @override
-  State<EditHabitPage> createState() => _EditHabitPageState();
-}
-
-class _EditHabitPageState extends State<EditHabitPage> {
-  late Habit currentHabit;
-  late TextEditingController _nameCtrl;
-  late TextEditingController _descCtrl;
-  Color _selectedColor = Colors.blue;
-
-  @override
-  void initState() {
-    super.initState();
-    final prov = context.read<HabitProvider>();
-    currentHabit = prov.getHabitById(widget.habitId);
-    _nameCtrl = TextEditingController(text: currentHabit.name);
-    _descCtrl = TextEditingController(text: currentHabit.description);
-    _selectedColor = currentHabit.color;
-  }
-
-  @override
-  void dispose() {
-    _nameCtrl.dispose();
-    _descCtrl.dispose();
-    super.dispose();
-  }
-
-  void _save() {
-    final prov = context.read<HabitProvider>();
-    final updated = currentHabit.copyWith(
-      name: _nameCtrl.text.trim().isNotEmpty ? _nameCtrl.text.trim() : currentHabit.name,
-      description: _descCtrl.text.trim().isNotEmpty ? _descCtrl.text.trim() : currentHabit.description,
-      color: _selectedColor,
-    );
-    prov.updateHabit(updated);
-    widget.onSaved(updated);
-    Navigator.pop(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Alışkanlığı Düzenle'),
-        actions: [
-          TextButton(onPressed: _save, child: Text('Kaydet', style: TextStyle(color: Colors.white)))
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(controller: _nameCtrl, decoration: InputDecoration(labelText: 'İsim')),
-            SizedBox(height: 12),
-            TextField(controller: _descCtrl, decoration: InputDecoration(labelText: 'Açıklama'), maxLines: 4),
-            SizedBox(height: 12),
-            Row(children: [
-              GestureDetector(
-                onTap: () async {
-                  Color temp = _selectedColor;
-                  await showDialog(context: context, builder: (dCtx) => AlertDialog(
-                    title: Text('Renk Seç'),
-                    content: SingleChildScrollView(child: ColorPicker(pickerColor: temp, onColorChanged: (c) => temp = c, pickerAreaHeightPercent: 0.8)),
-                    actions: [TextButton(onPressed: () => Navigator.pop(dCtx), child: Text('İptal')), TextButton(onPressed: () { setState(() => _selectedColor = temp); Navigator.pop(dCtx); }, child: Text('Seç'))],
-                  ));
-                },
-                child: Container(width:44, height:44, decoration: BoxDecoration(color:_selectedColor, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white24))),
-              ),
-              SizedBox(width:12), Text('Renk seç')
-            ])
-          ],
-        ),
-      ),
     );
   }
 }

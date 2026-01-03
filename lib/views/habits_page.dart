@@ -32,7 +32,7 @@ Widget buildHabitsPage({
 
   return Consumer<HabitProvider>(
     builder: (context, provider, child) {
-      // BU CONTEXT DOĞRU!
+
       final selectedDate = provider.selectedDate ?? DateTime.now();
       return LiquidGlassLayer(
         child: Column(
