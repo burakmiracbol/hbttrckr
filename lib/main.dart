@@ -4,6 +4,8 @@ import 'package:flutter_acrylic/window.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/providers/habitprovider.dart';
+import 'package:hbttrckr/providers/notification_settings_provider.dart';
+import 'package:hbttrckr/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/views/mainappview.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
@@ -51,6 +53,9 @@ final colorScheme2 = ColorScheme(
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // NotificationService'i başlat
+  await NotificationService().initialize();
 
   // Recover any lost image picker data (Android may kill MainActivity during pick)
   try {
@@ -100,6 +105,7 @@ Future<void> main() async {
         // provide the same instance so MyApp and widgets read the same object
         ChangeNotifierProvider<CurrentThemeMode>.value(value: initialTheme),
         ChangeNotifierProvider(create: (_) => HabitProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationSettings()),
       ],
       child: const MyApp(),
     ),

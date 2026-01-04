@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neat_and_clean_calendar/neat_and_clean_calendar_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/services/notification_service.dart';
 import 'dart:convert';
 // TODO: today olan fonksiyonların that day veya that time halini yapalım çünkü her zaman bugüne bakmıyoruz
 // TODO: isdonetoday buraya da ekle
@@ -20,6 +21,31 @@ class HabitProvider with ChangeNotifier {
 
   HabitProvider() {
     _loadHabits();
+    // Alışkanlıklar yüklendikten sonra bildirimleri planla
+    Future.microtask(rescheduleAllNotifications);
+  }
+
+  // Tüm alışkanlıkların bildirimlerini yeniden planla (uygulama başlangıcında ve ayarlar değiştirildiğinde)
+  Future<void> rescheduleAllNotifications() async {
+    // Alışkanlıkların yüklenmesini bekle
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    debugPrint('🔄 Tüm bildirimleri yeniden planlıyor...');
+
+    // Önce TÜM eski bildirimleri iptal et
+    await NotificationService().cancelAllNotifications();
+    debugPrint('🗑️ Tüm eski bildirimler iptal edildi');
+
+    // Sonra yenileri planla
+    int scheduledCount = 0;
+    for (final habit in _habits) {
+      if (habit.reminderTime != null) {
+        await scheduleReminders(habit.id);
+        scheduledCount++;
+      }
+    }
+    debugPrint(
+        '✅ Yeniden planlama tamamlandı (${_habits.length} alışkanlık, $scheduledCount hatırlatma aktif)');
   }
 
   void resetTimer(String habitId) {
@@ -274,13 +300,13 @@ class HabitProvider with ChangeNotifier {
     _habits.add(newHabit);
     notifyListeners();
     _saveHabits();
+
+    // Eğer reminder ayarlanmışsa planla
+    if (reminderTime != null) {
+      scheduleReminders(newHabit.id);
+    }
   }
 
-  void deleteHabit(String id) {
-    _habits.removeWhere((h) => h.id == id);
-    notifyListeners();
-    _saveHabits();
-  }
 
   void changeSkipHabit(String habitId) {
     final index = _habits.indexWhere((h) => h.id == habitId);
@@ -360,6 +386,15 @@ class HabitProvider with ChangeNotifier {
       _habits[index] = updatedHabit;
       notifyListeners();
       _saveHabits();
+
+      // Bildirimleri güncelle
+      if (updatedHabit.reminderTime != null) {
+        scheduleReminders(updatedHabit.id);
+      } else {
+        // Reminder kaldırılmışsa bildirimleri iptal et
+        NotificationService()
+            .cancelNotification(updatedHabit.id.hashCode);
+      }
     }
   }
 
@@ -401,6 +436,55 @@ class HabitProvider with ChangeNotifier {
         .toList();
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
+    notifyListeners();
+    _saveHabits();
+  }
+
+  // Alışkanlık için bildirimleri planla
+  Future<void> scheduleReminders(String habitId) async {
+    final index = _habits.indexWhere((h) => h.id == habitId);
+    if (index == -1) return;
+
+    final habit = _habits[index];
+
+    // Eğer reminder ayarlanmamışsa iptal et
+    if (habit.reminderTime == null) {
+      await NotificationService().cancelNotification(habitId.hashCode);
+      debugPrint('🔔 Bildirim iptal edildi: ${habit.name}');
+      return;
+    }
+
+    try {
+      debugPrint('🔄 ${habit.name} için bildirim planlanıyor...');
+
+      // Yeni bildirimleri planla (sadece belirtilen saatte her gün)
+      // scheduleDailyNotification içinde zaten eski bildirimler iptal ediliyor
+      await NotificationService().scheduleDailyNotification(
+        id: habitId.hashCode,
+        title: habit.name,
+        body: 'Bugün için "${habit.name}" alışkanlığını tamamlamayı hatırla!',
+        hour: habit.reminderTime!.hour,
+        minute: habit.reminderTime!.minute,
+        daysOfWeek: null,
+        payload: habitId,
+      );
+
+      debugPrint(
+          '✅ ${habit.name} planlandı - ${habit.reminderTime!.hour}:${habit.reminderTime!.minute.toString().padLeft(2, '0')}');
+    } catch (e) {
+      debugPrint('❌ Bildirim planlama hatası: $e');
+    }
+  }
+
+  // Alışkanlığı sil
+  Future<void> deleteHabit(String habitId) async {
+    final index = _habits.indexWhere((h) => h.id == habitId);
+    if (index == -1) return;
+
+    // Bildirimleri iptal et
+    await NotificationService().cancelNotification(habitId.hashCode);
+
+    _habits.removeAt(index);
     notifyListeners();
     _saveHabits();
   }
