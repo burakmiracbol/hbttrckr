@@ -1,6 +1,8 @@
 # hbttrckr
 Bu README dosyasını hala düzenlemedim kusura kalmayın lütfen (I haven't edited this README file yet, sorry.)
-
+### Lisans
+Bu proje lisans ile korunmaktadır :
+- **Yazılım:** Kaynak kodları [GPL v3](./LICENSE) lisansı altındadır.
 
 şu an hala türkçe readme ama yakında ingilizceye de çevirecem
 nasıl özgün proje ismi ama "habit tracker"'ın ünsüz harfleri (habit tracker alışkanlık takip eden demek)
@@ -52,7 +54,3 @@ Uygulamanın özellikleri ve işlevleri :
 Katkıda bulunmak
 
 Issue açabilir, PR gönderebilir veya kod içerisindeki TODO'lar üzerine çalışılıp yardım edebilir ve özellik istemesi yapabilirsiniz. Bu açık kaynak dünyasında her katkı değerlidir.
-
-### Lisans
-Bu proje lisans ile korunmaktadır :
-- **Yazılım:** Kaynak kodları [GPL v3](./LICENSE) lisansı altındadır.
