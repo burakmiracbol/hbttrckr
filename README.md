@@ -12,7 +12,7 @@ Benim amacım ise bu dünya insanlarına para ödemeden kullanacağı bir alış
 
 Her ne kadar şu an geliştirme aşamasında olduğu için daha sadece kemik kısmı ayakata kaldığı ve bazen istenmeyen hatalarla ve yahut istenmeyen bir tasarım stili ile karşılaşsak dahi bizim amacımız size hem kod düzenleme bilmeyenlerimiz için kullanması kolay ve yeni başlayan ve uzman geliştiriciler için
 ise kendi projelerinde temel olarak almaları için açık kodlu bir projeyi hedefliyoruz gelecekte bu uygulamayı size daha işe yarayan hale getirmekten başka ise 
-bilgisayar ile çok alakası olmayan insanlarıbilgisayarla ilgili işlere alıştırmak için uygulamamız farklı platformların ugulama mağazalarında kar amacı güden şekilde yayımlanabilir ve eğer ki ücretsiz faydalanmak istiyorlar ise onlara kodlarımızı kendi bilgisayarlarında derlemeleri sağlanılacaktır.
+bilgisayar ile çok alakası olmayan insanları bilgisayarla ilgili işlere alıştırmak için uygulamamız farklı platformların ugulama mağazalarında kar amacı güden şekilde yayımlanabilir ve eğer ki ücretsiz faydalanmak istiyorlar ise onlara kodlarımızı kendi bilgisayarlarında derlemeleri sağlanılacaktır.
 
 OPEN SOURCE IS LOVE . 
 
