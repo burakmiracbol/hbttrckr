@@ -53,3 +53,6 @@ Katkıda bulunmak
 
 Issue açabilir, PR gönderebilir veya kod içerisindeki TODO'lar üzerine çalışılıp yardım edebilir ve özellik istemesi yapabilirsiniz. Bu açık kaynak dünyasında her katkı değerlidir.
 
+### Lisans
+Bu proje lisans ile korunmaktadır :
+- **Yazılım:** Kaynak kodları [GPL v3](./LICENSE) lisansı altındadır.
