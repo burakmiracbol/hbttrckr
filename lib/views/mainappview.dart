@@ -30,6 +30,7 @@ import 'package:hbttrckr/providers/scheme_provider.dart';
 
 // TODO's
 //
+//  doğa modu
 //  reklam fikri sağol
 //  ALARM: edit dialog çalışmıyor ve edit dialog artık dialog olarak değil de modal botom sheet olarak kullanmak daha iyi olur
 //  habit paylaşma özelliği olsun
