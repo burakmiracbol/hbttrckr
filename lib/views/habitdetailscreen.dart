@@ -1521,7 +1521,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                               width: 36,
                                               height: 36,
                                               decoration: BoxDecoration(
-                                                color: Colors.green.withValues(
+                                                color: context.read<HabitProvider>().getMixedColor(currentHabit.id).withValues(
                                                   alpha: 0.8,
                                                 ),
                                                 shape: BoxShape.circle,
@@ -1572,7 +1572,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                 color: Colors.transparent,
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
-                                                  color: Colors.green
+                                                  color: context.read<HabitProvider>().getMixedColor(currentHabit.id)
                                                       .withValues(alpha: 0.9),
                                                   width: 2,
                                                 ),
@@ -1581,7 +1581,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                 child: Text(
                                                   '${day.day}',
                                                   style: TextStyle(
-                                                    color: Colors.green
+                                                    color: context.read<HabitProvider>().getMixedColor(currentHabit.id)
                                                         .withValues(alpha: 0.9),
                                                     fontWeight: FontWeight.bold,
                                                   ),

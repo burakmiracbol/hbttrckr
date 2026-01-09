@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/window.dart';
 import 'package:flutter_acrylic/window_effect.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:hbttrckr/classes/glasscard.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/views/habitdetailscreen.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ import 'package:hbttrckr/providers/notification_settings_provider.dart';
 import 'package:hbttrckr/services/notification_service.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 import 'habits_page.dart';
+import 'package:hbttrckr/providers/scheme_provider.dart';
 
 // TODO's taken from README:
 //  Implement statistics page and strengthen strength calculation
@@ -28,12 +30,13 @@ import 'habits_page.dart';
 
 // TODO's
 //
+//  reklam fikri sağol
 //  ALARM: edit dialog çalışmıyor ve edit dialog artık dialog olarak değil de modal botom sheet olarak kullanmak daha iyi olur
 //  habit paylaşma özelliği olsun
 //  detail screende appbar şeffaf yapalım
 //  detail scrrende appbarda actionsda iki tuş bulunsun biri notes biri ise diğerlerini görmek için sheet açan kısım
 //  habitler için not kısmında hatalar düzeltilsin
-//  countlarda ve timelarda strength tamamalama oranına göre verilsin (mevcut hal ise tamamlama durumu) yani durum değil oran ile yapacağız
+//  countlarda ve timelarda strength tamalama oranına göre verilsin (mevcut hal ise tamamlama durumu) yani durum değil oran ile yapacağız
 //  habitdetail screen hepsine bir glass glow ekle
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
@@ -134,9 +137,7 @@ class MainAppViewState extends State<MainAppView> {
       backgroundColor: Colors.transparent,
       builder: (sheetContext) => Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(
-            parentContext,
-          ).viewInsets.bottom,
+          bottom: MediaQuery.of(parentContext).viewInsets.bottom,
         ),
         child: AddHabitSheet(
           onAdd:
@@ -151,7 +152,6 @@ class MainAppViewState extends State<MainAppView> {
                 TimeOfDay? reminderTime,
                 Set<int>? reminderDays,
               }) {
-
                 parentContext.read<HabitProvider>().addHabit(
                   name: name,
                   description: description,
@@ -214,29 +214,42 @@ class MainAppViewState extends State<MainAppView> {
       backgroundColor: context.watch<CurrentThemeMode>().isMica
           ? Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 1)
           : Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.3),
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: context.watch<CurrentThemeMode>().isMica
-            ? Theme.of(context).floatingActionButtonTheme.foregroundColor
-            : Theme.of(context).floatingActionButtonTheme.foregroundColor
-                  ?.withValues(alpha: 0.2),
-        backgroundColor: context.watch<CurrentThemeMode>().isMica
-            ? Theme.of(context).floatingActionButtonTheme.backgroundColor
-            : Theme.of(context).floatingActionButtonTheme.backgroundColor
-                  ?.withValues(alpha: 0.2),
-        onPressed: () {},
-        shape: StadiumBorder(),
-        child: IconButton(
-          onPressed: () => showAddHabitSheet(context),
-          icon: Icon(Icons.add),
+      floatingActionButton: liquidGlassContainer(
+        context: context,
+        child: FloatingActionButton(
+          foregroundColor: context.watch<CurrentThemeMode>().isMica
+              ? Theme.of(context).floatingActionButtonTheme.foregroundColor
+              : Theme.of(context).floatingActionButtonTheme.foregroundColor
+                    ?.withValues(alpha: 0.7),
+          backgroundColor: context.watch<CurrentThemeMode>().isMica
+              ? Theme.of(context).floatingActionButtonTheme.backgroundColor
+              : Theme.of(context).floatingActionButtonTheme.backgroundColor
+                    ?.withValues(alpha: 0.7),
+          onPressed: () {},
+          shape: StadiumBorder(),
+          child: IconButton(
+            onPressed: () => showAddHabitSheet(context),
+            icon: Icon(Icons.add),
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
       appBar: AppBar(
-
         title: Center(
-          child: Text(
-            '  ${_titleForSelectedDate(context)}',
+          child: liquidGlassContainer(
+            context: context,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 4.0,
+                bottom: 4.0,
+                left: 2.0,
+                right: 8.0,
+              ),
+              child: Text(
+                '  ${_selectedIndex == 0 ? _titleForSelectedDate(context) : "İstatistikler"}',
+              ),
+            ),
           ),
         ),
 
@@ -251,714 +264,881 @@ class MainAppViewState extends State<MainAppView> {
         elevation: 10,
         leading: Builder(
           builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(Icons.format_list_bulleted),
-              onPressed: () {
-                showModalBottomSheet(
-                  enableDrag: true,
-                  useSafeArea: true,
-                  isScrollControlled: true,
+            return Consumer<HabitProvider>(
+              builder: (ctx, habitProvider, child) {
+                final combinedColor = habitProvider.getCombinedMixedColor();
+                return liquidGlassContainer(
                   context: context,
-                  builder: (sheetContext) => DraggableScrollableSheet(
-                    expand: false,
-                    initialChildSize: 0.5, // başlangıçta ekranın %50'si
-                    minChildSize: 0.25,
-                    maxChildSize: 0.95,
-                    builder: (context, scrollController) => Padding(
-                      padding: EdgeInsets.all(8),
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        child: Column(
-                          children: [
-                            Text(
-                              "Tüm Alışkanlıklar",
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            Column(
-                              children: [
-                                ...habits.map(
-                                  (h) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: Card(
-                                      color:
-                                          context
-                                              .watch<CurrentThemeMode>()
-                                              .isMica
-                                          ? Theme.of(context).cardColor
-                                          : Theme.of(
-                                              context,
-                                            ).cardColor.withValues(alpha: 0.2),
-                                      elevation: 3,
-                                      child: ListTile(
-                                        leading: CircleAvatar(
-                                          backgroundColor: h.color,
-                                          child: Text(h.name[0].toUpperCase()),
+                  child: IconButton(
+                    style: IconButton.styleFrom(padding: EdgeInsets.all(0)),
+                    icon: Icon(Icons.format_list_bulleted, color: combinedColor),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        enableDrag: true,
+                        useSafeArea: true,
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (sheetContext) => DraggableScrollableSheet(
+                      expand: false,
+                      initialChildSize: 0.5, // başlangıçta ekranın %50'si
+                      minChildSize: 0.25,
+                      maxChildSize: 0.95,
+                      builder: (context, scrollController) => Padding(
+                        padding: EdgeInsets.all(8),
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Column(
+                            children: [
+                              Text(
+                                "Tüm Alışkanlıklar",
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              Column(
+                                children: [
+                                  ...habits.map(
+                                    (h) => Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 10,
+                                      ),
+                                      child: Card(
+                                        color:
+                                            context
+                                                .watch<CurrentThemeMode>()
+                                                .isMica
+                                            ? Theme.of(context).cardColor
+                                            : Theme.of(context).cardColor
+                                                  .withValues(alpha: 0.2),
+                                        elevation: 3,
+                                        child: ListTile(
+                                          leading: CircleAvatar(
+                                            backgroundColor: context.read<HabitProvider>().getMixedColor(h.id).withValues(alpha: 0.8),
+                                            child: Text(
+                                              h.name[0].toUpperCase(),
+                                            ),
+                                          ),
+                                          title: Text(h.name),
+                                          subtitle: Text(
+                                            "${h.currentStreak} gün streak • ${h.strength}% güç",
+                                          ),
+                                          trailing: h.currentStreak > 0
+                                              ? Icon(
+                                                  Icons.local_fire_department,
+                                                  color: context.read<HabitProvider>().getMixedColor(h.id),
+                                                )
+                                              : const Icon(
+                                                  Icons
+                                                      .local_fire_department_outlined,
+                                                  color: Colors.grey,
+                                                ),
                                         ),
-                                        title: Text(h.name),
-                                        subtitle: Text(
-                                          "${h.currentStreak} gün streak • ${h.strength}% güç",
-                                        ),
-                                        trailing: h.currentStreak > 0
-                                            ? Icon(
-                                                Icons.local_fire_department,
-                                              ) // TODO : lottie ekle
-                                            : const Icon(
-                                                Icons
-                                                    .local_fire_department_outlined,
-                                                color: Colors.grey,
-                                              ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await showModalBottomSheet(
-                enableDrag: true,
-                useSafeArea: true,
-                isScrollControlled: true,
-                context: context,
-                builder: (sheetContext) {
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      top: 16,
-                      left: 8,
-                      right: 8,
-                      bottom: 8,
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                "Ayarlar",
-                                style: TextStyle(
-                                  fontSize: Theme.of(
-                                    context,
-                                  ).textTheme.headlineSmall?.fontSize,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.account_circle_outlined),
-                                ),
-                                title: Text("Hesap Bilgileri"),
-                                trailing: Icon(Icons.chevron_right),
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    enableDrag: true,
-                                    useSafeArea: true,
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (sheetContext) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 16,
-                                          left: 8,
-                                          right: 8,
-                                          bottom: 8,
-                                        ),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Stack(
-                                                children: [
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.topLeft,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            4.0,
-                                                          ),
-                                                      child: IconButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                            sheetContext,
-                                                          );
-                                                        },
-                                                        icon: Icon(Icons.close),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Center(
-                                                    child: Text(
-                                                      "Account",
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                            Theme.of(context)
-                                                                .textTheme
-                                                                .headlineSmall
-                                                                ?.fontSize,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(
-                                                  4.0,
-                                                ),
-                                                child: Card(
-                                                  child: TextField(
-                                                    controller:
-                                                        accountController,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                    decoration: InputDecoration(
-                                                      hintText: 'Account name',
-                                                      hintStyle: TextStyle(
-                                                        color: Colors.grey,
-                                                      ),
-                                                      border: OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              12,
-                                                            ),
-                                                      ),
-                                                      filled: true,
-                                                      fillColor:
-                                                          Colors.grey[900],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(
-                                                  4.0,
-                                                ),
-                                                child: Card(
-                                                  child: TextField(
-                                                    controller:
-                                                        passwordController,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                          'Password (that is secret don\'t share it)',
-                                                      hintStyle: TextStyle(
-                                                        color: Colors.grey,
-                                                      ),
-                                                      border: OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              12,
-                                                            ),
-                                                      ),
-                                                      filled: true,
-                                                      fillColor:
-                                                          Colors.grey[900],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(
-                                                  4.0,
-                                                ),
-                                                child: TextButton(
-                                                  onPressed: () {},
-                                                  child: Text(
-                                                    "Forgot your password ?\n(okay that is normal but we are tired)",
-                                                  ),
-                                                ),
-                                              ),
-
-                                              Padding(
-                                                padding: const EdgeInsets.all(
-                                                  4.0,
-                                                ),
-                                                child: SizedBox(
-                                                  width: double.infinity,
-                                                  child: ElevatedButton(
-                                                    style:
-                                                        ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              Color.fromARGB(
-                                                                255,
-                                                                140,
-                                                                140,
-                                                                73,
-                                                              ),
-                                                        ),
-                                                    onPressed: () {},
-                                                    child: Text("Log in"),
-                                                  ),
-                                                ),
-                                              ),
-
-                                              Stack(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 6.0,
-                                                        ),
-                                                    child: Center(
-                                                      child: Divider(),
-                                                    ),
-                                                  ),
-                                                  Center(
-                                                    child: Card(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              horizontal: 8.0,
-                                                              vertical: 4.0,
-                                                            ),
-                                                        child: Text("  or  "),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-
-                                              Card(
-                                                child: TextButton(
-                                                  onPressed: () {},
-                                                  child: Text("Create Account"),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.notifications_outlined),
-                                ),
-                                title: Text("Bildirimler"),
-                                trailing: Icon(Icons.chevron_right),
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    enableDrag: true,
-                                    useSafeArea: true,
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (sheetContext) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 16,
-                                          left: 8,
-                                          right: 8,
-                                          bottom: 8,
-                                        ),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Stack(
-                                                children: [
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.topLeft,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            4.0,
-                                                          ),
-                                                      child: IconButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                            sheetContext,
-                                                          );
-                                                        },
-                                                        icon: Icon(Icons.close),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Center(
-                                                    child: Text(
-                                                      "Bildirim Ayarları",
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                            Theme.of(context)
-                                                                .textTheme
-                                                                .headlineSmall
-                                                                ?.fontSize,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 20),
-                                              // Bildirimleri Aç/Kapat
-                                              Consumer<NotificationSettings>(
-                                                builder: (ctx, notifSettings,
-                                                    child) {
-                                                  return ListTile(
-                                                    leading: Icon(Icons
-                                                        .notifications_active),
-                                                    title: Text(
-                                                        "Bildirimleri Etkinleştir"),
-                                                    trailing: Switch(
-                                                      value:
-                                                          notifSettings
-                                                              .notificationsEnabled,
-                                                      onChanged: (value) async {
-                                                        await notifSettings
-                                                            .setNotificationsEnabled(
-                                                                value);
-                                                      },
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                              // Sesi Aç/Kapat
-                                              Consumer<NotificationSettings>(
-                                                builder: (ctx, notifSettings,
-                                                    child) {
-                                                  return ListTile(
-                                                    leading: Icon(Icons.volume_up),
-                                                    title: Text("Ses"),
-                                                    trailing: Switch(
-                                                      value: notifSettings
-                                                          .soundEnabled,
-                                                      onChanged: (value) async {
-                                                        await notifSettings
-                                                            .setSoundEnabled(
-                                                                value);
-                                                      },
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                              // Titreşimi Aç/Kapat
-                                              Consumer<NotificationSettings>(
-                                                builder: (ctx, notifSettings,
-                                                    child) {
-                                                  return ListTile(
-                                                    leading:
-                                                        Icon(Icons.vibration),
-                                                    title: Text("Titreşim"),
-                                                    trailing: Switch(
-                                                      value: notifSettings
-                                                          .vibrationEnabled,
-                                                      onChanged: (value) async {
-                                                        await notifSettings
-                                                            .setVibrationEnabled(
-                                                                value);
-                                                      },
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                              Divider(),
-                                              // Varsayılan Hatırlatma Saati
-                                              Consumer<NotificationSettings>(
-                                                builder: (ctx, notifSettings,
-                                                    child) {
-                                                  return ListTile(
-                                                    leading: Icon(Icons.schedule),
-                                                    title: Text(
-                                                        "Varsayılan Hatırlatma Saati"),
-                                                    subtitle: Text(
-                                                      notifSettings
-                                                          .defaultReminderTime
-                                                          .format(context),
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .secondary,
-                                                      ),
-                                                    ),
-                                                    trailing: Icon(Icons
-                                                        .edit),
-                                                    onTap: () async {
-                                                      final TimeOfDay? picked =
-                                                          await showTimePicker(
-                                                        context: context,
-                                                        initialTime:
-                                                            notifSettings
-                                                                .defaultReminderTime,
-                                                      );
-                                                      if (picked != null) {
-                                                        await notifSettings
-                                                            .setDefaultReminderTime(
-                                                                picked);
-                                                      }
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                              SizedBox(height: 20),
-                                              // Test Bildirim Butonu
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: ElevatedButton.icon(
-                                                  onPressed: () async {
-                                                    await NotificationService()
-                                                        .showNotification(
-                                                      id: 999,
-                                                      title: '🔔 Test Bildirim',
-                                                      body:
-                                                          'Bildirim sistemi çalışıyor!',
-                                                    );
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
-                                                            'Test bildirim gönderildi!'),
-                                                        duration: Duration(
-                                                            seconds: 2),
-                                                      ),
-                                                    );
-                                                  },
-                                                  icon: Icon(Icons.send),
-                                                  label: Text(
-                                                      'Test Bildirim Gönder'),
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                              // Planlı Bildirimleri Kontrol Et
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: ElevatedButton.icon(
-                                                  onPressed: () async {
-                                                    await NotificationService()
-                                                        .debugPendingNotifications();
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
-                                                            'Planlı bildirimler console\'da gösteriliyor'),
-                                                        duration: Duration(
-                                                            seconds: 2),
-                                                      ),
-                                                    );
-                                                  },
-                                                  icon: Icon(Icons.list),
-                                                  label: Text(
-                                                      'Planlı Bildirimleri Kontrol Et'),
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.blue,
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.tune),
-                                ),
-                                title: Text("Tercihler"),
-                                trailing: Icon(Icons.chevron_right),
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    enableDrag: true,
-                                    useSafeArea: true,
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (sheetContext) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 16,
-                                          left: 8,
-                                          right: 8,
-                                          bottom: 8,
-                                        ),
-                                        child: SingleChildScrollView(
-                                          child: Stack(
-                                            children: [
-                                              Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  ListTile(
-                                                    onTap: () => context
-                                                        .read<
-                                                          CurrentThemeMode
-                                                        >()
-                                                        .changeThemeMode(),
-                                                    leading: IconButton(
-                                                      icon: Icon(
-                                                        context
-                                                                .watch<
-                                                                  CurrentThemeMode
-                                                                >()
-                                                                .isDarkMode
-                                                            ? Icons.light_mode
-                                                            : Icons.dark_mode,
-                                                      ),
-                                                      onPressed: () => context
-                                                          .read<
-                                                            CurrentThemeMode
-                                                          >()
-                                                          .changeThemeMode(),
-                                                    ),
-                                                    title: Text(
-                                                      "Tema Modunu Değiştirin",
-                                                    ),
-                                                    subtitle: Text(
-                                                      "şu anki tema modu ${context.watch<CurrentThemeMode>().isDarkMode ? "karanlık" : "açık"}",
-                                                    ),
-                                                  ),
-                                                  ListTile(
-                                                    leading:
-                                                        Consumer<
-                                                          CurrentThemeMode
-                                                        >(
-                                                          builder:
-                                                              (
-                                                                ctx,
-                                                                theme,
-                                                                child,
-                                                              ) => Icon(
-                                                                theme.isMica
-                                                                    ? Icons
-                                                                          .blur_off
-                                                                    : Icons
-                                                                          .blur_on,
-                                                              ),
-                                                        ),
-                                                    title: Text(
-                                                      "Uygulamanın Şeffaflığını Değiştirin",
-                                                    ),
-                                                    subtitle: Text(
-                                                      "şu anki görüntü modu ${context.watch<CurrentThemeMode>().isMica ? "normal" : "şeffaf"}",
-                                                    ),
-                                                    onTap: () async {
-                                                      await context
-                                                          .read<
-                                                            CurrentThemeMode
-                                                          >()
-                                                          .toggleMica();
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.message_outlined),
-                                ),
-                                title: Text("Destek Hattı"),
-                                trailing: Icon(Icons.chevron_right),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.star_outline),
-                                ),
-                                title: Text("Bizi Değerlendir"),
-                                trailing: Icon(Icons.chevron_right),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ),
                   );
                 },
+                  )
               );
             },
-            icon: Icon(Icons.settings),
+          );
+        },
+        ),
+
+        actions: [
+          liquidGlassContainer(
+            context: context,
+            child: IconButton(
+              onPressed: () async {
+                await showModalBottomSheet(
+                  enableDrag: true,
+                  useSafeArea: true,
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (sheetContext) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        top: 16,
+                        left: 8,
+                        right: 8,
+                        bottom: 8,
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(
+                                  "Ayarlar",
+                                  style: TextStyle(
+                                    fontSize: Theme.of(
+                                      context,
+                                    ).textTheme.headlineSmall?.fontSize,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    child: Icon(Icons.account_circle_outlined),
+                                  ),
+                                  title: Text("Hesap Bilgileri"),
+                                  trailing: Icon(Icons.chevron_right),
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      enableDrag: true,
+                                      useSafeArea: true,
+                                      isScrollControlled: true,
+                                      context: context,
+                                      builder: (sheetContext) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 16,
+                                            left: 8,
+                                            right: 8,
+                                            bottom: 8,
+                                          ),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.all(
+                                                              4.0,
+                                                            ),
+                                                        child: IconButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                              sheetContext,
+                                                            );
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.close,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Center(
+                                                      child: Text(
+                                                        "Account",
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .headlineSmall
+                                                                  ?.fontSize,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    4.0,
+                                                  ),
+                                                  child: Card(
+                                                    child: TextField(
+                                                      controller:
+                                                          accountController,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                      decoration: InputDecoration(
+                                                        hintText:
+                                                            'Account name',
+                                                        hintStyle: TextStyle(
+                                                          color: Colors.grey,
+                                                        ),
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                12,
+                                                              ),
+                                                        ),
+                                                        filled: true,
+                                                        fillColor:
+                                                            Colors.grey[900],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    4.0,
+                                                  ),
+                                                  child: Card(
+                                                    child: TextField(
+                                                      controller:
+                                                          passwordController,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                      decoration: InputDecoration(
+                                                        hintText:
+                                                            'Password (that is secret don\'t share it)',
+                                                        hintStyle: TextStyle(
+                                                          color: Colors.grey,
+                                                        ),
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                12,
+                                                              ),
+                                                        ),
+                                                        filled: true,
+                                                        fillColor:
+                                                            Colors.grey[900],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    4.0,
+                                                  ),
+                                                  child: TextButton(
+                                                    onPressed: () {},
+                                                    child: Text(
+                                                      "Forgot your password ?\n(okay that is normal but we are tired)",
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    4.0,
+                                                  ),
+                                                  child: SizedBox(
+                                                    width: double.infinity,
+                                                    child: ElevatedButton(
+                                                      style:
+                                                          ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Color.fromARGB(
+                                                                  255,
+                                                                  140,
+                                                                  140,
+                                                                  73,
+                                                                ),
+                                                          ),
+                                                      onPressed: () {},
+                                                      child: Text("Log in"),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                Stack(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 6.0,
+                                                          ),
+                                                      child: Center(
+                                                        child: Divider(),
+                                                      ),
+                                                    ),
+                                                    Center(
+                                                      child: Card(
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 8.0,
+                                                                vertical: 4.0,
+                                                              ),
+                                                          child: Text("  or  "),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                Card(
+                                                  child: TextButton(
+                                                    onPressed: () {},
+                                                    child: Text(
+                                                      "Create Account",
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    child: Icon(Icons.notifications_outlined),
+                                  ),
+                                  title: Text("Bildirimler"),
+                                  trailing: Icon(Icons.chevron_right),
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      enableDrag: true,
+                                      useSafeArea: true,
+                                      isScrollControlled: true,
+                                      context: context,
+                                      builder: (sheetContext) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 16,
+                                            left: 8,
+                                            right: 8,
+                                            bottom: 8,
+                                          ),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.all(
+                                                              4.0,
+                                                            ),
+                                                        child: IconButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                              sheetContext,
+                                                            );
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.close,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Center(
+                                                      child: Text(
+                                                        "Bildirim Ayarları",
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .headlineSmall
+                                                                  ?.fontSize,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 20),
+                                                // Bildirimleri Aç/Kapat
+                                                Consumer<NotificationSettings>(
+                                                  builder: (ctx, notifSettings, child) {
+                                                    return ListTile(
+                                                      leading: Icon(
+                                                        Icons
+                                                            .notifications_active,
+                                                      ),
+                                                      title: Text(
+                                                        "Bildirimleri Etkinleştir",
+                                                      ),
+                                                      trailing: Switch(
+                                                        value: notifSettings
+                                                            .notificationsEnabled,
+                                                        onChanged: (value) async {
+                                                          await notifSettings
+                                                              .setNotificationsEnabled(
+                                                                value,
+                                                              );
+                                                        },
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                                // Sesi Aç/Kapat
+                                                Consumer<NotificationSettings>(
+                                                  builder: (ctx, notifSettings, child) {
+                                                    return ListTile(
+                                                      leading: Icon(
+                                                        Icons.volume_up,
+                                                      ),
+                                                      title: Text("Ses"),
+                                                      trailing: Switch(
+                                                        value: notifSettings
+                                                            .soundEnabled,
+                                                        onChanged: (value) async {
+                                                          await notifSettings
+                                                              .setSoundEnabled(
+                                                                value,
+                                                              );
+                                                        },
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                                // Titreşimi Aç/Kapat
+                                                Consumer<NotificationSettings>(
+                                                  builder: (ctx, notifSettings, child) {
+                                                    return ListTile(
+                                                      leading: Icon(
+                                                        Icons.vibration,
+                                                      ),
+                                                      title: Text("Titreşim"),
+                                                      trailing: Switch(
+                                                        value: notifSettings
+                                                            .vibrationEnabled,
+                                                        onChanged: (value) async {
+                                                          await notifSettings
+                                                              .setVibrationEnabled(
+                                                                value,
+                                                              );
+                                                        },
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                                Divider(),
+                                                // Varsayılan Hatırlatma Saati
+                                                Consumer<NotificationSettings>(
+                                                  builder: (ctx, notifSettings, child) {
+                                                    return ListTile(
+                                                      leading: Icon(
+                                                        Icons.schedule,
+                                                      ),
+                                                      title: Text(
+                                                        "Varsayılan Hatırlatma Saati",
+                                                      ),
+                                                      subtitle: Text(
+                                                        notifSettings
+                                                            .defaultReminderTime
+                                                            .format(context),
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .secondary,
+                                                        ),
+                                                      ),
+                                                      trailing: Icon(
+                                                        Icons.edit,
+                                                      ),
+                                                      onTap: () async {
+                                                        final TimeOfDay?
+                                                        picked =
+                                                            await showTimePicker(
+                                                              context: context,
+                                                              initialTime:
+                                                                  notifSettings
+                                                                      .defaultReminderTime,
+                                                            );
+                                                        if (picked != null) {
+                                                          await notifSettings
+                                                              .setDefaultReminderTime(
+                                                                picked,
+                                                              );
+                                                        }
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                                SizedBox(height: 20),
+                                                // Test Bildirim Butonu
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: ElevatedButton.icon(
+                                                    onPressed: () async {
+                                                      await NotificationService()
+                                                          .showNotification(
+                                                            id: 999,
+                                                            title:
+                                                                '🔔 Test Bildirim',
+                                                            body:
+                                                                'Bildirim sistemi çalışıyor!',
+                                                          );
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            'Test bildirim gönderildi!',
+                                                          ),
+                                                          duration: Duration(
+                                                            seconds: 2,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    icon: Icon(Icons.send),
+                                                    label: Text(
+                                                      'Test Bildirim Gönder',
+                                                    ),
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.green,
+                                                          foregroundColor:
+                                                              Colors.white,
+                                                        ),
+                                                  ),
+                                                ),
+                                                // Planlı Bildirimleri Kontrol Et
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: ElevatedButton.icon(
+                                                    onPressed: () async {
+                                                      await NotificationService()
+                                                          .debugPendingNotifications();
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            'Planlı bildirimler console\'da gösteriliyor',
+                                                          ),
+                                                          duration: Duration(
+                                                            seconds: 2,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    icon: Icon(Icons.list),
+                                                    label: Text(
+                                                      'Planlı Bildirimleri Kontrol Et',
+                                                    ),
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.blue,
+                                                          foregroundColor:
+                                                              Colors.white,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    child: Icon(Icons.tune),
+                                  ),
+                                  title: Text("Tercihler"),
+                                  trailing: Icon(Icons.chevron_right),
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      enableDrag: true,
+                                      useSafeArea: true,
+                                      isScrollControlled: true,
+                                      context: context,
+                                      builder: (sheetContext) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 16,
+                                            left: 8,
+                                            right: 8,
+                                            bottom: 8,
+                                          ),
+                                          child: SingleChildScrollView(
+                                            child: Stack(
+                                              children: [
+                                                Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    ListTile(
+                                                      onTap: () => context
+                                                          .read<
+                                                            CurrentThemeMode
+                                                          >()
+                                                          .changeThemeMode(),
+                                                      leading: IconButton(
+                                                        icon: Icon(
+                                                          context
+                                                                  .watch<
+                                                                    CurrentThemeMode
+                                                                  >()
+                                                                  .isDarkMode
+                                                              ? Icons.light_mode
+                                                              : Icons.dark_mode,
+                                                        ),
+                                                        onPressed: () => context
+                                                            .read<
+                                                              CurrentThemeMode
+                                                            >()
+                                                            .changeThemeMode(),
+                                                      ),
+                                                      title: Text(
+                                                        "Tema Modunu Değiştirin",
+                                                      ),
+                                                      subtitle: Text(
+                                                        "şu anki tema modu ${context.watch<CurrentThemeMode>().isDarkMode ? "karanlık" : "açık"}",
+                                                      ),
+                                                    ),
+                                                    // Yeni: Tema etkenlerini değiştirme ListTile'ı
+                                                    ListTile(
+                                                      leading: CircleAvatar(
+                                                        child: Icon(
+                                                          Icons.palette,
+                                                        ),
+                                                      ),
+                                                      title: Text(
+                                                        "Tema Etkenlerini Değiştirin",
+                                                      ),
+                                                      subtitle: Text(
+                                                        "${context.watch<SchemeProvider>().scheme.toString().split('.').last} • ${context.watch<SchemeProvider>().baseColor.value.toRadixString(16).padLeft(8, '0').toUpperCase()}",
+                                                      ),
+                                                      onTap: () {
+                                                        final sp = context
+                                                            .read<
+                                                              SchemeProvider
+                                                            >();
+                                                        Color tempColor =
+                                                            sp.baseColor;
+                                                        SchemeType tempScheme =
+                                                            sp.scheme;
+                                                        showModalBottomSheet(
+                                                          context: sheetContext,
+                                                          isScrollControlled:
+                                                              true,
+                                                          builder: (ctx) {
+                                                            return StatefulBuilder(
+                                                              builder:
+                                                                  (
+                                                                    ctx2,
+                                                                    setStateSheet,
+                                                                  ) {
+                                                                    return Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                        bottom: MediaQuery.of(
+                                                                          ctx,
+                                                                        ).viewInsets.bottom,
+                                                                      ),
+                                                                      child: SingleChildScrollView(
+                                                                        child: Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            ListTile(
+                                                                              title: Text(
+                                                                                'Scheme Tipi Seçin',
+                                                                              ),
+                                                                              subtitle:
+                                                                                  DropdownButton<
+                                                                                    SchemeType
+                                                                                  >(
+                                                                                    value: tempScheme,
+                                                                                    items: SchemeType.values
+                                                                                        .map(
+                                                                                          (
+                                                                                            e,
+                                                                                          ) => DropdownMenuItem(
+                                                                                            value: e,
+                                                                                            child: Text(
+                                                                                              e
+                                                                                                  .toString()
+                                                                                                  .split(
+                                                                                                    '.',
+                                                                                                  )
+                                                                                                  .last,
+                                                                                            ),
+                                                                                          ),
+                                                                                        )
+                                                                                        .toList(),
+                                                                                    onChanged:
+                                                                                        (
+                                                                                          v,
+                                                                                        ) {
+                                                                                          if (v !=
+                                                                                              null)
+                                                                                            setStateSheet(
+                                                                                              () => tempScheme = v,
+                                                                                            );
+                                                                                        },
+                                                                                  ),
+                                                                            ),
+                                                                            ListTile(
+                                                                              title: Text(
+                                                                                'Base Renk Seçin',
+                                                                              ),
+                                                                              subtitle: Row(
+                                                                                children: [
+                                                                                  CircleAvatar(
+                                                                                    backgroundColor: tempColor,
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    width: 12,
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    child: Text(
+                                                                                      '#' +
+                                                                                          tempColor.value
+                                                                                              .toRadixString(
+                                                                                                16,
+                                                                                              )
+                                                                                              .padLeft(
+                                                                                                8,
+                                                                                                '0',
+                                                                                              )
+                                                                                              .toUpperCase(),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.all(
+                                                                                12.0,
+                                                                              ),
+                                                                              child: ColorPicker(
+                                                                                pickerColor: tempColor,
+                                                                                onColorChanged:
+                                                                                    (
+                                                                                      c,
+                                                                                    ) => setStateSheet(
+                                                                                      () => tempColor = c,
+                                                                                    ),
+                                                                                showLabel: true,
+                                                                                pickerAreaHeightPercent: 0.6,
+                                                                              ),
+                                                                            ),
+                                                                            Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.end,
+                                                                              children: [
+                                                                                TextButton(
+                                                                                  onPressed: () => Navigator.of(
+                                                                                    ctx,
+                                                                                  ).pop(),
+                                                                                  child: Text(
+                                                                                    'İptal',
+                                                                                  ),
+                                                                                ),
+                                                                                const SizedBox(
+                                                                                  width: 8,
+                                                                                ),
+                                                                                ElevatedButton(
+                                                                                  onPressed: () {
+                                                                                    sp.setScheme(
+                                                                                      tempScheme,
+                                                                                    );
+                                                                                    sp.setBaseColor(
+                                                                                      tempColor,
+                                                                                    );
+                                                                                    Navigator.of(
+                                                                                      ctx,
+                                                                                    ).pop();
+                                                                                  },
+                                                                                  child: Text(
+                                                                                    'Uygula',
+                                                                                  ),
+                                                                                ),
+                                                                                const SizedBox(
+                                                                                  width: 12,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 12,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                    ),
+                                                    ListTile(
+                                                      leading:
+                                                          Consumer<
+                                                            CurrentThemeMode
+                                                          >(
+                                                            builder:
+                                                                (
+                                                                  ctx,
+                                                                  theme,
+                                                                  child,
+                                                                ) => Icon(
+                                                                  theme.isMica
+                                                                      ? Icons
+                                                                            .blur_off
+                                                                      : Icons
+                                                                            .blur_on,
+                                                                ),
+                                                          ),
+                                                      title: Text(
+                                                        "Uygulamanın Şeffaflığını Değiştirin",
+                                                      ),
+                                                      subtitle: Text(
+                                                        "şu anki görüntü modu ${context.watch<CurrentThemeMode>().isMica ? "normal" : "şeffaf"}",
+                                                      ),
+                                                      onTap: () async {
+                                                        await context
+                                                            .read<
+                                                              CurrentThemeMode
+                                                            >()
+                                                            .toggleMica();
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              icon: Icon(Icons.settings),
+            ),
           ),
         ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
-              onTap: () {
-                // Handle the tap
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () {
-                // Handle the tap
-              },
-            ),
-          ],
-        ),
       ),
       body: _selectedIndex == 0
           ? buildHabitsPage(
@@ -991,9 +1171,7 @@ class MainAppViewState extends State<MainAppView> {
                         });
 
                         // HabitProvider'ı güncelle - bu bildirimleri yeniden planlar
-                        context.read<HabitProvider>().updateHabit(
-                          updatedHabit,
-                        );
+                        context.read<HabitProvider>().updateHabit(updatedHabit);
                       },
                       onHabitDeleted: (String id) {
                         setState(() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hbttrckr/classes/glasscard.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -57,15 +58,10 @@ Widget buildHabitsPage({
                     day,
                   ),
                   calendarFormat: CalendarFormat.week,
-                  // ← HAFTALIK GÖRÜNÜM!
                   startingDayOfWeek: StartingDayOfWeek.sunday,
-
                   headerVisible: false,
-                  // "Today" yazısını kaldırdık
                   daysOfWeekHeight: 40,
                   rowHeight: 66,
-
-                  // GÜN BAŞLIKLARI (Sun, Mon, Tue...)
                   daysOfWeekStyle: const DaysOfWeekStyle(
                     weekdayStyle: TextStyle(
                       color: Colors.white70,
@@ -77,7 +73,6 @@ Widget buildHabitsPage({
                     ),
                   ),
 
-                  // SEÇİLEN GÜN
                   calendarStyle: CalendarStyle(
                     todayDecoration: const BoxDecoration(),
                     todayTextStyle: const TextStyle(
@@ -94,13 +89,23 @@ Widget buildHabitsPage({
                     ),
                   ),
 
-                  // GÜN ÜZERİNDEKİ NOKTALAR (tamamlanan alışkanlık varsa)
                   calendarBuilders: CalendarBuilders(
                     markerBuilder: (context, date, events) {
-                      final completedCount = Provider.of<HabitProvider>(
-                        context,
-                      ).getCompletedCountForDay(date);
-                      if (completedCount > 0) {
+                      final habitProvider = Provider.of<HabitProvider>(context);
+                      final normalizedDate = DateTime(date.year, date.month, date.day);
+
+                      // Tamamlanan habitler
+                      final completedHabits = habits.where((habit) {
+                        final createdDate = DateTime(
+                          habit.createdAt.year,
+                          habit.createdAt.month,
+                          habit.createdAt.day,
+                        );
+                        return !createdDate.isAfter(normalizedDate) &&
+                               habit.isCompletedOnDate(normalizedDate);
+                      }).toList();
+
+                      if (completedHabits.isNotEmpty) {
                         return Align(
                           alignment: Alignment.bottomCenter,
                           child: Container(
@@ -108,20 +113,20 @@ Widget buildHabitsPage({
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: List.generate(
-                                completedCount.clamp(0, 4),
-                                (index) => Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 1.5,
-                                  ),
-                                  width: 7,
-                                  height: 7,
-                                  decoration: BoxDecoration(
-                                    color: index < 3
-                                        ? Colors.cyan
-                                        : Colors.orange,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
+                                completedHabits.take(4).length,
+                                (index) {
+                                  final habit = completedHabits[index];
+                                  final mixedColor = habitProvider.getMixedColor(habit.id);
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                                    width: 7,
+                                    height: 7,
+                                    decoration: BoxDecoration(
+                                      color: mixedColor.withValues(alpha: 0.8),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -131,12 +136,11 @@ Widget buildHabitsPage({
                     },
                   ),
 
-                  // TARİH DEĞİŞİNCE
                   onDaySelected: (selectedDay, focusedDay) {
                     context.read<HabitProvider>().setSelectedDate(selectedDay);
                     print(
                       "Tıklanan gün: $selectedDay",
-                    ); // bunu ekle, konsola baksın
+                    );
                   },
 
                   onPageChanged: (focusedDay) {
@@ -187,188 +191,192 @@ Widget buildHabitsPage({
                       bool isTooLate = selectedDate.isBefore(sevenDaysAgo);
                       final isCompleted = habit.dailyProgress[normalizedDate];
                       return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
                         color: habit.color.withValues(alpha: 0.2),
-                        child: ListTile(
-                          onTap: () => onHabitTapped(habit),
-                          // sadece tıklama bildir
-                          onLongPress: () {
-                            showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                title: Text('Silinsin mi?'),
-                                content: Text(
-                                  '${habit.name} alışkanlığını silmek istediğinden emin misin?',
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(ctx),
-                                    child: Text('İptal'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      // ANA EKRANA SİLME TALİMATI GÖNDER
-                                      context.read<HabitProvider>().deleteHabit(
-                                        habit.id,
-                                      ); // yukarı tanımlayacak
-                                      Navigator.pop(ctx);
-                                    },
-                                    child: Text(
-                                      'Sil',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          leading: CircleAvatar(backgroundColor: habit.color),
-                          title: Text(
-                            habit.name,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            isFuture || isTooLate
-                                ? " "
-                                : habit.type == HabitType.task
-                                ? habit.isSkippedOnDate(selectedDate)
-                                      ? "Atlandı"
-                                      : (habit.isCompletedOnDate(selectedDate)
-                                            ? 'Tamamlandı'
-                                            : 'Yapılmadı')
-                                : habit.type == HabitType.count
-                                ? habit.isSkippedOnDate(selectedDate)
-                                      ? "Atlandı"
-                                      : '${habit.getCountProgressForDate(selectedDate)} / ${habit.targetCount ?? '?'}'
-                                : habit.type == HabitType.time
-                                ? habit.isSkippedOnDate(selectedDate)
-                                      ? "Atlandı"
-                                      : '${habit.getSecondsProgressForDate(selectedDate).formattedHMS} / ${habit.targetSeconds.formattedHMS} '
-                                : habit.isCompletedOnDate(selectedDate)
-                                ? 'Tamamlandı'
-                                : 'Yapılmadı',
-                          ),
-                          trailing: isFuture || isTooLate
-                              ? habit.type == HabitType.task
-                                    ? IconButton(
-                                        style: IconButton.styleFrom(
-                                          foregroundColor: Colors.grey,
-                                        ),
-                                        icon: Icon(
-                                          Icons.radio_button_unchecked,
-                                          size: 25,
-                                        ),
-                                        onPressed: () {},
-                                      )
-                                    : habit.type == HabitType.count
-                                    ? IconButton(
-                                        style: IconButton.styleFrom(
-                                          foregroundColor: Colors.grey,
-                                        ),
-                                        icon: Icon(
-                                          Icons.add_outlined,
-                                          size: 25,
-                                        ),
-                                        onPressed: () {},
-                                      )
-                                    : habit.type == HabitType.time
-                                    ? IconButton(
-                                        style: IconButton.styleFrom(
-                                          foregroundColor: Colors.grey,
-                                        ),
-                                        icon: Icon(
-                                          Icons.radio_button_unchecked,
-                                          size: 25,
-                                        ),
-                                        onPressed: () {},
-                                      )
-                                    : IconButton(
-                                        style: IconButton.styleFrom(
-                                          foregroundColor: Colors.grey,
-                                        ),
-                                        icon: Icon(
-                                          Icons.radio_button_unchecked,
-                                          size: 25,
-                                        ),
-                                        onPressed: () {},
-                                      )
-                              : habit.type == HabitType.task
-                              ? IconButton(
-                                  style: IconButton.styleFrom(
-                                    foregroundColor:
-                                        habit.isCompletedOnDate(selectedDate)
-                                        ? Colors.green
-                                        : Colors.grey,
-                                  ),
-                                  icon: Icon(
-                                    habit.isCompletedOnDate(selectedDate)
-                                        ? Icons.check_circle
-                                        : Icons.radio_button_unchecked,
-                                    size: 25,
-                                  ),
-                                  onPressed: () {
-                                    context
-                                        .read<HabitProvider>()
-                                        .toggleTaskCompletion(habit.id);
-                                  },
-                                )
-                              : habit.type == HabitType.count
-                              ? IconButton(
-                                  style: IconButton.styleFrom(
-                                    foregroundColor:
-                                        habit.isCompletedOnDate(selectedDate)
-                                        ? Colors.green
-                                        : Colors.grey,
-                                  ),
-                                  icon: Icon(
-                                    habit.isCompletedOnDate(selectedDate)
-                                        ? Icons.add
-                                        : Icons.add_outlined,
-                                    size: 25,
-                                  ),
-                                  onPressed: () {
-                                    context
-                                        .read<HabitProvider>()
-                                        .incrementCount(habit.id);
-                                  },
-                                )
-                              : habit.type == HabitType.time
-                              ? Consumer<HabitProvider>(
-                                  builder: (context, provider, child) {
-                                    final bool isRunning =
-                                        provider.runningTimers[habit.id] ??
-                                        false;
+                        child: liquidGlassContainer(context: context,
+                          child: ListTile(
+                            onTap: () => onHabitTapped(habit),
 
-                                    return IconButton(
-                                      style: IconButton.styleFrom(
-                                        foregroundColor: Colors.grey,
-                                      ),
+                            onLongPress: () {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: Text('Silinsin mi?'),
+                                  content: Text(
+                                    '${habit.name} alışkanlığını silmek istediğinden emin misin?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx),
+                                      child: Text('İptal'),
+                                    ),
+                                    TextButton(
                                       onPressed: () {
-                                        provider.toggleTimer(habit.id);
+                                        context.read<HabitProvider>().deleteHabit(
+                                          habit.id,
+                                        );
+                                        Navigator.pop(ctx);
                                       },
-                                      icon: Icon(
-                                        isRunning
-                                            ? Icons.pause
-                                            : Icons.play_arrow,
-                                        size: 25,
+                                      child: Text(
+                                        'Sil',
+                                        style: TextStyle(color: Colors.red),
                                       ),
-                                    );
-                                  },
-                                )
-                              : IconButton(
-                                  style: IconButton.styleFrom(
-                                    foregroundColor:
-                                        habit.isCompletedOnDate(selectedDate)
-                                        ? Colors.green
-                                        : Colors.grey,
-                                  ),
-                                  icon: Icon(
-                                    habit.isCompletedOnDate(selectedDate)
-                                        ? Icons.check_circle
-                                        : Icons.radio_button_unchecked,
-                                    size: 25,
-                                  ),
-                                  onPressed: () {},
+                                    ),
+                                  ],
                                 ),
+                              );
+                            },
+                            leading: CircleAvatar(backgroundColor: habit.color),
+                            title: Text(
+                              habit.name,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              isFuture || isTooLate
+                                  ? " "
+                                  : habit.type == HabitType.task
+                                  ? habit.isSkippedOnDate(selectedDate)
+                                        ? "Atlandı"
+                                        : (habit.isCompletedOnDate(selectedDate)
+                                              ? 'Tamamlandı'
+                                              : 'Yapılmadı')
+                                  : habit.type == HabitType.count
+                                  ? habit.isSkippedOnDate(selectedDate)
+                                        ? "Atlandı"
+                                        : '${habit.getCountProgressForDate(selectedDate)} / ${habit.targetCount ?? '?'}'
+                                  : habit.type == HabitType.time
+                                  ? habit.isSkippedOnDate(selectedDate)
+                                        ? "Atlandı"
+                                        : '${habit.getSecondsProgressForDate(selectedDate).formattedHMS} / ${habit.targetSeconds.formattedHMS} '
+                                  : habit.isCompletedOnDate(selectedDate)
+                                  ? 'Tamamlandı'
+                                  : 'Yapılmadı',
+                            ),
+                            trailing: isFuture || isTooLate
+                                ? habit.type == HabitType.task
+                                      ? IconButton(
+                                          style: IconButton.styleFrom(
+                                            foregroundColor: Colors.grey,
+                                          ),
+                                          icon: Icon(
+                                            Icons.radio_button_unchecked,
+                                            size: 25,
+                                          ),
+                                          onPressed: () {},
+                                        )
+                                      : habit.type == HabitType.count
+                                      ? IconButton(
+                                          style: IconButton.styleFrom(
+                                            foregroundColor: Colors.grey,
+                                          ),
+                                          icon: Icon(
+                                            Icons.add_outlined,
+                                            size: 25,
+                                          ),
+                                          onPressed: () {},
+                                        )
+                                      : habit.type == HabitType.time
+                                      ? IconButton(
+                                          style: IconButton.styleFrom(
+                                            foregroundColor: Colors.grey,
+                                          ),
+                                          icon: Icon(
+                                            Icons.radio_button_unchecked,
+                                            size: 25,
+                                          ),
+                                          onPressed: () {},
+                                        )
+                                      : IconButton(
+                                          style: IconButton.styleFrom(
+                                            foregroundColor: Colors.grey,
+                                          ),
+                                          icon: Icon(
+                                            Icons.radio_button_unchecked,
+                                            size: 25,
+                                          ),
+                                          onPressed: () {},
+                                        )
+                                : habit.type == HabitType.task
+                                ? IconButton(
+                                    style: IconButton.styleFrom(
+                                      foregroundColor:
+                                          habit.isCompletedOnDate(selectedDate)
+                                          ? Colors.green
+                                          : Colors.grey,
+                                    ),
+                                    icon: Icon(
+                                      habit.isCompletedOnDate(selectedDate)
+                                          ? Icons.check_circle
+                                          : Icons.radio_button_unchecked,
+                                      size: 25,
+                                    ),
+                                    onPressed: () {
+                                      context
+                                          .read<HabitProvider>()
+                                          .toggleTaskCompletion(habit.id);
+                                    },
+                                  )
+                                : habit.type == HabitType.count
+                                ? IconButton(
+                                    style: IconButton.styleFrom(
+                                      foregroundColor:
+                                          habit.isCompletedOnDate(selectedDate)
+                                          ? Colors.green
+                                          : Colors.grey,
+                                    ),
+                                    icon: Icon(
+                                      habit.isCompletedOnDate(selectedDate)
+                                          ? Icons.add
+                                          : Icons.add_outlined,
+                                      size: 25,
+                                    ),
+                                    onPressed: () {
+                                      context
+                                          .read<HabitProvider>()
+                                          .incrementCount(habit.id);
+                                    },
+                                  )
+                                : habit.type == HabitType.time
+                                ? Consumer<HabitProvider>(
+                                    builder: (context, provider, child) {
+                                      final bool isRunning =
+                                          provider.runningTimers[habit.id] ??
+                                          false;
+
+                                      return IconButton(
+                                        style: IconButton.styleFrom(
+                                          foregroundColor: Colors.grey,
+                                        ),
+                                        onPressed: () {
+                                          provider.toggleTimer(habit.id);
+                                        },
+                                        icon: Icon(
+                                          isRunning
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                          size: 25,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : IconButton(
+                                    style: IconButton.styleFrom(
+                                      foregroundColor:
+                                          habit.isCompletedOnDate(selectedDate)
+                                          ? Colors.green
+                                          : Colors.grey,
+                                    ),
+                                    icon: Icon(
+                                      habit.isCompletedOnDate(selectedDate)
+                                          ? Icons.check_circle
+                                          : Icons.radio_button_unchecked,
+                                      size: 25,
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                          ),
                         ),
                       );
                     },

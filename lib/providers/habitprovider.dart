@@ -4,25 +4,64 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neat_and_clean_calendar/neat_and_clean_calendar_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/classes/colormix.dart';
 import 'package:hbttrckr/services/notification_service.dart';
 import 'dart:convert';
-// TODO: today olan fonksiyonların that day veya that time halini yapalım çünkü her zaman bugüne bakmıyoruz
-// TODO: isdonetoday buraya da ekle
+
 
 enum TimeElements { minute, second, hour }
 
 class HabitProvider with ChangeNotifier {
   List<Habit> _habits = [];
   DateTime? selectedDate = DateTime.now();
+  late ColorMixer _colorMixer;
+  final Map<String, Color> _mixedColorCache = {}; // Mixed color cache (O(1) lookup)
 
   List<Habit> get habits => List.unmodifiable(_habits);
   Timer? _timer;
   Map<String, bool> runningTimers = {};
 
   HabitProvider() {
+    _colorMixer = ColorMixer();
     _loadHabits();
     // Alışkanlıklar yüklendikten sonra bildirimleri planla
     Future.microtask(rescheduleAllNotifications);
+  }
+
+  // Tüm alışkanlıklar için renkleri mixer ile yeniden hesapla ve cache'le
+  void _recalculateMixedColors() {
+    _colorMixer.reset();
+    _mixedColorCache.clear(); // Cache'i temizle
+    for (final habit in _habits) {
+      final mixed = _colorMixer.addColor(habit.color);
+      _mixedColorCache[habit.id] = mixed; // Cache'e kaydet
+    }
+    notifyListeners();
+  }
+
+  // Bir alışkanlığın mixed color'ını cache'den al (O(1) lookup)
+  Color getMixedColor(String habitId) {
+    return _mixedColorCache[habitId] ?? _habits.firstWhere((h) => h.id == habitId).color;
+  }
+
+  // Tüm habitler için combined/average mixed color (icon için)
+  Color getCombinedMixedColor() {
+    if (_mixedColorCache.isEmpty) return Colors.grey;
+
+    // Tüm mixed color'ları ortalama
+    double r = 0, g = 0, b = 0;
+    for (final color in _mixedColorCache.values) {
+      r += (color.r * 255.0).round();
+      g += (color.g * 255.0).round();
+      b += (color.b * 255.0).round();
+    }
+    final count = _mixedColorCache.length;
+    return Color.fromARGB(
+      255,
+      (r / count).toInt(),
+      (g / count).toInt(),
+      (b / count).toInt(),
+    );
   }
 
   // Tüm alışkanlıkların bildirimlerini yeniden planla (uygulama başlangıcında ve ayarlar değiştirildiğinde)
@@ -298,7 +337,10 @@ class HabitProvider with ChangeNotifier {
     );
 
     _habits.add(newHabit);
-    notifyListeners();
+
+    // Yeni alışkanlık eklendikten sonra tüm renkleri ColorMixer ile yeniden hesapla
+    _recalculateMixedColors();
+
     _saveHabits();
 
     // Eğer reminder ayarlanmışsa planla
@@ -384,7 +426,10 @@ class HabitProvider with ChangeNotifier {
     final index = _habits.indexWhere((h) => h.id == updatedHabit.id);
     if (index != -1) {
       _habits[index] = updatedHabit;
-      notifyListeners();
+
+      // Her zaman mixed color'ları yeniden hesapla (renk değişti mi diye kontrol etmeye gerek yok)
+      _recalculateMixedColors();
+
       _saveHabits();
 
       // Bildirimleri güncelle
@@ -485,7 +530,10 @@ class HabitProvider with ChangeNotifier {
     await NotificationService().cancelNotification(habitId.hashCode);
 
     _habits.removeAt(index);
-    notifyListeners();
+
+    // Silindikten sonra mixed color'ları yeniden hesapla
+    _recalculateMixedColors();
+
     _saveHabits();
   }
 

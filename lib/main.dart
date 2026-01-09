@@ -12,47 +12,137 @@ import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:hbttrckr/providers/scheme_provider.dart';
 
-final schemelight = SchemeMonochrome(
+Color themeColor = Colors.teal;
+
+// Keep a couple of default scheme objects (will be overridden by provider at runtime)
+final defaultScheme = SchemeExpressive(
   isDark: false,
-  contrastLevel: 0.4,
-  // use explicit ARGB int for teal to avoid deprecated accessors
-  sourceColorHct: Hct.fromInt(0xFF009688), // Colors.teal ARGB
+  contrastLevel: 0.0,
+  sourceColorHct: Hct.fromInt(themeColor.toARGB32()),
 );
 
-final schemedark = SchemeMonochrome(
-  isDark: true,
-  contrastLevel: 1.0,
-  sourceColorHct: Hct.fromInt(0xFF009688), // Colors.teal ARGB
-);
+// Convert various Scheme* objects into a Flutter ColorScheme. The material_color_utilities
+// package uses different scheme classes but their fields are similarly named; this helper
+// handles the common fields using dynamic access.
+ColorScheme _colorSchemeFromMaterial(dynamic s) {
+  // Many Scheme classes expose fields directly; we try direct access first.
+  Color _c(Object? value, [int fallback = 0xFF000000]) {
+    if (value is int) return Color(value);
+    try {
+      if (value != null) return Color(value as int);
+    } catch (_) {}
+    return Color(fallback);
+  }
 
-final colorScheme1 = ColorScheme(
-  brightness: Brightness.light,
-  primary: Color(schemelight.primary),
-  onPrimary: Color(schemelight.onPrimary),
-  secondary: Color(schemelight.secondary),
-  onSecondary: Color(schemelight.onSecondary),
-  error: Color(schemelight.error),
-  onError: Color(schemelight.onError),
-  // use surface/onSurface instead of deprecated background/onBackground
-  surface: Color(schemelight.surface),
-  onSurface: Color(schemelight.onSurface),
-);
+  // Use common names where possible; fall back to defaults if a field isn't present.
+  return ColorScheme(
+    brightness: (s?.isDark == true) ? Brightness.dark : Brightness.light,
+    primary: _c(s?.primary, Colors.teal.toARGB32()),
+    onPrimary: _c(s?.onPrimary, Colors.white.toARGB32()),
+    primaryContainer: _c(s?.primaryContainer, Colors.teal[700]!.toARGB32()),
+    onPrimaryContainer: _c(s?.onPrimaryContainer, Colors.white.toARGB32()),
+    secondary: _c(s?.secondary, Colors.tealAccent.toARGB32()),
+    onSecondary: _c(s?.onSecondary, Colors.black.toARGB32()),
+    secondaryContainer: _c(
+      s?.secondaryContainer,
+      Colors.tealAccent[100]?.toARGB32() ?? Colors.tealAccent.toARGB32(),
+    ),
+    onSecondaryContainer: _c(s?.onSecondaryContainer, Colors.black.toARGB32()),
+    tertiary: _c(s?.tertiary, Colors.teal.toARGB32()),
+    onTertiary: _c(s?.onTertiary, Colors.white.toARGB32()),
+    tertiaryContainer: _c(
+      s?.tertiaryContainer,
+      Colors.teal[200]?.toARGB32() ?? Colors.teal.toARGB32(),
+    ),
+    onTertiaryContainer: _c(s?.onTertiaryContainer, Colors.white.toARGB32()),
+    error: _c(s?.error, Colors.red.toARGB32()),
+    onError: _c(s?.onError, Colors.white.toARGB32()),
+    errorContainer: _c(
+      s?.errorContainer,
+      Colors.red[100]?.toARGB32() ?? Colors.red.toARGB32(),
+    ),
+    onErrorContainer: _c(s?.onErrorContainer, Colors.white.toARGB32()),
+    surface: _c(s?.surface, Colors.grey[50]!.toARGB32()),
+    onSurface: _c(s?.onSurface, Colors.black.toARGB32()),
+    surfaceContainerHighest: _c(
+      s?.surfaceVariant,
+      Colors.grey[200]!.toARGB32(),
+    ),
+    onSurfaceVariant: _c(s?.onSurfaceVariant, Colors.black.toARGB32()),
+    outline: _c(s?.outline, Colors.grey[600]!.toARGB32()),
+    shadow: _c(s?.shadow, Colors.black.toARGB32()),
+    inverseSurface: _c(s?.inverseSurface, Colors.grey[800]!.toARGB32()),
+    onInverseSurface: _c(s?.onSurface, Colors.white.toARGB32()),
+    inversePrimary: _c(s?.inversePrimary, Colors.tealAccent.toARGB32()),
+    surfaceTint: _c(s?.primary, Colors.teal.toARGB32()),
+  );
+}
 
-final colorScheme2 = ColorScheme(
-  brightness: Brightness.dark,
-  primary: Color(schemedark.primary),
-  onPrimary: Color(schemedark.onPrimary),
-  secondary: Color(schemedark.secondary),
-  onSecondary: Color(schemedark.onSecondary),
-  error: Color(schemedark.error),
-  onError: Color(schemedark.onError),
-  surface: Color(schemedark.surface),
-  onSurface: Color(schemedark.onSurface),
-);
+// Build a material_color_utilities scheme object from provider values.
+// This returns different Scheme* based on the provider's SchemeType selection.
+dynamic buildMaterialScheme(SchemeProvider sp, bool isDark) {
+  final hct = Hct.fromInt(sp.baseColorArgb);
+  switch (sp.scheme) {
+    case SchemeType.expressive:
+      return SchemeExpressive(
+        isDark: isDark,
+        sourceColorHct: hct,
+        contrastLevel: isDark ? 1.0 : 0.0,
+      );
+    case SchemeType.fidelity:
+      return SchemeFidelity(
+        isDark: isDark,
+        sourceColorHct: hct,
+        contrastLevel: isDark ? 1.0 : 0.0,
+      );
+    case SchemeType.fruitsalad:
+      // material_color_utilities may not provide a dedicated "fruitsalad" class; use Expressive as a close default
+      return SchemeExpressive(
+        isDark: isDark,
+        sourceColorHct: hct,
+        contrastLevel: isDark ? 1.0 : 0.0,
+      );
+    case SchemeType.monochrome:
+      return SchemeMonochrome(
+        isDark: isDark,
+        sourceColorHct: hct,
+        contrastLevel: isDark ? 1.0 : 0.0,
+      );
+    case SchemeType.neutral:
+      return SchemeNeutral(
+        isDark: isDark,
+        sourceColorHct: hct,
+        contrastLevel: isDark ? 1.0 : 0.0,
+      );
+    case SchemeType.rainbow:
+      return SchemeRainbow(
+        isDark: isDark,
+        sourceColorHct: hct,
+        contrastLevel: isDark ? 1.0 : 0.0,
+      );
+    case SchemeType.tonalSpot:
+      return SchemeTonalSpot(
+        isDark: isDark,
+        sourceColorHct: hct,
+        contrastLevel: isDark ? 1.0 : 0.0,
+      );
+    case SchemeType.vibrant:
+      return SchemeVibrant(
+        isDark: isDark,
+        sourceColorHct: hct,
+        contrastLevel: isDark ? 1.0 : 0.0,
+      );
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize SchemeProvider early so saved preferences are loaded
+  final schemeProvider = SchemeProvider();
+  await schemeProvider.init();
 
   // NotificationService'i başlat
   await NotificationService().initialize();
@@ -106,6 +196,7 @@ Future<void> main() async {
         ChangeNotifierProvider<CurrentThemeMode>.value(value: initialTheme),
         ChangeNotifierProvider(create: (_) => HabitProvider()),
         ChangeNotifierProvider(create: (_) => NotificationSettings()),
+        ChangeNotifierProvider<SchemeProvider>.value(value: schemeProvider),
       ],
       child: const MyApp(),
     ),
@@ -118,6 +209,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeMode = Provider.of<CurrentThemeMode>(context).currentMode;
+    final schemeProvider = Provider.of<SchemeProvider>(context);
+
+    // Build material scheme based on provider
+    final lightMat = buildMaterialScheme(schemeProvider, false);
+    final darkMat = buildMaterialScheme(schemeProvider, true);
+
+    final colorSchemeLight = _colorSchemeFromMaterial(lightMat);
+    final colorSchemeDark = _colorSchemeFromMaterial(darkMat);
+
     return MaterialApp(
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -139,31 +239,36 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         bottomAppBarTheme: BottomAppBarThemeData(
-          color: colorScheme1.onSecondary,
+          color: colorSchemeLight.onSecondary,
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: colorScheme1.onPrimary,
+          backgroundColor: colorSchemeLight.onPrimary,
           elevation: 10,
         ),
         brightness: Brightness.light,
-        colorScheme: colorScheme1,
+        colorScheme: colorSchemeLight,
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         bottomAppBarTheme: BottomAppBarThemeData(
-          color: colorScheme2.onSecondary,
+          color: colorSchemeDark.onSecondary,
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: colorScheme2.onPrimary,
+          backgroundColor: colorSchemeDark.onPrimary,
           elevation: 10,
         ),
-        colorScheme: colorScheme2,
+        colorScheme: colorSchemeDark,
       ),
       home: MainAppView(),
     );
   }
 }
 
-// const MainAppView(),
-// const AdaptiveScaffoldMainView(),
-// const NavigationRailMain(),
+// TODO (yapılacaklar):
+// - Kullanıcının seçebileceği scheme türleri: expressive, fidelity, fruitsalad, monochrome,
+//   neutral, rainbow, tonalSpot, vibrant
+// - Kullanıcı theme'in base color'unu değiştirebilecek (ARGB/Color picker)
+// - Provider (`SchemeProvider`) ile seçilen scheme ve baseColor saklanacak ve uygulama
+//   runtime'da tema oluştururken kullanılacak
+// - UI tarafında basit bir settings paneli ekle (daha sonra): scheme tipi dropdown, color picker
+//   ve light/dark önizleme düğmesi
