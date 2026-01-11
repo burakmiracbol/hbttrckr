@@ -1,4 +1,5 @@
-// Copyright (C) 2026  [Burak Miraç Bol]
+// hbttrckr: just a habit tracker
+// Copyright (C) 2026  Burak Miraç Bol
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

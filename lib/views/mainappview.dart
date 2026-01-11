@@ -1,4 +1,5 @@
-// Copyright (C) 2026  [Burak Miraç Bol]
+// hbttrckr: just a habit tracker
+// Copyright (C) 2026  Burak Miraç Bol
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,7 +46,6 @@ import 'package:hbttrckr/providers/scheme_provider.dart';
 
 // TODO's
 //
-//  lisans dosyası kontrolü yapılmalı
 //  doğa modu
 //  reklam fikri sağol
 //  ALARM: edit dialog çalışmıyor ve edit dialog artık dialog olarak değil de modal botom sheet olarak kullanmak daha iyi olur
