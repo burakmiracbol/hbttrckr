@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_iconpicker/Models/configuration.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 
 import '../classes/habit.dart';
 import '../providers/habitprovider.dart';
@@ -93,6 +95,7 @@ void detailSettingsSheet(
                         .read<HabitProvider>()
                         .getHabitById(currentHabit.id)
                         .color;
+                    IconData selectedIcon = currentHabit.icon;
                     TimeOfDay? selectedReminderTime = currentHabit.reminderTime;
 
                     showModalBottomSheet(
@@ -216,7 +219,28 @@ void detailSettingsSheet(
                                     ],
                                   ),
                                 ),
-                                // Bildirim Ayarları
+                                // Icon Seçici
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () async {
+                                      IconPickerIcon? icon = await showIconPicker(
+                                        context,
+                                        configuration: SinglePickerConfiguration(
+                                          iconPackModes: [IconPack.material],
+                                        ),
+                                      );
+
+                                      if (icon != null) {
+                                        setStateSheet(() {
+                                          selectedIcon = icon.data;
+                                        });
+                                      }
+                                    },
+                                    icon: Icon(selectedIcon),
+                                    label: Text('İcon Seç'),
+                                  ),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: ListTile(
@@ -285,6 +309,7 @@ void detailSettingsSheet(
                                                         )
                                                         .description,
                                               color: selectedColor,
+                                              icon: selectedIcon,
                                               reminderTime:
                                                   selectedReminderTime,
                                             );

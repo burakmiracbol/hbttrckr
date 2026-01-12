@@ -331,12 +331,14 @@ class HabitProvider with ChangeNotifier {
     String description = '',
     required Color color,
     required HabitType type,
+    required IconData icon,
     num? targetCount,
     int? targetSeconds,
     TimeOfDay? reminderTime,
     Set<int>? reminderDays,
     int? maxCount,
   }) {
+    // Icon parametresi artık doğru şekilde alınıyor
     final newHabit = Habit(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
@@ -349,6 +351,7 @@ class HabitProvider with ChangeNotifier {
       reminderTime: reminderTime,
       reminderDays: reminderDays,
       achievedCount: 0,
+      icon: icon,
     );
 
     _habits.add(newHabit);
@@ -357,6 +360,9 @@ class HabitProvider with ChangeNotifier {
     _recalculateMixedColors();
 
     _saveHabits();
+
+    // Listeners'ı bilgilendir
+    notifyListeners();
 
     // Eğer reminder ayarlanmışsa planla
     if (reminderTime != null) {

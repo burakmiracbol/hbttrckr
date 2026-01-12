@@ -24,6 +24,8 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:hbttrckr/views/mainappview.dart';
 import 'dart:async';
 
+import '../classes/durationformatter.dart';
+
 // TODO : calendarda task türünden yapılanları işaretliyor diğer türleri değil
 // TODO : calendar habitlerin hangi günde olduğunu biliyor ama hangi günde ne kadar bittiğini bilmiyor
 
@@ -34,21 +36,24 @@ Widget buildHabitsPage({
   required OnHabitDeleted? onHabitDeleted,
   required Function(DateTime) onDateSelected,
 }) {
-  if (habits.isEmpty) {
-    return Center(
-      child: Text(
-        'Henüz alışkanlık eklemedin.\n+ butonuna bas!',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 18, color: Colors.grey),
-      ),
-    );
-  }
-
   bool isRunning = false;
   late Timer timer;
 
   return Consumer<HabitProvider>(
     builder: (context, provider, child) {
+      // Provider'dan alınan habits'i kullan (en güncel)
+      final currentHabits = provider.habits;
+
+      if (currentHabits.isEmpty) {
+        return Center(
+          child: Text(
+            'Henüz alışkanlık eklemedin.\n+ butonuna bas!',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, color: Colors.grey),
+          ),
+        );
+      }
+
 
       final selectedDate = provider.selectedDate ?? DateTime.now();
       return LiquidGlassLayer(
@@ -111,7 +116,7 @@ Widget buildHabitsPage({
                       final normalizedDate = DateTime(date.year, date.month, date.day);
 
                       // Tamamlanan habitler
-                      final completedHabits = habits.where((habit) {
+                      final completedHabits = currentHabits.where((habit) {
                         final createdDate = DateTime(
                           habit.createdAt.year,
                           habit.createdAt.month,
@@ -176,7 +181,7 @@ Widget buildHabitsPage({
                     selectedDate.month,
                     selectedDate.day,
                   );
-                  final visibleHabits = habits.where((habit) {
+                  final visibleHabits = currentHabits.where((habit) {
                     final createdDate = DateTime(
                       habit.createdAt.year,
                       habit.createdAt.month,
@@ -244,7 +249,7 @@ Widget buildHabitsPage({
                                 ),
                               );
                             },
-                            leading: CircleAvatar(backgroundColor: habit.color),
+                            leading: CircleAvatar(backgroundColor: habit.color, child: Icon(habit.icon)),
                             title: Text(
                               habit.name,
                               style: TextStyle(fontWeight: FontWeight.bold),

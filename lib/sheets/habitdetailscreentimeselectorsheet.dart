@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 
+import '../classes/durationformatter.dart';
 import '../classes/habit.dart';
 import '../providers/habitprovider.dart';
 

@@ -28,6 +28,7 @@ import 'package:wheel_slider/wheel_slider.dart';
 import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:hbttrckr/sheets/habit_notes_editor_sheet.dart';
 
+import '../classes/durationformatter.dart';
 import '../sheets/habitdetailscreencountselectorsheet.dart';
 import '../sheets/habitdetailscreentimeselectorsheet.dart';
 
@@ -94,6 +95,19 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
+            title: Row(
+              children: [
+                Icon(currentHabit.icon, color: currentHabit.color),
+                SizedBox(width: 12),
+                Text(
+                  currentHabit.name,
+                  style: TextStyle(
+                    color: currentHabit.color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
             actions: [
               Row(
                 children: [
@@ -170,7 +184,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       backgroundColor: currentHabit.color
                                           .withValues(alpha: 0.3),
                                       child: Icon(
-                                        Icons.flag,
+                                        currentHabit.icon,
                                         size: 60,
                                         color: currentHabit.color,
                                       ),

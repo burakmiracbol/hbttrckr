@@ -32,6 +32,7 @@ class Habit {
   final TimeOfDay? reminderTime;
   final Set<int>? reminderDays;
   final HabitType type;
+  final IconData icon;
   final num achievedCount;
   final num? targetCount;
   final int? maxCount;
@@ -50,6 +51,7 @@ class Habit {
     this.reminderTime,
     this.reminderDays,
     required this.type,
+    required this.icon,
     required this.achievedCount,
     this.maxCount,
     this.targetCount,
@@ -265,12 +267,13 @@ class Habit {
     TimeOfDay? reminderTime,
     Set<int>? reminderDays,
     HabitType? type,
+    IconData? icon,
     num? achievedCount,
     num? targetCount,
     int? maxCount,
-    int? achievedMinutes,
-    int? targetMinutes,
-    int? maxMinutes,
+    int? achievedSeconds,
+    int? targetSeconds,
+    int? maxSeconds,
     Map<DateTime, dynamic>? dailyProgress,
     String? notesDelta,
   }) {
@@ -283,12 +286,13 @@ class Habit {
       reminderTime: reminderTime ?? this.reminderTime,
       reminderDays: reminderDays ?? this.reminderDays,
       type: type ?? this.type,
+      icon: icon ?? this.icon,
       achievedCount: achievedCount ?? this.achievedCount,
       targetCount: targetCount ?? this.targetCount,
       maxCount: maxCount ?? this.maxCount,
-      achievedSeconds: achievedMinutes ?? this.achievedSeconds,
-      targetSeconds: targetMinutes ?? this.targetSeconds,
-      maxSeconds: maxMinutes ?? this.maxSeconds,
+      achievedSeconds: achievedSeconds ?? this.achievedSeconds,
+      targetSeconds: targetSeconds ?? this.targetSeconds,
+      maxSeconds: maxSeconds ?? this.maxSeconds,
       dailyProgress: dailyProgress ?? this.dailyProgress,
       notesDelta: notesDelta ?? this.notesDelta,
     );
@@ -306,6 +310,7 @@ class Habit {
         : null,
     'reminderDays': reminderDays?.toList(),
     'type': type.index,
+    'icon': icon.codePoint,
     'achievedCount': achievedCount,
     'targetCount': targetCount,
     'maxCount': maxCount,
@@ -372,6 +377,10 @@ class Habit {
       reminderTime: time,
       reminderDays: (json['reminderDays'] as List?)?.cast<int>().toSet(),
       type: HabitType.values[json['type'] ?? 0],
+      icon: IconData(
+        json['icon'] ?? Icons.favorite.codePoint,
+        fontFamily: 'MaterialIcons',
+      ),
       achievedCount: json['achievedCount'] ?? 0,
       targetCount: json['targetCount'],
       maxCount: json['maxCount'],
@@ -390,45 +399,4 @@ class Habit {
 
   @override
   int get hashCode => id.hashCode;
-}
-
-extension DurationFormatter on int? {
-  // 1. Saat döndürür (örneğin 7200 → 2)
-  int get hours {
-    if (this == null) return 0;
-    return this! ~/ 3600;
-  }
-
-  // 2. Dakika döndürür (örneğin 7385 → 3) → kalan dakikalar
-  int get minutes {
-    if (this == null) return 0;
-    return (this! % 3600) ~/ 60;
-  }
-
-  // 3. Saniye döndürür (örneğin 7385 → 5) → kalan saniyeler
-  int get seconds {
-    if (this == null) return 0;
-    return this! % 60;
-  }
-
-  // BONUS: 7385 → "2s 3dk 5sn" şeklinde güzel string (isteğe bağlı)
-  String get formattedHMS {
-    if (this == null || this == 0) return "0 dk";
-    final h = hours;
-    final m = minutes;
-    final s = seconds;
-
-    if (h > 0) return "${h}s ${m}dk ${s}sn";
-    if (m > 0) return "${m}dk ${s}sn";
-    return "${s}sn";
-  }
-
-  // BONUS 2: Sadece "02:03:05" formatı (progress bar vs. için ideal)
-  String get formattedHHmmSS {
-    if (this == null || this == 0) return "00:00:00";
-    final h = hours.toString().padLeft(2, '0');
-    final m = minutes.toString().padLeft(2, '0');
-    final s = seconds.toString().padLeft(2, '0');
-    return "$h:$m:$s";
-  }
 }
