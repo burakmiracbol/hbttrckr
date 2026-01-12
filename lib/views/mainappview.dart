@@ -17,21 +17,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/window.dart';
 import 'package:flutter_acrylic/window_effect.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:hbttrckr/classes/glasscard.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/views/habitdetailscreen.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/views/statsview.dart';
 import 'package:hbttrckr/providers/habitprovider.dart';
-import 'package:hbttrckr/providers/notification_settings_provider.dart';
-import 'package:hbttrckr/services/notification_service.dart';
-import 'package:wheel_slider/wheel_slider.dart';
 import '../sheets/habit_add_sheet.dart';
 import '../sheets/main_settings_sheet.dart';
-import '../sheets/backup_settings_sheet.dart';
 import 'habits_page.dart';
-import 'package:hbttrckr/providers/scheme_provider.dart';
 
 // TODO's taken from README:
 //  Implement statistics page and strengthen strength calculation

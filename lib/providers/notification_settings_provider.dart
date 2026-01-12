@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hbttrckr/services/notification_service.dart';
-import 'package:hbttrckr/providers/habitprovider.dart';
 
 class NotificationSettings with ChangeNotifier {
   bool _notificationsEnabled = true;

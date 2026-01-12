@@ -23,11 +23,8 @@ import 'package:hbttrckr/views/statsview.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:wheel_slider/wheel_slider.dart';
-
 import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:hbttrckr/sheets/habit_notes_editor_sheet.dart';
-
 import '../classes/durationformatter.dart';
 import '../sheets/habit_detail_screen_count_selector_sheet.dart';
 import '../sheets/habit_detail_screen_time_selector_sheet.dart';

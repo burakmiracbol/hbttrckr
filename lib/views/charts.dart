@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/habit.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 class WeekChartWidget extends StatelessWidget {
   @override
