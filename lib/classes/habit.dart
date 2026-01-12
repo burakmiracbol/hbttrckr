@@ -353,21 +353,6 @@ class Habit {
       parsedNotes = null;
     }
 
-    final legacyCompleted = (json['completedDates'] as List?)
-        ?.map((ms) => DateTime.fromMillisecondsSinceEpoch(ms as int))
-        .toList() ?? [];
-
-    final completedFromProgress = parsedDaily.entries
-        .where((e) => e.value == true)
-        .map((e) => e.key)
-        .toList();
-
-    // Birleştir, duplicate kaldır
-    final combinedCompleted = {
-      ...{for (var d in legacyCompleted) DateTime(d.year, d.month, d.day): d},
-      ...{for (var d in completedFromProgress) DateTime(d.year, d.month, d.day): d}
-    }.values.toList();
-
     return Habit(
       id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
       name: json['name'] ?? 'İsimsiz',

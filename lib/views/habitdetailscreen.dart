@@ -18,7 +18,7 @@ import 'package:hbttrckr/classes/strengthgauge.dart';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/views/mainappview.dart';
-import 'package:hbttrckr/sheets/habitdetailscreensettingssheet.dart';
+import 'package:hbttrckr/sheets/habit_detai_lscreen_settings_sheet.dart';
 import 'package:hbttrckr/views/statsview.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
@@ -29,8 +29,8 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:hbttrckr/sheets/habit_notes_editor_sheet.dart';
 
 import '../classes/durationformatter.dart';
-import '../sheets/habitdetailscreencountselectorsheet.dart';
-import '../sheets/habitdetailscreentimeselectorsheet.dart';
+import '../sheets/habit_detail_screen_count_selector_sheet.dart';
+import '../sheets/habit_detail_screen_time_selector_sheet.dart';
 
 // TODO ERROR : düzenleme oluyor iki iptal tuşu var
 

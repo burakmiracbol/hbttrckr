@@ -49,6 +49,7 @@ dependencies:
   table_calendar: ^3.2.0
   flutter_pickers: ^2.1.9
   time_range_selector_widget: ^2.0.2
+  file_picker: ^10.3.8
   flutter_inset_box_shadow: ^1.0.8
   liquid_glass_renderer: ^0.2.0-dev.4
   bitsdojo_window: ^0.1.6
