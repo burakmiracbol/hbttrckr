@@ -25,7 +25,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:hbttrckr/sheets/habit_notes_editor_sheet.dart';
-import '../classes/durationformatter.dart';
+import '../extensions/durationformatter.dart';
 import '../sheets/habit_detail_screen_count_selector_sheet.dart';
 import '../sheets/habit_detail_screen_time_selector_sheet.dart';
 

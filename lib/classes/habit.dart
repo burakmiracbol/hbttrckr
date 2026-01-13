@@ -33,12 +33,12 @@ class Habit {
   final Set<int>? reminderDays;
   final HabitType type;
   final IconData icon;
-  final num achievedCount;
-  final num? targetCount;
-  final int? maxCount;
-  final int? achievedSeconds;
-  final int? targetSeconds;
-  final int? maxSeconds;
+  final double achievedCount;
+  final double? targetCount;
+  final double? maxCount;
+  final double? achievedSeconds;
+  final double? targetSeconds;
+  final double? maxSeconds;
   final Map<DateTime, dynamic> dailyProgress;
   final String? notesDelta;
 
@@ -124,10 +124,10 @@ class Habit {
   ///   - %30 → mevcut streak (max 30 gün üzerinden)
   ///   - %20 → toplam tamamlanan gün sayısı (max 200 gün üzerinden)
   // TODO: işte bunun biraz ayarlarıyla oynayalım
-  int get strength {
+  num get strength {
     // 1. Son 30 gün tamamlanma oranı (%50 ağırlık)
     final last30 = last30DaysStatus;
-    final completionRate30 = last30.where((done) => done).length / 30;
+    double completionRate30 = last30.fold(0.0, (previousValue, element) => previousValue + element,) / 30;
     double score = completionRate30 * 50;
 
     // 2. Mevcut streak (%30 ağırlık, max 30 gün)
@@ -135,28 +135,25 @@ class Habit {
     score += streakScore;
 
     // 3. Toplam tamamlanan gün sayısı (%20 ağırlık, max 200 gün)
-    int totalCompletedDays = 0;
+    double totalCompletedDays = 0.0;
 
     if (type == HabitType.task) {
       totalCompletedDays = dailyProgress.keys.where((date) {
         final value = dailyProgress[date];
         return value == true;
-      }).length;
+      }).length.toDouble();
     } else if (type == HabitType.count) {
-      totalCompletedDays =
-          dailyProgress.keys.where((date) {
-            final value = dailyProgress[date];
-            final int achieved = (value is num) ? value.toInt() : 0;
-            return achieved >= (targetCount ?? 1);
-          }).length;
+      totalCompletedDays = dailyProgress.values.map((v) {
+        final achieved = (v is num) ? v.toDouble() : 0.0;
+        final t = targetCount ?? 1.0;
+        return (achieved >= t) ? 1.0 : (achieved / t);
+      }).fold(0.0, (previousValue, element) => previousValue + element);
     } else if (type == HabitType.time) {
-      totalCompletedDays =
-          dailyProgress.keys.where((date) {
-            final value = dailyProgress[date];
-            final int achievedSeconds = (value is num) ? value.toInt() : 0;
-            final int targetSecs = targetSeconds ?? 60;
-            return achievedSeconds >= targetSecs;
-          }).length;
+      totalCompletedDays = dailyProgress.values.map((v) {
+        final achievedSeconds = (v is num) ? v.toDouble() : 0.0;
+        final targetSecs = targetSeconds ?? 60.0;
+        return (achievedSeconds >= targetSecs) ? 1.0 : (achievedSeconds / targetSecs);
+      }).fold(0.0, (previousValue, element) => previousValue + element);
     }
 
     final longevityScore = (totalCompletedDays / 200.0).clamp(0.0, 1.0) * 20.0;
@@ -174,14 +171,14 @@ class Habit {
     return "Yeni Başladı";
   }
 
-  List<bool> get last7DaysStatus => last30DaysStatus.sublist(23); // son 7 gün
+  List<double> get last7DaysStatus => last30DaysStatus.sublist(23); // son 7 gün
 
   int get currentStreak {
     int streak = 0;
     // last30DaysStatus zaten bugünden geriye doğru (bugün en sonda)
     // reversed yapmadan doğrudan sondan başa doğru bakıyoruz
     for (int i = last30DaysStatus.length - 1; i >= 0; i--) {
-      if (last30DaysStatus[i]) {
+      if (last30DaysStatus[i] == 1) {
         streak++;
       } else {
         break; // ilk yapılmayan günde dur
@@ -190,30 +187,30 @@ class Habit {
     return streak;
   }
 
-  List<bool> get last30DaysStatus {
-    final List<bool> status = [];
+  List<double> get last30DaysStatus {
+    final List<double> status = [];
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
     for (int i = 0; i < 30; i++) {
       final day = today.subtract(Duration(days: i));
-      bool doneThatDay = false;
+      double doneRateOfThatDay = 0.0;
 
       if (type == HabitType.task) {
         final val = dailyProgress[day];
-        doneThatDay = val == true;
+        doneRateOfThatDay = val == true ? 1 : 0 ;
       } else if (type == HabitType.count) {
         final value = dailyProgress[day];
-        final int achieved = (value is num) ? value.toInt() : 0;
-        doneThatDay = achieved >= (targetCount ?? 1);
+        final double achieved = (value is num) ? value.toDouble() : 0;
+        doneRateOfThatDay = achieved >= (targetCount ?? 1) ? 1 : achieved / (targetCount ?? 1) ;
       } else if (type == HabitType.time) {
         final value = dailyProgress[day];
-        final int achievedSeconds = (value is num) ? value.toInt() : 0;
-        final int targetSecs = targetSeconds ?? 60; // default 1 dakika
-        doneThatDay = achievedSeconds >= targetSecs;
+        final double achievedSeconds = (value is num) ? value.toDouble() : 0;
+        final double targetSecs = targetSeconds ?? 60; // default 1 dakika
+        doneRateOfThatDay = achievedSeconds >= targetSecs ? 1 : achievedSeconds / targetSecs ;
       }
 
-      status.add(doneThatDay);
+      status.add(doneRateOfThatDay);
     }
 
     // status[0] = 30 gün önce, status[29] = bugün
@@ -268,12 +265,12 @@ class Habit {
     Set<int>? reminderDays,
     HabitType? type,
     IconData? icon,
-    num? achievedCount,
-    num? targetCount,
-    int? maxCount,
-    int? achievedSeconds,
-    int? targetSeconds,
-    int? maxSeconds,
+    double? achievedCount,
+    double? targetCount,
+    double? maxCount,
+    double? achievedSeconds,
+    double? targetSeconds,
+    double? maxSeconds,
     Map<DateTime, dynamic>? dailyProgress,
     String? notesDelta,
   }) {

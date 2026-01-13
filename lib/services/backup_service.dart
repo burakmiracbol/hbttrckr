@@ -16,6 +16,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
@@ -125,7 +126,7 @@ class BackupService {
   /// Backup dosyalarını listele
   static Future<List<File>> listBackups() async {
     try {
-      final directory = Directory('/storage/emulated/0/Downloads');
+      final directory = defaultTargetPlatform == TargetPlatform.android ? Directory('/storage/emulated/0/Downloads') : Directory.systemTemp;
       if (!await directory.exists()) {
         return [];
       }

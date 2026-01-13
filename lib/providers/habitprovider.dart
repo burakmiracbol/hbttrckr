@@ -332,11 +332,11 @@ class HabitProvider with ChangeNotifier {
     required Color color,
     required HabitType type,
     required IconData icon,
-    num? targetCount,
-    int? targetSeconds,
+    double? targetCount,
+    double? targetSeconds,
     TimeOfDay? reminderTime,
     Set<int>? reminderDays,
-    int? maxCount,
+    double? maxCount,
   }) {
     // Icon parametresi artık doğru şekilde alınıyor
     final newHabit = Habit(

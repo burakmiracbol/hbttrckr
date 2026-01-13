@@ -24,7 +24,7 @@ import 'package:hbttrckr/providers/habitprovider.dart';
 import 'package:hbttrckr/views/mainappview.dart';
 import 'dart:async';
 
-import '../classes/durationformatter.dart';
+import '../extensions/durationformatter.dart';
 
 // TODO : calendarda task türünden yapılanları işaretliyor diğer türleri değil
 // TODO : calendar habitlerin hangi günde olduğunu biliyor ama hangi günde ne kadar bittiğini bilmiyor
@@ -266,11 +266,11 @@ Widget buildHabitsPage({
                                   : habit.type == HabitType.count
                                   ? habit.isSkippedOnDate(selectedDate)
                                         ? "Atlandı"
-                                        : '${habit.getCountProgressForDate(selectedDate)} / ${habit.targetCount ?? '?'}'
+                                        : '${habit.getCountProgressForDate(selectedDate)} / ${habit.targetCount?.toInt() ?? '?'}'
                                   : habit.type == HabitType.time
                                   ? habit.isSkippedOnDate(selectedDate)
                                         ? "Atlandı"
-                                        : '${habit.getSecondsProgressForDate(selectedDate).formattedHMS} / ${habit.targetSeconds.formattedHMS} '
+                                        : '${habit.getSecondsProgressForDate(selectedDate).formattedHMS} / ${habit.targetSeconds?.toInt().formattedHMS} '
                                   : habit.isCompletedOnDate(selectedDate)
                                   ? 'Tamamlandı'
                                   : 'Yapılmadı',

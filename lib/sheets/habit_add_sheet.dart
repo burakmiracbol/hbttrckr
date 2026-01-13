@@ -34,9 +34,9 @@ class AddHabitSheet extends StatefulWidget {
   required Color color,
   required HabitType type,
   required IconData icon,
-  int? targetCount,
-  int? maxCount,
-  num? targetSeconds,
+  double? targetCount,
+  double? maxCount,
+  double? targetSeconds,
   TimeOfDay? reminderTime,
   Set<int>? reminderDays,
   })
@@ -482,13 +482,13 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                       type: _selectedType,
                       icon: currentIconOfHabit,
                       targetCount: _selectedType == HabitType.count
-                          ? int.tryParse(_countController.text)
+                          ? double.tryParse(_countController.text)
                           : null,
                       maxCount: _selectedType == HabitType.count
-                          ? int.tryParse(_maxCountController.text)
+                          ? double.tryParse(_maxCountController.text)
                           : null,
                       targetSeconds: _selectedType == HabitType.time
-                          ? _totalSeconds
+                          ? _totalSeconds.toDouble()
                           : null,
                       reminderTime: _selectedTime,
                       reminderDays: _selectedDays.isEmpty ? null : _selectedDays,
