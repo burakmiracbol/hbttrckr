@@ -24,6 +24,7 @@ import 'package:provider/provider.dart';
 import 'package:hbttrckr/views/statsview.dart';
 import 'package:hbttrckr/providers/habitprovider.dart';
 import '../sheets/habit_add_sheet.dart';
+import '../sheets/habits_summary_sheet.dart';
 import '../sheets/main_settings_sheet.dart';
 import 'habits_page.dart';
 
@@ -152,33 +153,34 @@ class MainAppViewState extends State<MainAppView> {
           bottom: MediaQuery.of(parentContext).viewInsets.bottom,
         ),
         child: AddHabitSheet(
-          onAdd: ({
-            required String name,
-            String description = '',
-            required Color color,
-            required HabitType type,
-            required IconData icon,
-            int? targetCount,
-            int? maxCount,
-            num? targetSeconds,
-            TimeOfDay? reminderTime,
-            Set<int>? reminderDays,
-          }) {
-            parentContext.read<HabitProvider>().addHabit(
-              name: name,
-              description: description,
-              color: color,
-              type: type,
-              targetCount: targetCount,
-              maxCount: maxCount,
-              targetSeconds: targetSeconds?.toInt(),
-              reminderTime: reminderTime,
-              reminderDays: reminderDays,
-              icon: icon,
-            );
+          onAdd:
+              ({
+                required String name,
+                String description = '',
+                required Color color,
+                required HabitType type,
+                required IconData icon,
+                double? targetCount,
+                double? maxCount,
+                double? targetSeconds,
+                TimeOfDay? reminderTime,
+                Set<int>? reminderDays,
+              }) {
+                parentContext.read<HabitProvider>().addHabit(
+                  name: name,
+                  description: description,
+                  color: color,
+                  type: type,
+                  targetCount: targetCount,
+                  maxCount: maxCount,
+                  targetSeconds: targetSeconds?.toDouble(),
+                  reminderTime: reminderTime,
+                  reminderDays: reminderDays,
+                  icon: icon,
+                );
 
-            Navigator.pop(sheetContext);
-          },
+                Navigator.pop(sheetContext);
+              },
         ),
       ),
     );
@@ -284,83 +286,18 @@ class MainAppViewState extends State<MainAppView> {
                   context: context,
                   child: IconButton(
                     style: IconButton.styleFrom(padding: EdgeInsets.all(0)),
-                    icon: Icon(Icons.format_list_bulleted, color: combinedColor),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        enableDrag: true,
-                        useSafeArea: true,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (sheetContext) => DraggableScrollableSheet(
-                      expand: false,
-                      initialChildSize: 0.5, // başlangıçta ekranın %50'si
-                      minChildSize: 0.25,
-                      maxChildSize: 0.95,
-                      builder: (context, scrollController) => Padding(
-                        padding: EdgeInsets.all(8),
-                        child: SingleChildScrollView(
-                          controller: scrollController,
-                          child: Column(
-                            children: [
-                              Text(
-                                "Tüm Alışkanlıklar",
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              Column(
-                                children: [
-                                  ...habits.map(
-                                    (h) => Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: 10,
-                                      ),
-                                      child: Card(
-                                        color:
-                                            context
-                                                .watch<CurrentThemeMode>()
-                                                .isMica
-                                            ? Theme.of(context).cardColor
-                                            : Theme.of(context).cardColor
-                                                  .withValues(alpha: 0.2),
-                                        elevation: 3,
-                                        child: ListTile(
-                                          leading: CircleAvatar(
-                                            backgroundColor: context.read<HabitProvider>().getMixedColor(h.id).withValues(alpha: 0.8),
-                                            child: Text(
-                                              h.name[0].toUpperCase(),
-                                            ),
-                                          ),
-                                          title: Text(h.name),
-                                          subtitle: Text(
-                                            "${h.currentStreak} gün streak • ${h.strength}% güç",
-                                          ),
-                                          trailing: h.currentStreak > 0
-                                              ? Icon(
-                                                  Icons.local_fire_department,
-                                                  color: context.read<HabitProvider>().getMixedColor(h.id),
-                                                )
-                                              : const Icon(
-                                                  Icons
-                                                      .local_fire_department_outlined,
-                                                  color: Colors.grey,
-                                                ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    icon: Icon(
+                      Icons.format_list_bulleted,
+                      color: combinedColor,
                     ),
-                  );
-                },
-                  )
-              );
-            },
-          );
-        },
+                    onPressed: () {
+                      showHabitsSummarySheet(context);
+                    },
+                  ),
+                );
+              },
+            );
+          },
         ),
 
         actions: [
@@ -368,7 +305,11 @@ class MainAppViewState extends State<MainAppView> {
             context: context,
             child: IconButton(
               onPressed: () {
-                 showMainSettingsSheet(context, accountController, passwordController);
+                showMainSettingsSheet(
+                  context,
+                  accountController,
+                  passwordController,
+                );
               },
               icon: Icon(Icons.settings),
             ),
@@ -485,6 +426,3 @@ class MainAppViewState extends State<MainAppView> {
     );
   }
 }
-
-
-
