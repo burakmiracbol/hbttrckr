@@ -44,24 +44,18 @@ import 'habits_page.dart';
 //
 //  doğa modu
 //  reklam fikri sağol
-//  ALARM: edit dialog çalışmıyor ve edit dialog artık dialog olarak değil de modal botom sheet olarak kullanmak daha iyi olur
-//  habit paylaşma özelliği olsun
+//
+//  habit paylaşma özelliği olsun bujnun için de bir küçük eidget tasarlayalım ve bunun ss alma özelliği olsun bir tuşla şu pkaeti kullan screenshot: ^3.0.0
+//
 //  detail screende appbar şeffaf yapalım
-//  detail scrrende appbarda actionsda iki tuş bulunsun biri notes biri ise diğerlerini görmek için sheet açan kısım
 //  habitler için not kısmında hatalar düzeltilsin
-//  countlarda ve timelarda strength tamalama oranına göre verilsin (mevcut hal ise tamamlama durumu) yani durum değil oran ile yapacağız
 //  habitdetail screen hepsine bir glass glow ekle
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
-//  her alışkanlığın kendi içinde de takvimi var ama skipped yok
-//  stats_view.dart ekranında da takvimi düzeltmek lazım (skipped olan günler gösterme felan) ve görsellik yükseltilmeli yapma sayısı oran felan
-//  alışkanlıklara yeni özellikler eklemeli notlar kısmı ikonu felan ayrıca ikon seçme özelliği eklenmeli
 //  haftanın hangi gününden başladığı eklenmeli
 //  habit gruplama olmalı
 //  kodu düzeltmeli hızımızı artırır eğer düzenler isek
-//  alarm ve haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
-//  custom theme olsun ve şu an ki transparan butonu ve açık koyu tema butonu ayarlara doğru yol alsın
-//  tema açısından geliştirmeler yapılmalı
+//  alarmın haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
 //  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
 //  custom bildirim gönderme olmalı
 //  bir icon paketi oluşturlmalı veya bulunmalı ama bize uyumlu olsun
