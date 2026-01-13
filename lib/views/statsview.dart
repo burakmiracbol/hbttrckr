@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:hbttrckr/views/navigationrail.dart';
+import 'package:hbttrckr/classes/rate_of_doing.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +56,56 @@ class StatisticsScreen extends StatelessWidget {
     final perfectHabits = habits.where((h) => h.strength >= 90).length;
     final totalStrength = habits.fold(0.0, (sum, h) => sum + h.strength);
 
+    // Tüm gün-habit kombinasyonları için istatistik hesapla
+    double doneCount = 0;
+    double missedCount = 0;
+    double skippedCount = 0;
+    double totalCount = 0;
+
+    for (final habit in habits) {
+      // Habit oluşturulduğu günden bugüne kadar geçen gün sayısı
+      final daysForThisHabit =
+          todayDate
+              .difference(
+                DateTime(
+                  habit.createdAt.year,
+                  habit.createdAt.month,
+                  habit.createdAt.day,
+                ),
+              )
+              .inDays +
+          1;
+      totalCount += daysForThisHabit;
+
+      for (final entry in habit.dailyProgress.entries) {
+        final dynamic value = entry.value;
+
+        bool isDone = false;
+        bool isSkipped = value == "skipped";
+
+        if (!isSkipped) {
+          if (habit.type == HabitType.task) {
+            isDone = value == true;
+          } else if (habit.type == HabitType.count) {
+            final achieved = (value is num) ? value.toInt() : 0;
+            isDone = achieved >= (habit.targetCount ?? 1);
+          } else if (habit.type == HabitType.time) {
+            final achievedSeconds = (value is num) ? value.toInt() : 0;
+            final targetSecs = habit.targetSeconds ?? 60;
+            isDone = achievedSeconds >= targetSecs;
+          }
+        }
+
+        if (isDone) {
+          doneCount++;
+        } else if (isSkipped) {
+          skippedCount++;
+        } else {
+          missedCount++;
+        }
+      }
+    }
+
     return GlassGlowLayer(
       child: LiquidGlassLayer(
         child: Scaffold(
@@ -67,28 +117,33 @@ class StatisticsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Card(
-                    color: Colors.transparent,
-                    child: liquidGlassContainer(context: context,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 24.0),
-                            child: StrengthGauge(
-                              strength:
-                                  (totalStrength / totalHabits.clamp(1, 999))
-                                      .roundToDouble(), // 0-100 arası int
-                              size: 200,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: liquidGlassContainer(
+                        context: context,
+                        child: Expanded(
+                          child: Card(
+                            color: Colors.transparent,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: RateOfDoing(
+                                doneCount: doneCount,
+                                missedCount: missedCount,
+                                skippedCount: skippedCount,
+                                totalCount: totalCount,
+                                size: MediaQuery.of(context).size.width * 0.4,
+                              ),
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
+
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Row(
@@ -166,12 +221,23 @@ class StatisticsScreen extends StatelessWidget {
                                 : Theme.of(
                                     context,
                                   ).cardColor.withValues(alpha: 0.2),
-                            child: StatCard(
-                              "Ortalama Güç",
-                              "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
-                              Icons.trending_up,
-                              Colors.green,
-                              16,
+                            child: liquidGlassContainer(
+                              context: context,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  top: 32.0,
+                                  bottom: 8.0,
+                                  right: 8.0,
+                                  left: 8.0,
+                                ),
+                                child: StrengthGauge(
+                                  seenStrength:
+                                      "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
+                                  strength:
+                                      (totalStrength / totalHabits.clamp(1, 999)),
+                                  size: MediaQuery.of(context).size.width * 0.3,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -185,7 +251,8 @@ class StatisticsScreen extends StatelessWidget {
                     color: context.read<CurrentThemeMode>().isMica
                         ? Theme.of(context).cardColor
                         : Theme.of(context).cardColor.withValues(alpha: 0.2),
-                    child: liquidGlassContainer(context: context,
+                    child: liquidGlassContainer(
+                      context: context,
                       child: TableCalendar(
                         firstDay: DateTime.utc(2020, 1, 1),
                         lastDay: DateTime.utc(2030, 12, 31),
@@ -262,7 +329,9 @@ class StatisticsScreen extends StatelessWidget {
 
                               // skipped kontrolü (varsa)
                               try {
-                                isSkipped = habit.isSkippedOnDate(normalizedDay);
+                                isSkipped = habit.isSkippedOnDate(
+                                  normalizedDay,
+                                );
                               } catch (_) {
                                 isSkipped = false;
                               }
@@ -270,7 +339,8 @@ class StatisticsScreen extends StatelessWidget {
                               // Güvenli günlük veri okuma: doğrudan map lookup yerine tarihe göre eşleme
                               dynamic v;
                               try {
-                                for (final entry in habit.dailyProgress.entries) {
+                                for (final entry
+                                    in habit.dailyProgress.entries) {
                                   final dynamic k = entry
                                       .key; // treat as dynamic to allow legacy string keys
                                   if (k is DateTime) {
@@ -372,7 +442,9 @@ class StatisticsScreen extends StatelessWidget {
                                     color: Colors.transparent,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: Colors.green.withValues(alpha: 0.9),
+                                      color: Colors.green.withValues(
+                                        alpha: 0.9,
+                                      ),
                                       width: 2,
                                     ),
                                   ),
@@ -409,7 +481,9 @@ class StatisticsScreen extends StatelessWidget {
                                     child: Text(
                                       '${day.day}',
                                       style: TextStyle(
-                                        color: Colors.grey.withValues(alpha: 0.8),
+                                        color: Colors.grey.withValues(
+                                          alpha: 0.8,
+                                        ),
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -465,27 +539,30 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return liquidGlassContainer(context: context, child: GlassGlow(
-      child: Padding(
-        padding: EdgeInsets.all(padding),
-        child: Opacity(
-          opacity: 1,
-          child: Column(
-            children: [
-              Icon(icon, size: 32, color: color),
-              SizedBox(height: 8),
-              Text(
-                value,
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                title,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
-            ],
+    return liquidGlassContainer(
+      context: context,
+      child: GlassGlow(
+        child: Padding(
+          padding: EdgeInsets.all(padding),
+          child: Opacity(
+            opacity: 1,
+            child: Column(
+              children: [
+                Icon(icon, size: 32, color: color),
+                SizedBox(height: 8),
+                Text(
+                  value,
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),);
+    );
   }
 }

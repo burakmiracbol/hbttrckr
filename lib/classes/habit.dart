@@ -124,7 +124,7 @@ class Habit {
   ///   - %30 → mevcut streak (max 30 gün üzerinden)
   ///   - %20 → toplam tamamlanan gün sayısı (max 200 gün üzerinden)
   // TODO: işte bunun biraz ayarlarıyla oynayalım
-  num get strength {
+  double get strength {
     // 1. Son 30 gün tamamlanma oranı (%50 ağırlık)
     final last30 = last30DaysStatus;
     double completionRate30 = last30.fold(0.0, (previousValue, element) => previousValue + element,) / 30;
@@ -159,7 +159,7 @@ class Habit {
     final longevityScore = (totalCompletedDays / 200.0).clamp(0.0, 1.0) * 20.0;
     score += longevityScore;
 
-    return score.round();
+    return score.roundToDouble();
   }
 
   String get strengthLevel {

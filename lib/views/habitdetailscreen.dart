@@ -616,7 +616,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                             )
                                     else
                                       const Placeholder(),
-                                    // durum yçnetiminde bizdir
+                                    // durum yönetiminde bizdir (production için en iyi yöntem bu bu arada error yese adam diğer işleri engellenecek)
                                   ],
                                 ),
                               ),
@@ -634,9 +634,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                           MainAxisAlignment.center,
                                       children: [
                                         StrengthGauge(
-                                          strength: currentHabit.strength
-                                              .toDouble()
-                                              .roundToDouble(), // 0-100 arası int
+                                          seenStrength: "${currentHabit.strength.toStringAsFixed(1)}%",
+                                          strength: currentHabit.strength,
                                           size: 200,
                                         ),
                                       ],

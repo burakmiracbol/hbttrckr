@@ -17,16 +17,29 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-class StrengthGauge extends StatelessWidget {
-  final String seenStrength;
-  final double strength; // 0-100 arası
+class RateOfDoing extends StatelessWidget {
+  final double doneCount;
+  final double missedCount;
+  final double skippedCount;
+  final double totalCount;
   final double size;
 
-  const StrengthGauge({super.key, required this.strength,required this.seenStrength, this.size = 200});
+  const RateOfDoing({
+    super.key,
+    required this.doneCount,
+    required this.missedCount,
+    required this.skippedCount,
+    required this.totalCount,
+    required this.size,
+  });
 
-  // 0-100 arası değerden kırmızı → sarı → yeşil gradyan renk hesapla
+  // Yapılan oranını hesapla (0-100)
+  double get _donePercentage =>
+      totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
+
+  // Yapılan oranına göre renk: yeşil → sarı → kırmızı
   Color get _progressColor {
-    final double ratio = strength / 100.0;
+    final double ratio = _donePercentage / 100.0;
 
     if (ratio <= 0.5) {
       // 0% → 50%: Kırmızıdan sarıya
@@ -39,30 +52,30 @@ class StrengthGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double percentage = strength / 100.0;
+    final double percentage = totalCount > 0 ? doneCount / totalCount : 0;
 
     return SizedBox(
       width: size,
-      height: size * 0.7,
+      height: size ,
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Arka plan (gri yarım daire)
           CustomPaint(
             size: Size(size, size),
-            painter: _GaugePainter(
+            painter: _RateOfDoingPainter(
               progress: 1.0,
               color: Colors.grey.withValues(alpha: 0.4),
               strokeWidth: size * 0.08,
             ),
           ),
 
-          // Dinamik renkli dolgu
+          // Dinamik renkli dolgu (yapılan oran)
           CustomPaint(
             size: Size(size, size),
-            painter: _GaugePainter(
+            painter: _RateOfDoingPainter(
               progress: percentage,
-              color: _progressColor, // <-- BURADA GRADYAN RENK GELİYOR
+              color: _progressColor,
               strokeWidth: size * 0.08,
             ),
           ),
@@ -71,14 +84,34 @@ class StrengthGauge extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Strength", style: TextStyle(fontSize: size * 0.07)),
-              const SizedBox(height: 4),
               Text(
-                "$seenStrength",
+                "Rate Of Doing",
+                style: TextStyle(fontSize: size * 0.07, color: _progressColor),
+              ),
+              Text(
+                "${_donePercentage.toStringAsFixed(1)}%",
                 style: TextStyle(
-                  fontSize: size * 0.18,
+                  fontSize: size * 0.08,
                   fontWeight: FontWeight.bold,
+                  color: _progressColor,
                 ),
+              ),
+              // Ayrıntılı istatistikler
+              Column(
+                children: [
+                  Text(
+                    "✓ Yapılan: ${doneCount.toInt()}",
+                    style: TextStyle(fontSize: size * 0.05, color: Colors.green),
+                  ),
+                  Text(
+                    "⊗ Kaçırılan: ${missedCount.toInt()}",
+                    style: TextStyle(fontSize: size * 0.05, color: Colors.red),
+                  ),
+                  Text(
+                    "⊘ Atlanan: ${skippedCount.toInt()}",
+                    style: TextStyle(fontSize: size * 0.05, color: Colors.orange),
+                  ),
+                ],
               ),
             ],
           ),
@@ -88,12 +121,12 @@ class StrengthGauge extends StatelessWidget {
   }
 }
 
-class _GaugePainter extends CustomPainter {
+class _RateOfDoingPainter extends CustomPainter {
   final double progress;
   final Color color;
   final double strokeWidth;
 
-  _GaugePainter({
+  _RateOfDoingPainter({
     required this.progress,
     required this.color,
     required this.strokeWidth,
@@ -110,10 +143,11 @@ class _GaugePainter extends CustomPainter {
     final double radius = size.width / 2;
     final Offset center = Offset(radius, radius);
 
+    // Yarım daire (180°) çiz: math.pi rad = 180°
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
-      math.pi, // 180 derece
-      math.pi * progress,
+      2* math.pi, // 180 derece başla
+      2*math.pi * progress, // progress kadar ilerle
       false,
       paint,
     );
