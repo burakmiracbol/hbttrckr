@@ -45,6 +45,8 @@ import 'habits_page.dart';
 //  doğa modu
 //  reklam fikri sağol
 //
+//  rate of doing kısmında yarım yapılmışlar kaçırılanlara konuluyor bu okey ama hiç yapılmamaışlar konmuyor ???
+//
 //  habit paylaşma özelliği olsun bujnun için de bir küçük eidget tasarlayalım ve bunun ss alma özelliği olsun bir tuşla şu pkaeti kullan screenshot: ^3.0.0
 //
 //  detail screende appbar şeffaf yapalım

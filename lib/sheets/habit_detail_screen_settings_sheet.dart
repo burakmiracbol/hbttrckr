@@ -17,10 +17,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
+import 'package:hbttrckr/classes/glasscard.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 
 import '../classes/habit.dart';
+import '../extensions/durationformatter.dart';
 import '../providers/habitprovider.dart';
 import '../views/mainappview.dart';
 
@@ -240,12 +242,16 @@ void detailSettingsSheet(
                                   padding: const EdgeInsets.all(8.0),
                                   child: ElevatedButton.icon(
                                     onPressed: () async {
-                                      IconPickerIcon? icon = await showIconPicker(
-                                        context,
-                                        configuration: SinglePickerConfiguration(
-                                          iconPackModes: [IconPack.material],
-                                        ),
-                                      );
+                                      IconPickerIcon? icon =
+                                          await showIconPicker(
+                                            context,
+                                            configuration:
+                                                SinglePickerConfiguration(
+                                                  iconPackModes: [
+                                                    IconPack.material,
+                                                  ],
+                                                ),
+                                          );
 
                                       if (icon != null) {
                                         setStateSheet(() {
@@ -332,7 +338,6 @@ void detailSettingsSheet(
 
                                         provider.updateHabit(updatedHabit);
 
-
                                         Navigator.pop(ctx);
                                       },
                                       child: const Text('Kaydet'),
@@ -356,6 +361,167 @@ void detailSettingsSheet(
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("valla şu an bunu geliştirmedik")),
+                    );
+                    showModalBottomSheet(
+                      enableDrag: true,
+                      useSafeArea: true,
+                      isScrollControlled: false,
+                      context: context,
+                      builder: (sheetContext) => StatefulBuilder(
+                        builder: (ctx, setStateSheet) => Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Card(
+                                  color: currentHabit.color.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: liquidGlassContainer(
+                                              context: context,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(14.0),
+                                                child: Icon(currentHabit.icon),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              children: [
+                                                liquidGlassContainer(context: context,child: Padding(
+                                                  padding: const EdgeInsets.only(left: 8.0, right: 8.0 , top: 4.0 , bottom: 4.0),
+                                                  child: Text(currentHabit.name),
+                                                )),
+                                                liquidGlassContainer(context: context,child: Padding(
+                                                  padding: const EdgeInsets.only(left: 8.0, right: 8.0 , top: 4.0 , bottom: 4.0),
+                                                  child: Text(currentHabit.description),
+                                                )),
+                                              ],
+                                            ),
+                                          ),
+                                          Card(
+                                            color: Theme.of(context).cardColor.withValues(alpha: 0.4),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                children: [
+                                                  Icon(Icons.health_and_safety),
+                                                  Text(
+                                                    "Güç seviyesi ${currentHabit.strengthLevel}",
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Card(
+                                            color: Theme.of(context).cardColor.withValues(alpha: 0.4),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                children: [
+                                                  Icon(Icons.whatshot_rounded),
+                                                  Text(
+                                                    "Streak ${currentHabit.currentStreak} gün",
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Card(
+                                            color: Theme.of(context).cardColor.withValues(alpha: 0.4),
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Icon(
+                                                        Icons
+                                                            .keyboard_double_arrow_up,
+                                                      ),
+                                                      Text(
+                                                        "Güç seviyesi %${currentHabit.strength}",
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Card(
+                                            color: Theme.of(context).cardColor.withValues(alpha: 0.4),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                children: [
+                                                  Icon(
+                                                    currentHabit.type ==
+                                                            HabitType.task
+                                                        ? Icons.check
+                                                        : currentHabit.type ==
+                                                              HabitType.count
+                                                        ? Icons.add_box_rounded
+                                                        : currentHabit.type ==
+                                                              HabitType.time
+                                                        ? Icons.timer
+                                                        : Icons.question_mark,
+                                                  ),
+                                                  Text(
+                                                    "Tipi : ${currentHabit.type == HabitType.task
+                                                        ? "Görev"
+                                                        : currentHabit.type == HabitType.count
+                                                        ? "Sayılı"
+                                                        : currentHabit.type == HabitType.time
+                                                        ? "Süreli"
+                                                        : "Bilinmeyen"}",
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Card(
+                                            color: Theme.of(context).cardColor.withValues(alpha: 0.4),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                children: [
+                                                  Icon(Icons.calendar_month),
+                                                  Text(
+                                                    currentHabit.type == HabitType.task
+                                                        ? currentHabit.isCompletedOnDate(selectedDate)
+                                                              ? "Tamamlandı"
+                                                              : "Tamamlanmadı"
+                                                        : currentHabit.type == HabitType.count
+                                                        ? "${currentHabit.getCountProgressForDate(selectedDate)}"
+                                                        : currentHabit.type == HabitType.time
+                                                        ? "${currentHabit.getSecondsProgressForDate(selectedDate).formattedHMS}"
+                                                        : "Bilinmeyen",
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),
