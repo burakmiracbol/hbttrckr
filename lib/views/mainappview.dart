@@ -47,13 +47,13 @@ import 'habits_page.dart';
 //
 //  rate of doing kısmında yarım yapılmışlar kaçırılanlara konuluyor bu okey ama hiç yapılmamaışlar konmuyor ???
 //
-//  habit paylaşma özelliği olsun bujnun için de bir küçük eidget tasarlayalım ve bunun ss alma özelliği olsun bir tuşla şu pkaeti kullan screenshot: ^3.0.0
-//
+//  habit page time habitleri için olan timer diğer günlere sıçrıyor diğer günü seçince o düzeltilmeli
+//  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
 //  detail screende appbar şeffaf yapalım
 //  habitler için not kısmında hatalar düzeltilsin
 //  habitdetail screen hepsine bir glass glow ekle
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
-//  strentgh gauge a içinde strength seviyesine göre bize laf söylesin
+//  strentgh gauge a içinde strength seviyesine göre bize laf söylesin detail screende
 //  haftanın hangi gününden başladığı eklenmeli
 //  habit gruplama olmalı
 //  kodu düzeltmeli hızımızı artırır eğer düzenler isek
