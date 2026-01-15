@@ -74,7 +74,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
   late final selectedDate = Provider.of<HabitProvider>(context).selectedDate;
 
   late String howManyDaysBeforeCreated =
-      "${DateTime.now().difference(currentHabit.createdAt).inDays}";
+      "${DateTime.now().difference(currentHabit.createdAt).inDays + 1}";
 
   @override
   void initState() {
@@ -244,7 +244,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         right: 8.0,
                                       ),
                                       child: Text(
-                                        'Toplam ${howManyDaysBeforeCreated} gün önce oluşturuldu',
+                                        'Toplam $howManyDaysBeforeCreated gün önce oluşturuldu',
                                         style: TextStyle(fontSize: 15),
                                       ),
                                     ),
