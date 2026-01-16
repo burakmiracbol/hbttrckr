@@ -53,9 +53,8 @@ import 'habits_page.dart';
 //  habitler için not kısmında hatalar düzeltilsin
 //  habitdetail screen hepsine bir glass glow ekle
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
-//  strentgh gauge a içinde strength seviyesine göre bize laf söylesin detail screende
+//  strentgh gauge a içinde strength seviyesine göre bize laf söylesin detail screende mesela strength levele göre sözler ve her zaman aynı sözler olmasın diye random sayı ile aynı seviyede farklı quote lar görünebilir
 //  haftanın hangi gününden başladığı eklenmeli
-//  habit gruplama olmalı
 //  kodu düzeltmeli hızımızı artırır eğer düzenler isek
 //  alarmın haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
 //  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
