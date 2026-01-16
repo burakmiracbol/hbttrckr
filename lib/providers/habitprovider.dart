@@ -329,6 +329,7 @@ class HabitProvider with ChangeNotifier {
   void addHabit({
     required String name,
     String description = '',
+    String? group,
     required Color color,
     required HabitType type,
     required IconData icon,
@@ -370,6 +371,23 @@ class HabitProvider with ChangeNotifier {
     }
   }
 
+  List<Habit> getUniqueGroups(List<Habit> habits) {
+    final Map<String, Habit> uniqueMap = {};
+    for (var h in habits.where((h) => h.group != null)) {
+      uniqueMap[h.group!] = h;
+    }
+    return uniqueMap.values.toList();
+  }
+
+  String? selectedGroup;
+
+  void setGroupToView (String? v){
+    selectedGroup = v;
+    notifyListeners();
+  }
+  String? getGroupToView (){
+    return selectedGroup;
+  }
 
   void changeSkipHabit(String habitId) {
     final index = _habits.indexWhere((h) => h.id == habitId);
@@ -462,6 +480,7 @@ class HabitProvider with ChangeNotifier {
             .cancelNotification(updatedHabit.id.hashCode);
       }
     }
+    notifyListeners();
   }
 
   void clearAll() {

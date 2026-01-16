@@ -32,6 +32,7 @@ class Habit {
   final TimeOfDay? reminderTime;
   final Set<int>? reminderDays;
   final HabitType type;
+  final String? group;
   final IconData icon;
   final double achievedCount;
   final double? targetCount;
@@ -51,6 +52,7 @@ class Habit {
     this.reminderTime,
     this.reminderDays,
     required this.type,
+    this.group,
     required this.icon,
     required this.achievedCount,
     this.maxCount,
@@ -264,6 +266,7 @@ class Habit {
     TimeOfDay? reminderTime,
     Set<int>? reminderDays,
     HabitType? type,
+    String? group,
     IconData? icon,
     double? achievedCount,
     double? targetCount,
@@ -283,6 +286,7 @@ class Habit {
       reminderTime: reminderTime ?? this.reminderTime,
       reminderDays: reminderDays ?? this.reminderDays,
       type: type ?? this.type,
+      group: group,
       icon: icon ?? this.icon,
       achievedCount: achievedCount ?? this.achievedCount,
       targetCount: targetCount ?? this.targetCount,
@@ -307,6 +311,7 @@ class Habit {
         : null,
     'reminderDays': reminderDays?.toList(),
     'type': type.index,
+    'group': group,
     'icon': icon.codePoint,
     'achievedCount': achievedCount,
     'targetCount': targetCount,
@@ -359,6 +364,7 @@ class Habit {
       reminderTime: time,
       reminderDays: (json['reminderDays'] as List?)?.cast<int>().toSet(),
       type: HabitType.values[json['type'] ?? 0],
+      group: json['group'],
       icon: IconData(
         json['icon'] ?? Icons.favorite.codePoint,
         fontFamily: 'MaterialIcons',

@@ -41,10 +41,7 @@ Widget buildHabitsPage({
 
   return Consumer<HabitProvider>(
     builder: (context, provider, child) {
-      // Provider'dan alınan habits'i kullan (en güncel)
-      final currentHabits = provider.habits;
-
-      if (currentHabits.isEmpty) {
+      if (provider.habits.isEmpty) {
         return Center(
           child: Text(
             'Henüz alışkanlık eklemedin.\n+ butonuna bas!',
@@ -54,8 +51,6 @@ Widget buildHabitsPage({
         );
       }
 
-
-      final selectedDate = provider.selectedDate ?? DateTime.now();
       return LiquidGlassLayer(
         child: Column(
           children: [
@@ -113,17 +108,21 @@ Widget buildHabitsPage({
                   calendarBuilders: CalendarBuilders(
                     markerBuilder: (context, date, events) {
                       final habitProvider = Provider.of<HabitProvider>(context);
-                      final normalizedDate = DateTime(date.year, date.month, date.day);
+                      final normalizedDate = DateTime(
+                        date.year,
+                        date.month,
+                        date.day,
+                      );
 
                       // Tamamlanan habitler
-                      final completedHabits = currentHabits.where((habit) {
+                      final completedHabits = provider.habits.where((habit) {
                         final createdDate = DateTime(
                           habit.createdAt.year,
                           habit.createdAt.month,
                           habit.createdAt.day,
                         );
                         return !createdDate.isAfter(normalizedDate) &&
-                               habit.isCompletedOnDate(normalizedDate);
+                            habit.isCompletedOnDate(normalizedDate);
                       }).toList();
 
                       if (completedHabits.isNotEmpty) {
@@ -137,9 +136,12 @@ Widget buildHabitsPage({
                                 completedHabits.take(4).length,
                                 (index) {
                                   final habit = completedHabits[index];
-                                  final mixedColor = habitProvider.getMixedColor(habit.id);
+                                  final mixedColor = habitProvider
+                                      .getMixedColor(habit.id);
                                   return Container(
-                                    margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 1.5,
+                                    ),
                                     width: 7,
                                     height: 7,
                                     decoration: BoxDecoration(
@@ -159,9 +161,7 @@ Widget buildHabitsPage({
 
                   onDaySelected: (selectedDay, focusedDay) {
                     context.read<HabitProvider>().setSelectedDate(selectedDay);
-                    print(
-                      "Tıklanan gün: $selectedDay",
-                    );
+                    print("Tıklanan gün: $selectedDay");
                   },
 
                   onPageChanged: (focusedDay) {
@@ -171,29 +171,111 @@ Widget buildHabitsPage({
                 ),
               ),
             ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children:
+                    context
+                            .read<HabitProvider>()
+                            .getUniqueGroups(
+                              context.read<HabitProvider>().habits,
+                            )
+                            .isEmpty ==
+                        true
+                    ? []
+                    : [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: FilterChip(
+                            label: const Text("Hepsi"),
+                            selected:
+                                context.watch<HabitProvider>().selectedGroup ==
+                                null,
+                            onSelected: (bool selected) {
+                              context.read<HabitProvider>().setGroupToView(
+                                null,
+                              );
+                            },
+                          ),
+                        ),
+
+                        ...context
+                            .read<HabitProvider>()
+                            .getUniqueGroups(
+                              context.read<HabitProvider>().habits,
+                            )
+                            .map((habit) {
+                              return FilterChip(
+                                label: Text(habit.group!),
+                                selected:
+                                    context
+                                        .watch<HabitProvider>()
+                                        .selectedGroup ==
+                                    habit.group,
+                                onSelected: (bool selected) {
+                                  if (selected) {
+                                    context
+                                        .read<HabitProvider>()
+                                        .setGroupToView(habit.group!);
+                                  } else {
+                                    context
+                                        .read<HabitProvider>()
+                                        .setGroupToView(null);
+                                  }
+                                },
+                              );
+                            })
+                            .toList(),
+                      ],
+              ),
+            ),
 
             Expanded(
               child: Consumer<HabitProvider>(
                 builder: (context, provider, child) {
                   final selectedDate = provider.selectedDate ?? DateTime.now();
+
                   final normalizedDate = DateTime(
                     selectedDate.year,
                     selectedDate.month,
                     selectedDate.day,
                   );
-                  final visibleHabits = currentHabits.where((habit) {
-                    final createdDate = DateTime(
-                      habit.createdAt.year,
-                      habit.createdAt.month,
-                      habit.createdAt.day,
-                    );
-                    return !createdDate.isAfter(normalizedDate);
-                  }).toList();
+
+                  final visibleHabitsByGroup = context
+                      .read<HabitProvider>()
+                      .getUniqueGroups(
+                    context.read<HabitProvider>().habits,
+                  )
+                      .isEmpty ==
+                      true
+                      ? provider.habits.where((habit) {
+                          final createdDate = DateTime(
+                            habit.createdAt.year,
+                            habit.createdAt.month,
+                            habit.createdAt.day,
+                          );
+                          return !createdDate.isAfter(normalizedDate);
+                        }).toList()
+                      : provider.habits
+                            .where((habit) {
+                              final createdDate = DateTime(
+                                habit.createdAt.year,
+                                habit.createdAt.month,
+                                habit.createdAt.day,
+                              );
+                              return !createdDate.isAfter(normalizedDate);
+                            })
+                            .toList()
+                            .where(
+                              (h) => (h.group == provider.getGroupToView()),
+                            )
+                            .toList();
+
                   return ListView.builder(
                     padding: EdgeInsets.all(16),
-                    itemCount: visibleHabits.length,
+                    itemCount: visibleHabitsByGroup.length,
                     itemBuilder: (context, index) {
-                      final habit = visibleHabits[index];
+                      final habit = visibleHabitsByGroup[index];
                       final normalizedDate = DateTime(
                         selectedDate.year,
                         selectedDate.month,
@@ -216,7 +298,8 @@ Widget buildHabitsPage({
                           borderRadius: BorderRadius.circular(24),
                         ),
                         color: habit.color.withValues(alpha: 0.2),
-                        child: liquidGlassContainer(context: context,
+                        child: liquidGlassContainer(
+                          context: context,
                           child: ListTile(
                             onTap: () => onHabitTapped(habit),
 
@@ -235,9 +318,9 @@ Widget buildHabitsPage({
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        context.read<HabitProvider>().deleteHabit(
-                                          habit.id,
-                                        );
+                                        context
+                                            .read<HabitProvider>()
+                                            .deleteHabit(habit.id);
                                         Navigator.pop(ctx);
                                       },
                                       child: Text(
@@ -249,7 +332,10 @@ Widget buildHabitsPage({
                                 ),
                               );
                             },
-                            leading: CircleAvatar(backgroundColor: habit.color, child: Icon(habit.icon)),
+                            leading: CircleAvatar(
+                              backgroundColor: habit.color,
+                              child: Icon(habit.icon),
+                            ),
                             title: Text(
                               habit.name,
                               style: TextStyle(fontWeight: FontWeight.bold),

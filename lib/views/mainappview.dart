@@ -153,6 +153,7 @@ class MainAppViewState extends State<MainAppView> {
               ({
                 required String name,
                 String description = '',
+                String? group,
                 required Color color,
                 required HabitType type,
                 required IconData icon,
@@ -165,6 +166,7 @@ class MainAppViewState extends State<MainAppView> {
                 parentContext.read<HabitProvider>().addHabit(
                   name: name,
                   description: description,
+                  group: group,
                   color: color,
                   type: type,
                   targetCount: targetCount,

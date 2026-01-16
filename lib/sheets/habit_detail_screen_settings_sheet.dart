@@ -524,6 +524,9 @@ void showResignOfHabit(BuildContext context, Habit currentHabit) {
   final descriptionController = TextEditingController(
     text: currentHabit.description,
   );
+  final groupController = TextEditingController(
+    text: currentHabit.group,
+  );
   Color selectedColor = currentHabit.color;
   Color tempColor = context
       .read<HabitProvider>()
@@ -566,6 +569,13 @@ void showResignOfHabit(BuildContext context, Habit currentHabit) {
                 child: TextField(
                   controller: descriptionController,
                   decoration: InputDecoration(labelText: 'Açıklama'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: groupController,
+                  decoration: InputDecoration(labelText: 'Grup'),
                 ),
               ),
               Padding(
@@ -699,6 +709,7 @@ void showResignOfHabit(BuildContext context, Habit currentHabit) {
                                 : provider
                                       .getHabitById(currentHabit.id)
                                       .description,
+                            group: groupController.text == "" ? null  : groupController.text ,
                             color: selectedColor,
                             icon: selectedIcon,
                             reminderTime: selectedReminderTime,

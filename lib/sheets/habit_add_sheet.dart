@@ -31,6 +31,7 @@ class AddHabitSheet extends StatefulWidget {
   final Function({
   required String name,
   String description,
+  String? group,
   required Color color,
   required HabitType type,
   required IconData icon,
@@ -51,6 +52,8 @@ class AddHabitSheet extends StatefulWidget {
 class _AddHabitSheetState extends State<AddHabitSheet> {
   final _nameController = TextEditingController();
   final _descController = TextEditingController();
+
+  final _groupController = TextEditingController();
   final _countController = TextEditingController();
   final _maxCountController = TextEditingController();
 
@@ -155,6 +158,21 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Description',
+                hintStyle: TextStyle(color: Colors.grey),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[900],
+              ),
+            ),
+            SizedBox(height: 16),
+
+            TextField(
+              controller: _groupController,
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Group (optional)',
                 hintStyle: TextStyle(color: Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -478,6 +496,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     widget.onAdd(
                       name: _nameController.text.trim(),
                       description: _descController.text.trim(),
+                      group: _groupController.text,
                       color: _selectedColor,
                       type: _selectedType,
                       icon: currentIconOfHabit,
