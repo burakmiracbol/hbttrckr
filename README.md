@@ -31,6 +31,7 @@ Bu proje: basit, açık kaynak bir alışkanlık takip uygulamasıdır (Flutter 
 Uygulamanın özellikleri ve işlevleri :
 
 - Habit tipleri: task (yapıldı/bool), count (sayı), time (süre)
+- Daha kolay ulaşmak için habit gruplama 
 - Geniş platform desteği 
 - Cihaza kaydedilen sabit ayarlar
 - Ana ekranda eski tarihlerde ne yapıldığını görmek için takvimli tasarım 
@@ -53,4 +54,4 @@ Uygulamanın özellikleri ve işlevleri :
 
 Katkıda bulunmak
 
-Issue açabilir, PR gönderebilir veya kod içerisindeki TODO'lar üzerine çalışılıp yardım edebilir ve özellik istemesi yapabilirsiniz. Bu açık kaynak dünyasında her katkı değerlidir.
+Issue açabilir, PR gönderebilir veya kod içerisindeki TODO'lar üzerine çalışılıp yardım edebilir (lib/views/mainappview.dart) (TODO'lar düzenli değilse kusuruma kalmayın)ve özellik istemesi yapabilirsiniz. Bu açık kaynak dünyasında her katkı değerlidir.
