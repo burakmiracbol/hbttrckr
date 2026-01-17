@@ -43,6 +43,23 @@ import 'habits_page.dart';
 // TODO's
 //
 //  doğa modu
+//    sheetler açılırkan iki yaprak açılma yüksekliğine göre 0 derceden 90 dereceye kadar dönecek mesela
+//      Bunun için Transform.rotate kullanılacak
+//    .
+//
+//  slider kullanılabilir
+//  Animated Widgetlar:
+//    AnimatedContainer
+//    AnimatedOpacity
+//    AnimatedAlign
+//    AnimatedPositioned
+//    AnimatedDefaultTextStyle
+//    AnimatedTheme
+//    AnimatedList
+//    AnimatedSwitcher
+//    AnimatedRotation
+//    AnimatedScale
+//
 //  animated widgetlar kullanma
 //  tamamlama efektleri
 //  reklam fikri sağol

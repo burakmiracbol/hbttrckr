@@ -541,7 +541,6 @@ class HabitProvider with ChangeNotifier {
       newProgress[targetDate] = true;
     }
 
-
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
     notifyListeners();
     _saveHabits();
