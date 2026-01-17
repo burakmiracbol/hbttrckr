@@ -67,10 +67,11 @@ import 'habits_page.dart';
 //  rate of doing kısmında yarım yapılmışlar kaçırılanlara konuluyor bu okey ama hiç yapılmamaışlar konmuyor ???
 //
 //  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
+//  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
+//
 //  detail screende appbar şeffaf yapalım
 //  habitler için not kısmında hatalar düzeltilsin
 //  habitdetail screen hepsine bir glass glow ekle
-//  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin detail screende mesela strength levele göre sözler ve her zaman aynı sözler olmasın diye random sayı ile aynı seviyede farklı quote lar görünebilir
 //  haftanın hangi gününden başladığı eklenmeli
 //  kodu düzeltmeli hızımızı artırır eğer düzenler isek
