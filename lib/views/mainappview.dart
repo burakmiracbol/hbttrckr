@@ -47,7 +47,6 @@ import 'habits_page.dart';
 //
 //  rate of doing kısmında yarım yapılmışlar kaçırılanlara konuluyor bu okey ama hiç yapılmamaışlar konmuyor ???
 //
-//  habit page time habitleri için olan timer diğer günlere sıçrıyor diğer günü seçince o düzeltilmeli
 //  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
 //  detail screende appbar şeffaf yapalım
 //  habitler için not kısmında hatalar düzeltilsin

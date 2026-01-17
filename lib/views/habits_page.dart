@@ -230,6 +230,7 @@ Widget buildHabitsPage({
               ),
             ),
 
+
             Expanded(
               child: Consumer<HabitProvider>(
                 builder: (context, provider, child) {
@@ -390,7 +391,7 @@ Widget buildHabitsPage({
                                             foregroundColor: Colors.grey,
                                           ),
                                           icon: Icon(
-                                            Icons.radio_button_unchecked,
+                                            Icons.play_arrow,
                                             size: 25,
                                           ),
                                           onPressed: () {},
@@ -405,6 +406,7 @@ Widget buildHabitsPage({
                                           ),
                                           onPressed: () {},
                                         )
+
                                 : habit.type == HabitType.task
                                 ? IconButton(
                                     style: IconButton.styleFrom(
@@ -457,10 +459,11 @@ Widget buildHabitsPage({
                                           foregroundColor: Colors.grey,
                                         ),
                                         onPressed: () {
-                                          provider.toggleTimer(habit.id);
+                                          provider.toggleTimer(habit.id,
+                                              selectedDate);
                                         },
                                         icon: Icon(
-                                          isRunning
+                                          isRunning && provider.extraDate == selectedDate
                                               ? Icons.pause
                                               : Icons.play_arrow,
                                           size: 25,

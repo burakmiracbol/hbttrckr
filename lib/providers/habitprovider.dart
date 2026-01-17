@@ -23,18 +23,19 @@ import 'package:hbttrckr/classes/colormix.dart';
 import 'package:hbttrckr/services/notification_service.dart';
 import 'dart:convert';
 
-
 enum TimeElements { minute, second, hour }
 
 class HabitProvider with ChangeNotifier {
   List<Habit> _habits = [];
   DateTime? selectedDate = DateTime.now();
   late ColorMixer _colorMixer;
-  final Map<String, Color> _mixedColorCache = {}; // Mixed color cache (O(1) lookup)
+  final Map<String, Color> _mixedColorCache =
+      {}; // Mixed color cache (O(1) lookup)
 
   List<Habit> get habits => List.unmodifiable(_habits);
   Timer? _timer;
   Map<String, bool> runningTimers = {};
+  DateTime? extraDate;
 
   HabitProvider() {
     _colorMixer = ColorMixer();
@@ -56,7 +57,8 @@ class HabitProvider with ChangeNotifier {
 
   // Bir alışkanlığın mixed color'ını cache'den al (O(1) lookup)
   Color getMixedColor(String habitId) {
-    return _mixedColorCache[habitId] ?? _habits.firstWhere((h) => h.id == habitId).color;
+    return _mixedColorCache[habitId] ??
+        _habits.firstWhere((h) => h.id == habitId).color;
   }
 
   // Tüm habitler için combined/average mixed color (icon için)
@@ -99,7 +101,8 @@ class HabitProvider with ChangeNotifier {
       }
     }
     debugPrint(
-        '✅ Yeniden planlama tamamlandı (${_habits.length} alışkanlık, $scheduledCount hatırlatma aktif)');
+      '✅ Yeniden planlama tamamlandı (${_habits.length} alışkanlık, $scheduledCount hatırlatma aktif)',
+    );
   }
 
   void resetTimer(String habitId) {
@@ -123,7 +126,7 @@ class HabitProvider with ChangeNotifier {
     _saveHabits();
   }
 
-  void incrementTime(String habitId) {
+  void incrementTime(String habitId, {DateTime? extraDate}) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
 
@@ -136,32 +139,55 @@ class HabitProvider with ChangeNotifier {
       selectedDate!.day,
     );
 
-    final v = habit.dailyProgress[targetDate];
-    final currentSeconds = (v is num) ? v.toInt() : 0;
-    final newSeconds = currentSeconds + 1;
+    if (extraDate != null) {
+      final extraDateX = DateTime(
+        extraDate.year,
+        extraDate.month,
+        extraDate.day,
+      );
+      final v = habit.dailyProgress[extraDateX];
+      final currentSeconds = (v is num) ? v.toInt() : 0;
+      final newSeconds = currentSeconds + 1;
 
-    final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
-    newProgress[targetDate] = newSeconds;
+      final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
+      newProgress[extraDateX] = newSeconds;
 
-    _habits[index] = habit.copyWith(dailyProgress: newProgress);
+      _habits[index] = habit.copyWith(dailyProgress: newProgress);
+    } else {
+      final v = habit.dailyProgress[targetDate];
+      final currentSeconds = (v is num) ? v.toInt() : 0;
+      final newSeconds = currentSeconds + 1;
+
+      final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
+      newProgress[targetDate] = newSeconds;
+
+      _habits[index] = habit.copyWith(dailyProgress: newProgress);
+    }
     notifyListeners();
     _saveHabits();
   }
 
-  void toggleTimer(String habitId) {
+  void toggleTimer(String habitId, DateTime thatDate) {
+
     if (runningTimers[habitId] == true) {
       // DURDUR
       _timer?.cancel();
+      extraDate = null;
       runningTimers[habitId] = false;
     } else {
       // BAŞLAT
       runningTimers[habitId] = true;
+      extraDate = thatDate;
       _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-        incrementTime(habitId); // saniye ekle
+        incrementTime(habitId, extraDate: extraDate); // saniye ekle
       });
     }
     notifyListeners();
   }
+
+  // timerlar id ve bool ile saklanıyor ve önceki tarihlerde değişmesinin sebebi normal zaman değişmesi kullanılması
+  // timerda galiba çünkü tümer toggle etttiğimzde bir tarihde alsak ayrcıa sadece timer için artıran bir fonskiyon yaparız
+  // ve sorunu çözeriz
 
   @override
   void dispose() {
@@ -381,11 +407,12 @@ class HabitProvider with ChangeNotifier {
 
   String? selectedGroup;
 
-  void setGroupToView (String? v){
+  void setGroupToView(String? v) {
     selectedGroup = v;
     notifyListeners();
   }
-  String? getGroupToView (){
+
+  String? getGroupToView() {
     return selectedGroup;
   }
 
@@ -476,8 +503,7 @@ class HabitProvider with ChangeNotifier {
         scheduleReminders(updatedHabit.id);
       } else {
         // Reminder kaldırılmışsa bildirimleri iptal et
-        NotificationService()
-            .cancelNotification(updatedHabit.id.hashCode);
+        NotificationService().cancelNotification(updatedHabit.id.hashCode);
       }
     }
     notifyListeners();
@@ -555,7 +581,8 @@ class HabitProvider with ChangeNotifier {
       );
 
       debugPrint(
-          '✅ ${habit.name} planlandı - ${habit.reminderTime!.hour}:${habit.reminderTime!.minute.toString().padLeft(2, '0')}');
+        '✅ ${habit.name} planlandı - ${habit.reminderTime!.hour}:${habit.reminderTime!.minute.toString().padLeft(2, '0')}',
+      );
     } catch (e) {
       debugPrint('❌ Bildirim planlama hatası: $e');
     }
@@ -602,5 +629,4 @@ class HabitProvider with ChangeNotifier {
       debugPrint('HabitProvider: Save error → $e');
     }
   }
-
 }

@@ -508,9 +508,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                     child: Consumer<HabitProvider>(
                                                       builder: (context, provider, child) {
                                                         final bool isRunning =
-                                                            provider
-                                                                .runningTimers[currentHabit
-                                                                .id] ??
+                                                            (provider
+                                                                .runningTimers[selectedDate]) ??
                                                             false;
 
                                                         return IconButton(
@@ -526,6 +525,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                             if (isRunning) {
                                                               provider.toggleTimer(
                                                                 currentHabit.id,
+                                                                selectedDate ?? DateTime.now()
                                                               ); // timer'ı da durdur
                                                             }
                                                           },
@@ -598,6 +598,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                 .toggleTimer(
                                                                   currentHabit
                                                                       .id,
+
+                                                                selectedDate ?? DateTime.now()
                                                                 );
                                                           },
                                                           icon: Icon(
