@@ -541,10 +541,6 @@ class HabitProvider with ChangeNotifier {
       newProgress[targetDate] = true;
     }
 
-    final newCompletedDates = newProgress.entries
-        .where((e) => e.value == true)
-        .map((e) => e.key)
-        .toList();
 
     _habits[index] = habit.copyWith(dailyProgress: newProgress);
     notifyListeners();
