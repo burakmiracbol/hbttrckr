@@ -370,6 +370,7 @@ class HabitProvider with ChangeNotifier {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
       description: description,
+      group: group,
       color: color,
       createdAt: DateTime.now(),
       type: type,

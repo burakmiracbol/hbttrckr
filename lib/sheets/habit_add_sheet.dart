@@ -496,7 +496,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     widget.onAdd(
                       name: _nameController.text.trim(),
                       description: _descController.text.trim(),
-                      group: _groupController.text,
+                      group: _groupController.text.toString() == "" ? null : _groupController.text.trim(),
                       color: _selectedColor,
                       type: _selectedType,
                       icon: currentIconOfHabit,
