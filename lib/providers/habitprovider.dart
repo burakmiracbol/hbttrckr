@@ -365,7 +365,6 @@ class HabitProvider with ChangeNotifier {
     Set<int>? reminderDays,
     double? maxCount,
   }) {
-    // Icon parametresi artık doğru şekilde alınıyor
     final newHabit = Habit(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
