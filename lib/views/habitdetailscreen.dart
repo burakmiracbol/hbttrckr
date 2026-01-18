@@ -68,6 +68,7 @@ class HabitDetailScreen extends StatefulWidget {
 }
 
 class _HabitDetailScreenState extends State<HabitDetailScreen> {
+
   late final currentHabit = Provider.of<HabitProvider>(
     context,
   ).getHabitById(widget.habitId);

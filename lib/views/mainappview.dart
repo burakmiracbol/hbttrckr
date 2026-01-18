@@ -64,6 +64,10 @@ import 'habits_page.dart';
 //  tamamlama efektleri
 //  reklam fikri sağol
 //
+//  habit gruplamada a grubunu görüntülerken o gruptan bir habite gidip o habitte grup silme işlemi yapınca ve döndüğümüzde
+//    framework hatası geliyor o yüzden bu konuya detaylı bakarız sonra
+//    ayrıca habitlerin yapılma oranına göre yukarıdaki filterchipler de uçuyor ona da bakacağız
+//
 //  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //
@@ -375,6 +379,9 @@ class MainAppViewState extends State<MainAppView> {
                     ),
                   ),
                 );
+                Provider.of<HabitProvider>(
+                  context,
+                ).setGroupToView(null);
               },
               onHabitUpdated: (updatedHabit) {
                 // bu satır aslında gerekmiyor çünkü Navigator içinden çağırılıyor

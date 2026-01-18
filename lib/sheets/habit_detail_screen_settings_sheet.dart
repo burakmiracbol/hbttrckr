@@ -334,7 +334,7 @@ void showShareDetailSheet(
                                 ],
                               ),
                             ),
-                            Row(
+                            Wrap(
                               children: [
                                 Expanded(
                                   child: Padding(

@@ -241,14 +241,22 @@ Widget buildHabitsPage({
                     selectedDate.day,
                   );
 
-                  final visibleHabitsByGroup =
-                      context
-                              .read<HabitProvider>()
-                              .getUniqueGroups(
-                                context.read<HabitProvider>().habits,
-                              )
-                              .isEmpty ==
-                          true
+                  final visibleHabitsByGroup = provider.getGroupToView() == null
+                      ? provider.habits.where((habit) {
+                          final createdDate = DateTime(
+                            habit.createdAt.year,
+                            habit.createdAt.month,
+                            habit.createdAt.day,
+                          );
+                          return !createdDate.isAfter(normalizedDate);
+                        }).toList()
+                      : context
+                                .read<HabitProvider>()
+                                .getUniqueGroups(
+                                  context.read<HabitProvider>().habits,
+                                )
+                                .isEmpty ==
+                            true
                       ? provider.habits.where((habit) {
                           final createdDate = DateTime(
                             habit.createdAt.year,
