@@ -230,7 +230,6 @@ Widget buildHabitsPage({
               ),
             ),
 
-
             Expanded(
               child: Consumer<HabitProvider>(
                 builder: (context, provider, child) {
@@ -242,13 +241,14 @@ Widget buildHabitsPage({
                     selectedDate.day,
                   );
 
-                  final visibleHabitsByGroup = context
-                      .read<HabitProvider>()
-                      .getUniqueGroups(
-                    context.read<HabitProvider>().habits,
-                  )
-                      .isEmpty ==
-                      true
+                  final visibleHabitsByGroup =
+                      context
+                              .read<HabitProvider>()
+                              .getUniqueGroups(
+                                context.read<HabitProvider>().habits,
+                              )
+                              .isEmpty ==
+                          true
                       ? provider.habits.where((habit) {
                           final createdDate = DateTime(
                             habit.createdAt.year,
@@ -406,7 +406,6 @@ Widget buildHabitsPage({
                                           ),
                                           onPressed: () {},
                                         )
-
                                 : habit.type == HabitType.task
                                 ? IconButton(
                                     style: IconButton.styleFrom(
@@ -456,14 +455,23 @@ Widget buildHabitsPage({
 
                                       return IconButton(
                                         style: IconButton.styleFrom(
-                                          foregroundColor: Colors.grey,
+                                          foregroundColor:
+                                              habit.isCompletedOnDate(
+                                                selectedDate,
+                                              )
+                                              ? Colors.green
+                                              : Colors.grey,
                                         ),
                                         onPressed: () {
-                                          provider.toggleTimer(habit.id,
-                                              selectedDate);
+                                          provider.toggleTimer(
+                                            habit.id,
+                                            selectedDate,
+                                          );
                                         },
                                         icon: Icon(
-                                          isRunning && provider.extraDate == selectedDate
+                                          isRunning &&
+                                                  provider.extraDate ==
+                                                      selectedDate
                                               ? Icons.pause
                                               : Icons.play_arrow,
                                           size: 25,

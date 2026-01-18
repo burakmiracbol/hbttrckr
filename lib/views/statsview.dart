@@ -64,7 +64,7 @@ class StatisticsScreen extends StatelessWidget {
 
     for (final habit in habits) {
       // Habit oluşturulduğu günden bugüne kadar geçen gün sayısı
-      final daysForThisHabit =
+      int daysForThisHabit =
           todayDate
               .difference(
                 DateTime(
@@ -77,20 +77,22 @@ class StatisticsScreen extends StatelessWidget {
           1;
       totalCount += daysForThisHabit;
 
-      for (final entry in habit.dailyProgress.entries) {
-        final dynamic value = entry.value;
 
+      for ( final dynamicValues in habit.dailyProgress.values) {
+        //final dynamic value = habit.dailyProgress[startDate];
+        daysForThisHabit -= 1;
+        //habit.dailyProgress.entries
         bool isDone = false;
-        bool isSkipped = value == "skipped";
+        bool isSkipped = dynamicValues == "skipped";
 
         if (!isSkipped) {
           if (habit.type == HabitType.task) {
-            isDone = value == true;
+            isDone = dynamicValues == true;
           } else if (habit.type == HabitType.count) {
-            final achieved = (value is num) ? value.toInt() : 0;
+            final achieved = (dynamicValues is num) ? dynamicValues.toInt() : 0;
             isDone = achieved >= (habit.targetCount ?? 1);
           } else if (habit.type == HabitType.time) {
-            final achievedSeconds = (value is num) ? value.toInt() : 0;
+            final achievedSeconds = (dynamicValues is num) ? dynamicValues.toInt() : 0;
             final targetSecs = habit.targetSeconds ?? 60;
             isDone = achievedSeconds >= targetSecs;
           }
@@ -100,10 +102,9 @@ class StatisticsScreen extends StatelessWidget {
           doneCount++;
         } else if (isSkipped) {
           skippedCount++;
-        } else {
-          missedCount++;
         }
       }
+      missedCount = totalCount - (doneCount+skippedCount);
     }
 
     return GlassGlowLayer(

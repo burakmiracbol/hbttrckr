@@ -121,6 +121,7 @@ class RateOfDoing extends StatelessWidget {
   }
 }
 
+
 class _RateOfDoingPainter extends CustomPainter {
   final double progress;
   final Color color;

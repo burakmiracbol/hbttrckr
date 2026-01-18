@@ -64,8 +64,6 @@ import 'habits_page.dart';
 //  tamamlama efektleri
 //  reklam fikri sağol
 //
-//  rate of doing kısmında yarım yapılmışlar kaçırılanlara konuluyor bu okey ama hiç yapılmamaışlar konmuyor ???
-//
 //  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //
