@@ -95,10 +95,11 @@ void showPreferencesSettingsSheet(BuildContext context) {
                                               )
                                               .toList(),
                                           onChanged: (v) {
-                                            if (v != null)
+                                            if (v != null) {
                                               setStateSheet(
                                                 () => tempScheme = v,
                                               );
+                                            }
                                           },
                                         ),
                                       ),

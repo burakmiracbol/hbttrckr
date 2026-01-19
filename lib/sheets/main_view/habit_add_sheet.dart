@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
@@ -43,7 +41,7 @@ class AddHabitSheet extends StatefulWidget {
   })
   onAdd;
 
-  const AddHabitSheet({Key? key, required this.onAdd}) : super(key: key);
+  const AddHabitSheet({super.key, required this.onAdd});
 
   @override
   State<AddHabitSheet> createState() => _AddHabitSheetState();

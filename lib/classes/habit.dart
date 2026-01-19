@@ -64,16 +64,16 @@ class Habit {
     this.notesDelta,
   }) : dailyProgress = dailyProgress ?? {};
 
-  @deprecated
+  @Deprecated("tarihe göre alıma geçilmesi önerilir eğer bugünün değerini görmek istiyorsanız basitçe tarih olarak bugünü yollayın")
   int get todayCountProgress => getCountProgressForDate(DateTime.now());
 
-  @deprecated
+  @Deprecated("tarihe göre alıma geçilmesi önerilir eğer bugünün değerini görmek istiyorsanız basitçe tarih olarak bugünü yollayın")
   int get todaySecondsProgress => getSecondsProgressForDate(DateTime.now());
 
-  @deprecated
+  @Deprecated("tarihe göre alıma geçilmesi önerilir eğer bugünün değerini görmek istiyorsanız basitçe tarih olarak bugünü yollayın")
   bool get isDoneToday => isCompletedOnDate(DateTime.now());
 
-  @deprecated
+  @Deprecated("tarihe göre alıma geçilmesi önerilir eğer bugünün değerini görmek istiyorsanız basitçe tarih olarak bugünü yollayın")
   bool isCompletedToday() => isCompletedOnDate(DateTime.now());
 
   // Seçilen tarihe göre count progress (bugün yerine)
@@ -102,7 +102,7 @@ class Habit {
       // Öncelikle dailyProgress üzerinden kontrol et (true ise yapıldı)
       final val = dailyProgress[normalized];
       if (val == true) return true;
-      return false;;
+      return false;
     }
 
     if (type == HabitType.count) {
@@ -304,7 +304,7 @@ class Habit {
     'id': id,
     'name': name,
     'description': description,
-    'color': color.value,
+    'color': color.toARGB32(),
     'createdAt': createdAt.millisecondsSinceEpoch,
     'reminderTime': reminderTime != null
         ? '${reminderTime!.hour}:${reminderTime!.minute}'
@@ -359,7 +359,7 @@ class Habit {
       id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
       name: json['name'] ?? 'İsimsiz',
       description: json['description'] ?? '',
-      color: Color(json['color'] ?? Colors.blue.value),
+      color: Color(json['color'] ?? Colors.blue.toARGB32()),
       createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] ?? 0),
       reminderTime: time,
       reminderDays: (json['reminderDays'] as List?)?.cast<int>().toSet(),

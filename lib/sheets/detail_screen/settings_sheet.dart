@@ -498,12 +498,12 @@ void showShareDetailSheet(
                 child: imageState['image'] != null
                     ? ElevatedButton(onPressed: () {
                         // Burada share işlemi yapılabilir
-                        print("Screenshot paylaşıldı: ${imageState['image']!.length} bytes");
+                        debugPrint("Screenshot paylaşıldı: ${imageState['image']!.length} bytes");
                       }, child: Text("Paylaş"))
                     : ElevatedButton(onPressed: () async {
                   final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
                   String fileName = "${currentHabit.name} ${DateTime.now().microsecondsSinceEpoch.toString()}.png";
-                  var path = '$directory';
+                  var path = directory;
                   screenshotController.captureAndSave(
                   path ,
                   fileName:fileName

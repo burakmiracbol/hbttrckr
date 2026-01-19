@@ -74,7 +74,7 @@ class StrengthGauge extends StatelessWidget {
               Text("Strength", style: TextStyle(fontSize: size * 0.07)),
               const SizedBox(height: 4),
               Text(
-                "$seenStrength",
+                seenStrength,
                 style: TextStyle(
                   fontSize: size * 0.18,
                   fontWeight: FontWeight.bold,

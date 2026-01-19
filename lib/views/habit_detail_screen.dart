@@ -55,13 +55,13 @@ class HabitDetailScreen extends StatefulWidget {
   final OnHabitUpdated onHabitUpdated;
   final OnHabitDeleted? onHabitDeleted;
 
-  HabitDetailScreen({
-    Key? key,
+  const HabitDetailScreen({
+    super.key,
     required this.habitId,
     required this.selectedDate,
     required this.onHabitUpdated,
     required this.onHabitDeleted,
-  }) : super(key: key);
+  });
 
   @override
   State<HabitDetailScreen> createState() => _HabitDetailScreenState();
@@ -530,7 +530,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                         builder: (context, provider, child) {
                                                           final bool isRunning =
                                                               (provider
-                                                                  .runningTimers[selectedDate]) ??
+                                                                  .runningTimers[currentHabit.id]) ??
                                                               false;
 
                                                           return IconButton(
@@ -813,9 +813,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         },
 
                                         markerBuilder: (context, day, events) {
-                                          if (day.isAfter(DateTime.now()))
-                                            return null; // gelecekte marker yok
-
+                                          if (day.isAfter(DateTime.now())) {
+                                            return null;
+                                          }
                                           final normalizedDay = DateTime(
                                             day.year,
                                             day.month,

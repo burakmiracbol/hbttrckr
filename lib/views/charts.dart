@@ -18,6 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/habit.dart';
 
 class WeekChartWidget extends StatelessWidget {
+  const WeekChartWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     // Dummy data
@@ -46,7 +48,7 @@ class WeekChartWidget extends StatelessWidget {
 // widgets/monthly_calendar.dart
 class MonthlyCalendarWidget extends StatelessWidget {
   final List<Habit> habits;
-  const MonthlyCalendarWidget({required this.habits});
+  const MonthlyCalendarWidget({super.key, required this.habits});
 
   @override
   Widget build(BuildContext context) {

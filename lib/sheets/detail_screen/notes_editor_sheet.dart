@@ -27,7 +27,7 @@ import 'package:mime/mime.dart';
 class HabitNotesEditorSheet extends StatefulWidget {
   final String? initialDeltaJson;
 
-  const HabitNotesEditorSheet({Key? key, this.initialDeltaJson}) : super(key: key);
+  const HabitNotesEditorSheet({super.key, this.initialDeltaJson});
 
   @override
   State<HabitNotesEditorSheet> createState() => _HabitNotesEditorSheetState();
