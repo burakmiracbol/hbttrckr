@@ -260,9 +260,14 @@ Widget buildHabitsPage({
                       !uniqueGroups.any((h) => h == currentGroup);
 
                   if (isGroupInvalid) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Future.microtask(() {
+                      FocusScope.of(context).unfocus();
                       provider.setGroupToView(null);
                     });
+                    // Commented out original approach:
+                    // WidgetsBinding.instance.addPostFrameCallback((_) {
+                    //   provider.setGroupToView(null);
+                    // });
                   }
 
                   final List<Habit> visibleHabitsByGroup = (currentGroup == null || isGroupInvalid)

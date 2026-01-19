@@ -92,16 +92,20 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
           onPopInvokedWithResult: (didPop, result) async {
             if (didPop) return;
 
-            // Sayfadan çıkmadan ÖNCE focusu ve fare takibini bir nevi "kandırıyoruz"
+            // Yeni yaklaşım:
             FocusScope.of(context).unfocus();
-
-            // Çıkış yapmadan önce yarım frame (veya çok kısa bir süre) beklemek
-            // motorun kendine gelmesini sağlar.
-            await Future.delayed(const Duration(milliseconds: 10));
+            await Future.delayed(const Duration(milliseconds: 30));
 
             if (context.mounted) {
               Navigator.of(context).pop();
             }
+
+            // Eski yaklaşım (commented out):
+            // FocusScope.of(context).unfocus();
+            // await Future.delayed(const Duration(milliseconds: 10));
+            // if (context.mounted) {
+            //   Navigator.of(context).pop();
+            // }
           },
           child: Scaffold(
             primary: false,
