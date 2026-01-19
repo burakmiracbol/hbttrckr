@@ -64,8 +64,8 @@ void main() {
       _buildHabit(id: '3', name: 'C', group: 'Alpha'),
     ];
 
-    final groups = provider.getUniqueGroups(habits);
+    final groups = provider.getUniqueGroupNames(habits);
 
-    expect(groups.map((habit) => habit.group).toList(), ['Alpha', 'Beta']);
+    expect(groups.map((group) => group).toList(), ['Alpha', 'Beta']);
   });
 }
