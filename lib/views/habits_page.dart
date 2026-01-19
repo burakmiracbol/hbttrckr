@@ -15,16 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:hbttrckr/classes/glasscard.dart';
+import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:hbttrckr/classes/habit.dart';
-import 'package:hbttrckr/providers/habitprovider.dart';
-import 'package:hbttrckr/views/mainappview.dart';
+import 'package:hbttrckr/providers/habit_provider.dart';
+import 'package:hbttrckr/views/main_app_view.dart';
 import 'dart:async';
 
-import '../extensions/durationformatter.dart';
+import '../extensions/duration_formatter.dart';
 
 // TODO : calendarda task türünden yapılanları işaretliyor diğer türleri değil
 // TODO : calendar habitlerin hangi günde olduğunu biliyor ama hangi günde ne kadar bittiğini bilmiyor
@@ -36,8 +36,6 @@ Widget buildHabitsPage({
   required OnHabitDeleted? onHabitDeleted,
   required Function(DateTime) onDateSelected,
 }) {
-  bool isRunning = false;
-  late Timer timer;
 
   return Consumer<HabitProvider>(
     builder: (context, provider, child) {
@@ -161,12 +159,12 @@ Widget buildHabitsPage({
 
                   onDaySelected: (selectedDay, focusedDay) {
                     context.read<HabitProvider>().setSelectedDate(selectedDay);
-                    print("Tıklanan gün: $selectedDay");
+                    debugPrint("Tıklanan gün: $selectedDay");
                   },
 
                   onPageChanged: (focusedDay) {
                     context.read<HabitProvider>().setSelectedDate(focusedDay);
-                    print("Kaydırılan gün: $focusedDay");
+                    debugPrint("Kaydırılan gün: $focusedDay");
                   },
                 ),
               ),
@@ -227,7 +225,7 @@ Widget buildHabitsPage({
                                   },
                                 );
                               })
-                              .toList(),
+                              ,
                         ],
                 ),
               ),
@@ -295,7 +293,6 @@ Widget buildHabitsPage({
                         const Duration(days: 7),
                       );
                       bool isTooLate = selectedDate.isBefore(sevenDaysAgo);
-                      final isCompleted = habit.dailyProgress[normalizedDate];
                       return Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
