@@ -1,57 +1,108 @@
 # hbttrckr
-Bu README dosyasını hala düzenlemedim kusura kalmayın lütfen (I haven't edited this README file yet, sorry.)
-### Lisans
-Bu proje lisans ile korunmaktadır :
-- **Yazılım:** Kaynak kodları [GPL v3](./LICENSE) lisansı altındadır.
 
-şu an hala türkçe readme ama yakında ingilizceye de çevirecem
-nasıl özgün proje ismi ama "habit tracker"'ın ünsüz harfleri (habit tracker alışkanlık takip eden demek)
+An open-source habit tracker built with Flutter. The goal is to provide a free, cross‑platform app for tracking personal habits and daily progress.
 
-## **Alışkanlık takip uygulaması** 
-İnternet üzerinde çok güzel alışkanlık uygulamaları var ve insanlar bunları sonuna kadar kullanmak 
-istiyor fakat çoğu o uygulama kar amacı güttüğü için maalesef ki dünya insanı buna para ödeme ihtiyacı duyuyor. 
-Benim amacım ise bu dünya insanlarına para ödemeden kullanacağı bir alışkanlık takip uygulaması oluşturmak 
+## Overview
 
-Her ne kadar şu an geliştirme aşamasında olduğu için daha sadece kemik kısmı ayakata kaldığı ve bazen istenmeyen hatalarla ve yahut istenmeyen bir tasarım stili ile karşılaşsak dahi bizim amacımız size hem kod düzenleme bilmeyenlerimiz için kullanması kolay ve yeni başlayan ve uzman geliştiriciler için
-ise kendi projelerinde temel olarak almaları için açık kodlu bir projeyi hedefliyoruz gelecekte bu uygulamayı size daha işe yarayan hale getirmekten başka ise 
-bilgisayar ile çok alakası olmayan insanları bilgisayarla ilgili işlere alıştırmak için uygulamamız farklı platformların ugulama mağazalarında kar amacı güden şekilde yayımlanabilir ve eğer ki ücretsiz faydalanmak istiyorlar ise onlara kodlarımızı kendi bilgisayarlarında derlemeleri sağlanılacaktır.
+The name **hbttrckr** is derived from the consonants in “habit tracker.”
 
-OPEN SOURCE IS LOVE . 
+Core ideas and features (from the current implementation):
 
-Bu proje: basit, açık kaynak bir alışkanlık takip uygulamasıdır (Flutter ile yazılmıştır). Amaç: kişisel alışkanlıkları; "task", "count" ve "time" tipleriyle takip etmek, günlük ilerlemeyi kaydetmek ve istatistikler sunmaktır. Proje hem mobil hem de masaüstü hedefleri için geliştirilmektedir ve katkılar, hata raporları ve öneriler için açıktır.
+- Habit types: **task** (bool), **count** (number), **time** (duration)
+- Habit grouping (currently alpha)
+- Cross‑platform targets (mobile + desktop)
+- Persisted settings on device
+- Calendar‑based main screen and daily completion markers
+- Completion‑rate tracking and updates
+- Glassmorphism styling
+- Daily progress tracking and skipping
+- Statistics view and monthly calendar progress
+- Habit level, strength, and streak features
+- Material Design 3 color schemes with selectable base color
+- Notifications (beta) and notification testing
+- Rich‑text notes per habit
+- Bottom‑sheet summaries and settings (mobile‑friendly)
+- Desktop window effects (mica/transparency)
 
-### **Bu repository için bir hızlı başlangıç rehberi** 
+## Stack
 
-- Gereksinimler: Flutter SDK, Dart, (isteğe bağlı) Visual Studio veya Android Studio gibi bir kod düzenleme aracı, IDE .
-- Kurulum:
-  1. Repoyu klonlayın: git clone <repo>
-  2. Bağımlılıkları yükleyin: flutter pub get
-  3. Uygulamayı çalıştırın: flutter run
+- **Language:** Dart
+- **Framework:** Flutter (Material Design 3)
+- **State management:** Provider
+- **Package manager:** Flutter/Dart Pub (`pubspec.yaml`)
+- **Notable packages:** `shared_preferences`, `flutter_local_notifications`, `flutter_quill`, `bitsdojo_window`, `flutter_acrylic`, `image_picker`
 
-Uygulamanın özellikleri ve işlevleri :
+## Entry Points
 
-- Habit tipleri: task (yapıldı/bool), count (sayı), time (süre)
-- Daha kolay ulaşmak için habit gruplama (şu anlık alpha modunda)
-- Geniş platform desteği 
-- Cihaza kaydedilen sabit ayarlar
-- Ana ekranda eski tarihlerde ne yapıldığını görmek için takvimli tasarım 
-- Ana ekrandaki takvimde her günde tamamlanan alışkanlıkların sayısı kadar belirteç 
-- Ana ekrandan tamamlama oranı gösterme ve tamamlama oranı değiştirme 
-- Tasarımda glassmorphism desteği
-- Günlük ilerleme takibi ve atlama (skip) desteği
-- Tüm alışkanlıkların özetini tekere teker değil genel görmek isteyenler için de istatistik ekranı
-- İstatistik ekranında aylık takvim bazında progress gösterimi
-- Alışkanlık seviyesi , alışkanlık gücü , ve alışkanlık serisi gibi motive edici özellikler
-- Kişiselleştirmeye açık 
-- Material Design 3 renk şemaları detsekler ve bu şemalardan hangisini kullanmak istediğinizi seçebilirsiniz
-- Renk şemasının ana rengini değiştirme 
-- Bildirim gönderme (beta aşamasında), ve bildirim test etme 
-- Her alışkanlıkta not almak için alşıkanlıkların kendine zengin metin düzenleyici destekli özel not defteri
-- Tüm alışkanlıkların özelliklerini tek alttan açılır ekranla gelen özet listesi 
-- Özellikle mobil kullanıcılar için ve tek el kullanıcıları için kolaylık sağlama açısından genel olarak tüm ayar gibi ekranları alttan açılır halde 
-- Masaüstü için pencere efekti (mica/transparency) kontrolü
-- Açık kaynak: katkılar hoş karşılanır
+- `lib/main.dart` (app entry point)
 
-Katkıda bulunmak
+## Requirements
 
-Issue açabilir, PR gönderebilir veya kod içerisindeki TODO'lar üzerine çalışılıp yardım edebilir (lib/views/mainappview.dart) (TODO'lar düzenli değilse kusuruma kalmayın)ve özellik istemesi yapabilirsiniz. Bu açık kaynak dünyasında her katkı değerlidir.
+- Flutter SDK (Dart SDK constraint in `pubspec.yaml`: `sdk: ^3.9.0`)
+- Platform toolchains as required by Flutter (Android SDK, Xcode for iOS/macOS, Visual Studio Build Tools for Windows, etc.)
+  - TODO: Confirm exact toolchain versions used in development.
+
+## Setup
+
+```bash
+git clone <repo-url>
+cd hbttrckr
+flutter pub get
+```
+
+## Run
+
+```bash
+flutter run
+```
+
+To target a specific platform/device:
+
+```bash
+flutter devices
+flutter run -d <device-id>
+```
+
+## Scripts / Common Commands
+
+This repo does not define custom scripts; use standard Flutter commands:
+
+| Task | Command |
+| --- | --- |
+| Install dependencies | `flutter pub get` |
+| Run the app | `flutter run` |
+| Run tests | `flutter test` |
+| Build (example) | `flutter build <platform>` |
+
+## Environment Variables
+
+No required environment variables are documented in the repo.
+
+- TODO: Document any runtime configuration (API keys, notification config, etc.) if/when added.
+
+## Tests
+
+Tests are located in `test/`.
+
+```bash
+flutter test
+```
+
+## Project Structure
+
+```text
+lib/                # App source (providers, views, services, sheets, classes)
+assets/             # App assets (e.g., animations)
+test/               # Flutter tests
+android/ ios/       # Mobile platform projects
+windows/ macos/     # Desktop platform projects
+linux/ web/         # Desktop and web targets
+```
+
+## License
+
+This project is licensed under the **GNU GPL v3**. See [LICENSE](./LICENSE).
+
+## Contributing
+
+Issues, PRs, and suggestions are welcome. You can also help by addressing TODOs in the codebase (for example in `lib/views/mainappview.dart`).
