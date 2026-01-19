@@ -112,11 +112,9 @@ void showPreferencesSettingsSheet(BuildContext context) {
                                             SizedBox(width: 12),
                                             Expanded(
                                               child: Text(
-                                                '#' +
-                                                    tempColor.value
-                                                        .toRadixString(16)
+                                                '#${tempColor.toARGB32()                                                        .toRadixString(16)
                                                         .padLeft(8, '0')
-                                                        .toUpperCase(),
+                                                        .toUpperCase()}',
                                               ),
                                             ),
                                           ],
@@ -129,7 +127,6 @@ void showPreferencesSettingsSheet(BuildContext context) {
                                           onColorChanged: (c) => setStateSheet(
                                             () => tempColor = c,
                                           ),
-                                          showLabel: true,
                                           pickerAreaHeightPercent: 0.6,
                                         ),
                                       ),
