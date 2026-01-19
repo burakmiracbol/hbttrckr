@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/views/main_app_view.dart';
 import 'package:hbttrckr/sheets/detail_screen/settings_sheet.dart';
-import 'package:hbttrckr/views/stats_view.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';

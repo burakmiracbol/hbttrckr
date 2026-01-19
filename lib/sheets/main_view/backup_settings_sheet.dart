@@ -23,7 +23,7 @@ void showBackupSettingsSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.black.withOpacity(0.9),
+    backgroundColor: Colors.black.withValues(alpha: 0.9),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -117,8 +117,7 @@ void showBackupSettingsSheet(BuildContext context) {
                       final file = File(result.files.single.path!);
 
                       // İçeri aktar (Import)
-                      final success =
-                          await BackupService.importBackup(file);
+                      final success = await BackupService.importBackup(file);
 
                       if (success) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -177,39 +176,33 @@ void showBackupSettingsSheet(BuildContext context) {
                           : SingleChildScrollView(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: backups
                                     .map(
                                       (file) => Padding(
                                         padding: EdgeInsets.only(bottom: 8),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .spaceBetween,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start,
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    file.path
-                                                        .split('/')
-                                                        .last,
+                                                    file.path.split('/').last,
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
                                                     ),
-                                                    overflow: TextOverflow
-                                                        .ellipsis,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                   Text(
                                                     '${(file.lengthSync() / 1024).toStringAsFixed(2)} KB',
                                                     style: TextStyle(
-                                                      color:
-                                                          Colors.grey,
+                                                      color: Colors.grey,
                                                       fontSize: 10,
                                                     ),
                                                   ),
@@ -223,8 +216,9 @@ void showBackupSettingsSheet(BuildContext context) {
                                                 size: 18,
                                               ),
                                               onPressed: () async {
-                                                await BackupService
-                                                    .deleteBackup(file);
+                                                await BackupService.deleteBackup(
+                                                  file,
+                                                );
                                                 Navigator.pop(ctx);
                                                 setState(() {});
                                               },
@@ -260,4 +254,3 @@ void showBackupSettingsSheet(BuildContext context) {
     ),
   );
 }
-
