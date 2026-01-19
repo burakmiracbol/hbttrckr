@@ -11,12 +11,12 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:hbttrckr/main.dart';
-import 'package:hbttrckr/providers/habitprovider.dart';
+import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/providers/notification_settings_provider.dart';
 import 'package:hbttrckr/providers/scheme_provider.dart';
-import 'package:hbttrckr/views/mainappview.dart';
+import 'package:hbttrckr/views/main_app_view.dart';
 import 'package:hbttrckr/classes/habit.dart';
-import 'package:hbttrckr/views/habitdetailscreen.dart';
+import 'package:hbttrckr/views/habit_detail_screen.dart';
 
 void main() {
   setUp(() async {

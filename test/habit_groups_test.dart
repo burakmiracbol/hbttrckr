@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:hbttrckr/classes/habit.dart';
-import 'package:hbttrckr/providers/habitprovider.dart';
+import 'package:hbttrckr/providers/habit_provider.dart';
 
 Habit _buildHabit({
   required String id,
