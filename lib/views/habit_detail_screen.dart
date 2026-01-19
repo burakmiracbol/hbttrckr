@@ -14,20 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'package:hbttrckr/classes/strengthgauge.dart';
+import 'package:hbttrckr/classes/strength_gauge.dart';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/habit.dart';
-import 'package:hbttrckr/views/mainappview.dart';
-import 'package:hbttrckr/sheets/habit_detail_screen_settings_sheet.dart';
-import 'package:hbttrckr/views/statsview.dart';
+import 'package:hbttrckr/views/main_app_view.dart';
+import 'package:hbttrckr/sheets/detail_screen/settings_sheet.dart';
+import 'package:hbttrckr/views/stats_view.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:hbttrckr/providers/habitprovider.dart';
-import 'package:hbttrckr/sheets/habit_notes_editor_sheet.dart';
-import '../extensions/durationformatter.dart';
-import '../sheets/habit_detail_screen_count_selector_sheet.dart';
-import '../sheets/habit_detail_screen_time_selector_sheet.dart';
+import 'package:hbttrckr/providers/habit_provider.dart';
+import 'package:hbttrckr/sheets/detail_screen/notes_editor_sheet.dart';
+import '../classes/stats_card.dart';
+import '../extensions/duration_formatter.dart';
+import '../sheets/detail_screen/count_selector_sheet.dart';
+import '../sheets/detail_screen/time_selector_sheet.dart';
 
 // TODO ERROR : düzenleme oluyor iki iptal tuşu var
 

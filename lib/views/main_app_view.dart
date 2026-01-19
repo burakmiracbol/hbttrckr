@@ -17,15 +17,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/window.dart';
 import 'package:flutter_acrylic/window_effect.dart';
-import 'package:hbttrckr/classes/glasscard.dart';
+import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:hbttrckr/classes/habit.dart';
-import 'package:hbttrckr/views/habitdetailscreen.dart';
+import 'package:hbttrckr/views/habit_detail_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:hbttrckr/views/statsview.dart';
-import 'package:hbttrckr/providers/habitprovider.dart';
-import '../sheets/habit_add_sheet.dart';
-import '../sheets/habits_summary_sheet.dart';
-import '../sheets/main_settings_sheet.dart';
+import 'package:hbttrckr/views/stats_view.dart';
+import 'package:hbttrckr/providers/habit_provider.dart';
+import '../sheets/main_view/habit_add_sheet.dart';
+import '../sheets/main_view/habits_summary_sheet.dart';
+import '../sheets/main_view/main_settings_sheet.dart';
 import 'habits_page.dart';
 
 // TODO's taken from README:
@@ -227,7 +227,7 @@ class MainAppViewState extends State<MainAppView> {
       if (diff == 0) return 'Bugün';
       if (diff == 1) return 'Yarın';
       if (diff == -1) return 'Dün';
-      if (diff > 1) return '${diff} gün sonra';
+      if (diff > 1) return '$diff gün sonra';
       return '${-diff} gün önce';
     }
 

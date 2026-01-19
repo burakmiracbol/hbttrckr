@@ -19,14 +19,17 @@ import 'package:hbttrckr/classes/rate_of_doing.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
-import 'package:hbttrckr/providers/habitprovider.dart';
+import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/classes/habit.dart';
-import 'package:hbttrckr/classes/strengthgauge.dart';
-import 'package:hbttrckr/views/mainappview.dart';
+import 'package:hbttrckr/classes/strength_gauge.dart';
+import 'package:hbttrckr/views/main_app_view.dart';
 
-import '../classes/glasscard.dart';
+import '../classes/glass_card.dart';
+import '../classes/stats_card.dart';
 
 class StatisticsScreen extends StatelessWidget {
+  const StatisticsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final habits = context.watch<HabitProvider>().habits;
@@ -301,8 +304,9 @@ class StatisticsScreen extends StatelessWidget {
                           },
 
                           markerBuilder: (context, day, events) {
-                            if (day.isAfter(todayDate))
-                              return null; // gelecekte marker yok
+                            if (day.isAfter(todayDate)){
+                              return null;
+                            }
 
                             final normalizedDay = DateTime(
                               day.year,
@@ -531,39 +535,3 @@ class StatisticsScreen extends StatelessWidget {
   }
 }
 
-class StatCard extends StatelessWidget {
-  final String title, value;
-  final IconData icon;
-  final Color color;
-  final double padding;
-  StatCard(this.title, this.value, this.icon, this.color, this.padding);
-
-  @override
-  Widget build(BuildContext context) {
-    return liquidGlassContainer(
-      context: context,
-      child: GlassGlow(
-        child: Padding(
-          padding: EdgeInsets.all(padding),
-          child: Opacity(
-            opacity: 1,
-            child: Column(
-              children: [
-                Icon(icon, size: 32, color: color),
-                SizedBox(height: 8),
-                Text(
-                  value,
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
