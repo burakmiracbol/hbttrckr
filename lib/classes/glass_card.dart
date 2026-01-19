@@ -31,16 +31,16 @@ Widget liquidGlassContainer({required Widget child, double borderRadius = 24.0, 
         padding: const EdgeInsets.all(0),
         decoration: BoxDecoration(
 // Uses surface with low opacity to allow background through
-          color: colorScheme.surface.withOpacity(isDark ? 0.15 : 0.4),
+          color: colorScheme.surface.withValues(alpha: isDark ? 0.15 : 0.4),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
 // Provides the "glass edge" highlight
-            color: colorScheme.onSurface.withOpacity(isDark ? 0.1 : 0.2),
+            color: colorScheme.onSurface.withValues(alpha: isDark ? 0.1 : 0.2),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.shadow.withOpacity(0.1),
+              color: colorScheme.shadow.withValues(alpha: 0.1),
               blurRadius: 24,
               offset: const Offset(0, 10),
             ),
