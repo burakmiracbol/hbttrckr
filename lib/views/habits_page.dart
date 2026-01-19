@@ -171,62 +171,65 @@ Widget buildHabitsPage({
                 ),
               ),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children:
-                    context
-                            .read<HabitProvider>()
-                            .getUniqueGroups(
-                              context.read<HabitProvider>().habits,
-                            )
-                            .isEmpty ==
-                        true
-                    ? []
-                    : [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: FilterChip(
-                            label: const Text("Hepsi"),
-                            selected:
-                                context.watch<HabitProvider>().selectedGroup ==
-                                null,
-                            onSelected: (bool selected) {
-                              context.read<HabitProvider>().setGroupToView(
-                                null,
-                              );
-                            },
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  spacing: 8,
+                  children:
+                      context
+                              .read<HabitProvider>()
+                              .getUniqueGroupNames(
+                                context.read<HabitProvider>().habits,
+                              )
+                              .isEmpty
+                      ? []
+                      : [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: FilterChip(
+                              label: const Text("Hepsi"),
+                              selected:
+                                  context.watch<HabitProvider>().selectedGroup ==
+                                  null,
+                              onSelected: (bool selected) {
+                                context.read<HabitProvider>().setGroupToView(
+                                  null,
+                                );
+                              },
+                            ),
                           ),
-                        ),
 
-                        ...context
-                            .read<HabitProvider>()
-                            .getUniqueGroups(
-                              context.read<HabitProvider>().habits,
-                            )
-                            .map((habit) {
-                              return FilterChip(
-                                label: Text(habit.group!),
-                                selected:
-                                    context
-                                        .watch<HabitProvider>()
-                                        .selectedGroup ==
-                                    habit.group,
-                                onSelected: (bool selected) {
-                                  if (selected) {
-                                    context
-                                        .read<HabitProvider>()
-                                        .setGroupToView(habit.group!);
-                                  } else {
-                                    context
-                                        .read<HabitProvider>()
-                                        .setGroupToView(null);
-                                  }
-                                },
-                              );
-                            })
-                            .toList(),
-                      ],
+                          ...context
+                              .read<HabitProvider>()
+                              .getUniqueGroupNames(
+                                context.read<HabitProvider>().habits,
+                              )
+                              .map((groupName) {
+                                return FilterChip(
+                                  label: Text(groupName),
+                                  selected:
+                                      context
+                                          .watch<HabitProvider>()
+                                          .getGroupToView() ==
+                                      groupName,
+                                  onSelected: (bool selected) {
+                                    if (selected) {
+                                      context
+                                          .read<HabitProvider>()
+                                          .setGroupToView(groupName);
+                                    } else {
+                                      context
+                                          .read<HabitProvider>()
+                                          .setGroupToView(null);
+                                    }
+                                  },
+                                );
+                              })
+                              .toList(),
+                        ],
+                ),
               ),
             ),
 
@@ -241,44 +244,30 @@ Widget buildHabitsPage({
                     selectedDate.day,
                   );
 
-                  final visibleHabitsByGroup = provider.getGroupToView() == null
-                      ? provider.habits.where((habit) {
-                          final createdDate = DateTime(
-                            habit.createdAt.year,
-                            habit.createdAt.month,
-                            habit.createdAt.day,
-                          );
-                          return !createdDate.isAfter(normalizedDate);
-                        }).toList()
-                      : context
-                                .read<HabitProvider>()
-                                .getUniqueGroups(
-                                  context.read<HabitProvider>().habits,
-                                )
-                                .isEmpty ==
-                            true
-                      ? provider.habits.where((habit) {
-                          final createdDate = DateTime(
-                            habit.createdAt.year,
-                            habit.createdAt.month,
-                            habit.createdAt.day,
-                          );
-                          return !createdDate.isAfter(normalizedDate);
-                        }).toList()
-                      : provider.habits
-                            .where((habit) {
-                              final createdDate = DateTime(
-                                habit.createdAt.year,
-                                habit.createdAt.month,
-                                habit.createdAt.day,
-                              );
-                              return !createdDate.isAfter(normalizedDate);
-                            })
-                            .toList()
-                            .where(
-                              (h) => (h.group == provider.getGroupToView()),
-                            )
-                            .toList();
+                  final dateFilteredHabits = provider.habits.where((habit) {
+                    final createdDate = DateTime(
+                      habit.createdAt.year,
+                      habit.createdAt.month,
+                      habit.createdAt.day,
+                    );
+                    return !createdDate.isAfter(normalizedDate);
+                  }).toList();
+
+
+                  final currentGroup = provider.getGroupToView();
+                  final uniqueGroups = provider.getUniqueGroupNames(provider.habits);
+                  final bool isGroupInvalid = currentGroup != null &&
+                      !uniqueGroups.any((h) => h == currentGroup);
+
+                  if (isGroupInvalid) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      provider.setGroupToView(null);
+                    });
+                  }
+
+                  final List<Habit> visibleHabitsByGroup = (currentGroup == null || isGroupInvalid)
+                      ? dateFilteredHabits
+                      : dateFilteredHabits.where((h) => h.group == currentGroup).toList();
 
                   return ListView.builder(
                     padding: EdgeInsets.all(16),

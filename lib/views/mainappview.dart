@@ -379,9 +379,7 @@ class MainAppViewState extends State<MainAppView> {
                     ),
                   ),
                 );
-                Provider.of<HabitProvider>(
-                  context,
-                ).setGroupToView(null);
+                context.read<HabitProvider>().setGroupToView(null);
               },
               onHabitUpdated: (updatedHabit) {
                 // bu satır aslında gerekmiyor çünkü Navigator içinden çağırılıyor

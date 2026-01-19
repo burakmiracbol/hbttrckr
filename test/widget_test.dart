@@ -7,24 +7,88 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:hbttrckr/main.dart';
+import 'package:hbttrckr/providers/habitprovider.dart';
+import 'package:hbttrckr/providers/notification_settings_provider.dart';
+import 'package:hbttrckr/providers/scheme_provider.dart';
+import 'package:hbttrckr/views/mainappview.dart';
+import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/views/habitdetailscreen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  setUp(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
+  });
+
+  testWidgets('App builds main view', (WidgetTester tester) async {
+    final schemeProvider = SchemeProvider();
+    await schemeProvider.init();
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CurrentThemeMode>(
+            create: (_) => CurrentThemeMode(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => HabitProvider(enableNotifications: false),
+          ),
+          ChangeNotifierProvider(create: (_) => NotificationSettings()),
+          ChangeNotifierProvider<SchemeProvider>.value(value: schemeProvider),
+        ],
+        child: const MyApp(),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.byType(MainAppView), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('Tapping a habit does not throw provider listen assertion',
+      (WidgetTester tester) async {
+    final schemeProvider = SchemeProvider();
+    await schemeProvider.init();
+    final habitProvider = HabitProvider(enableNotifications: false);
+    habitProvider.addHabitFromObject(
+      Habit(
+        id: '1',
+        name: 'Read',
+        description: '',
+        group: 'Health',
+        color: Colors.blue,
+        createdAt: DateTime(2026, 1, 1),
+        type: HabitType.task,
+        icon: Icons.favorite,
+        achievedCount: 0,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CurrentThemeMode>(
+            create: (_) => CurrentThemeMode(),
+          ),
+          ChangeNotifierProvider<HabitProvider>.value(value: habitProvider),
+          ChangeNotifierProvider(create: (_) => NotificationSettings()),
+          ChangeNotifierProvider<SchemeProvider>.value(value: schemeProvider),
+        ],
+        child: const MyApp(),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    final habitTile = find.byType(ListTile).first;
+    await tester.tap(habitTile);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(HabitDetailScreen), findsOneWidget);
   });
 }

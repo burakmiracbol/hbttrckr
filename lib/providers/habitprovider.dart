@@ -31,17 +31,21 @@ class HabitProvider with ChangeNotifier {
   late ColorMixer _colorMixer;
   final Map<String, Color> _mixedColorCache =
       {}; // Mixed color cache (O(1) lookup)
+  final bool _enableNotifications;
 
   List<Habit> get habits => List.unmodifiable(_habits);
   Timer? _timer;
   Map<String, bool> runningTimers = {};
   DateTime? extraDate;
 
-  HabitProvider() {
+  HabitProvider({bool enableNotifications = true})
+      : _enableNotifications = enableNotifications {
     _colorMixer = ColorMixer();
     _loadHabits();
     // Alışkanlıklar yüklendikten sonra bildirimleri planla
-    Future.microtask(rescheduleAllNotifications);
+    if (_enableNotifications) {
+      Future.microtask(rescheduleAllNotifications);
+    }
   }
 
   // Tüm alışkanlıklar için renkleri mixer ile yeniden hesapla ve cache'le
@@ -83,6 +87,7 @@ class HabitProvider with ChangeNotifier {
 
   // Tüm alışkanlıkların bildirimlerini yeniden planla (uygulama başlangıcında ve ayarlar değiştirildiğinde)
   Future<void> rescheduleAllNotifications() async {
+    if (!_enableNotifications) return;
     // Alışkanlıkların yüklenmesini bekle
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -392,24 +397,57 @@ class HabitProvider with ChangeNotifier {
     notifyListeners();
 
     // Eğer reminder ayarlanmışsa planla
-    if (reminderTime != null) {
+    if (reminderTime != null && _enableNotifications) {
       scheduleReminders(newHabit.id);
     }
   }
 
-  List<Habit> getUniqueGroups(List<Habit> habits) {
-    final Map<String, Habit> uniqueMap = {};
-    for (var h in habits.where((h) => h.group != null)) {
-      uniqueMap[h.group!] = h;
+  List<String> getUniqueGroupNames(List<Habit> habits) {
+    final groupNames = <String>{};
+    for (var h in habits) {
+      if (h.group != null && h.group!.isNotEmpty) {
+        groupNames.add(h.group!);
+      }
     }
-    return uniqueMap.values.toList();
+    final sortedList = groupNames.toList();
+    sortedList.sort();
+    return sortedList;
   }
 
   String? selectedGroup;
 
   void setGroupToView(String? v) {
+    if (selectedGroup == v) return;
+
     selectedGroup = v;
-    notifyListeners();
+
+    // Hata almanın sebebi notifyListeners'ın build sırasında çalışmasıdır.
+    // Bunu bir sonraki frame'e atarsak assertion asla tetiklenmez.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (hasListeners) { // Bellek sızıntısını önlemek için kontrol
+        notifyListeners();
+      }
+    });
+  }
+
+// EK OLARAK: Habit listesi her değiştiğinde bu kontrolü otomatik yap
+// Böylece UI içinde if-else ile uğraşmazsın.
+  void checkGroupValidity({bool notify = true}) {
+    final groupNames = getUniqueGroupNames(_habits);
+    final exists = selectedGroup != null && groupNames.contains(selectedGroup);
+
+    if (selectedGroup != null && !exists) {
+      selectedGroup = null;
+      if (notify) {
+        notifyListeners();
+      }
+    }
+  }
+
+  void silentResetGroup() {
+    selectedGroup = null;
+    // notifyListeners() ÇAĞIRMIYORUZ!
+    // Çünkü zaten sayfadan çıkıyoruz veya ekran zaten istediğimiz gibi.
   }
 
   String? getGroupToView() {
@@ -498,12 +536,16 @@ class HabitProvider with ChangeNotifier {
 
       _saveHabits();
 
+      checkGroupValidity(notify: false);
+
       // Bildirimleri güncelle
-      if (updatedHabit.reminderTime != null) {
-        scheduleReminders(updatedHabit.id);
-      } else {
-        // Reminder kaldırılmışsa bildirimleri iptal et
-        NotificationService().cancelNotification(updatedHabit.id.hashCode);
+      if (_enableNotifications) {
+        if (updatedHabit.reminderTime != null) {
+          scheduleReminders(updatedHabit.id);
+        } else {
+          // Reminder kaldırılmışsa bildirimleri iptal et
+          NotificationService().cancelNotification(updatedHabit.id.hashCode);
+        }
       }
     }
     notifyListeners();
@@ -548,6 +590,7 @@ class HabitProvider with ChangeNotifier {
 
   // Alışkanlık için bildirimleri planla
   Future<void> scheduleReminders(String habitId) async {
+    if (!_enableNotifications) return;
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
 
@@ -589,9 +632,13 @@ class HabitProvider with ChangeNotifier {
     if (index == -1) return;
 
     // Bildirimleri iptal et
-    await NotificationService().cancelNotification(habitId.hashCode);
+    if (_enableNotifications) {
+      await NotificationService().cancelNotification(habitId.hashCode);
+    }
 
     _habits.removeAt(index);
+
+    checkGroupValidity(notify: false);
 
     // Silindikten sonra mixed color'ları yeniden hesapla
     _recalculateMixedColors();

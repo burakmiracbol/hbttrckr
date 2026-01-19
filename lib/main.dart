@@ -154,6 +154,7 @@ dynamic buildMaterialScheme(SchemeProvider sp, bool isDark) {
 }
 
 Future<void> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize SchemeProvider early so saved preferences are loaded
@@ -279,12 +280,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// TODO (yapılacaklar):
-// - Kullanıcının seçebileceği scheme türleri: expressive, fidelity, fruitsalad, monochrome,
-//   neutral, rainbow, tonalSpot, vibrant
-// - Kullanıcı theme'in base color'unu değiştirebilecek (ARGB/Color picker)
-// - Provider (`SchemeProvider`) ile seçilen scheme ve baseColor saklanacak ve uygulama
-//   runtime'da tema oluştururken kullanılacak
-// - UI tarafında basit bir settings paneli ekle (daha sonra): scheme tipi dropdown, color picker
-//   ve light/dark önizleme düğmesi
