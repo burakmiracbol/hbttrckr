@@ -19,16 +19,16 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
-import 'package:hbttrckr/classes/glasscard.dart';
+import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:screenshot/screenshot.dart';
 
-import '../classes/habit.dart';
-import '../extensions/durationformatter.dart';
-import '../providers/habitprovider.dart';
-import '../views/mainappview.dart';
+import '../../classes/habit.dart';
+import '../../extensions/duration_formatter.dart';
+import '../../providers/habit_provider.dart';
+import '../../views/main_app_view.dart';
 
 void detailSettingsSheet(
   BuildContext context,

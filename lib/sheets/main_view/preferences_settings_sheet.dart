@@ -17,8 +17,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
-import '../providers/scheme_provider.dart';
-import '../views/mainappview.dart';
+import '../../providers/scheme_provider.dart';
+import '../../views/main_app_view.dart';
 
 void showPreferencesSettingsSheet(
     BuildContext context

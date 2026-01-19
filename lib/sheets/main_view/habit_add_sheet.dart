@@ -22,7 +22,7 @@ import 'package:flutter_iconpicker/Models/configuration.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 
-import '../classes/habit.dart';
+import '../../classes/habit.dart';
 
 // Sık kullanılan Material Icons'ın custom map'i
 

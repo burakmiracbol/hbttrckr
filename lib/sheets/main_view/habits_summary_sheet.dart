@@ -16,9 +16,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../classes/glasscard.dart';
-import '../providers/habitprovider.dart';
-import '../views/mainappview.dart';
+import '../../classes/glass_card.dart';
+import '../../providers/habit_provider.dart';
+import '../../views/main_app_view.dart';
 
 void showHabitsSummarySheet (
     BuildContext context

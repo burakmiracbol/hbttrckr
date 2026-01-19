@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:hbttrckr/sheets/backup_settings_sheet.dart';
-import 'package:hbttrckr/sheets/preferences_settings_sheet.dart';
+import 'package:hbttrckr/sheets/main_view/backup_settings_sheet.dart';
+import 'package:hbttrckr/sheets/main_view/preferences_settings_sheet.dart';
 import 'account_settings_sheet.dart';
 import 'notifications_settings_sheet.dart';
 

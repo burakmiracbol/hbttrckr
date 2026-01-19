@@ -20,9 +20,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 
-import '../extensions/durationformatter.dart';
-import '../classes/habit.dart';
-import '../providers/habitprovider.dart';
+import '../../extensions/duration_formatter.dart';
+import '../../classes/habit.dart';
+import '../../providers/habit_provider.dart';
 
 void showTimeSelectorSheet(
     BuildContext context,

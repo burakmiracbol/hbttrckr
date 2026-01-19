@@ -17,8 +17,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/notification_settings_provider.dart';
-import '../services/notification_service.dart';
+import '../../providers/notification_settings_provider.dart';
+import '../../services/notification_service.dart';
 
 void showNotificationsSettingsSheet (
     BuildContext context
