@@ -30,7 +30,7 @@ void showHabitsSummarySheet (
     context: context,
     builder: (sheetContext) => DraggableScrollableSheet(
       expand: false,
-      initialChildSize: 0.5, // başlangıçta ekranın %50'si
+      initialChildSize: 0.7, // başlangıçta ekranın %50'si
       minChildSize: 0.25,
       maxChildSize: 0.95,
       builder: (context, scrollController) => Padding(

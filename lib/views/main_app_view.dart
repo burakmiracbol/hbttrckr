@@ -68,6 +68,8 @@ import 'habits_page.dart';
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //
 //  detail screende appbar şeffaf yapalım
+//  sadece calendar bölümü olabilir tek sferlik eventler için
+//  genel bir kronometre süre sayar da eklenebilir
 //  habitler için not kısmında hatalar düzeltilsin
 //  habitdetail screen hepsine bir glass glow ekle
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin detail screende mesela strength levele göre sözler ve her zaman aynı sözler olmasın diye random sayı ile aynı seviyede farklı quote lar görünebilir

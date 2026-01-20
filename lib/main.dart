@@ -154,7 +154,6 @@ dynamic buildMaterialScheme(SchemeProvider sp, bool isDark) {
 }
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize SchemeProvider early so saved preferences are loaded
@@ -192,18 +191,36 @@ Future<void> main() async {
   } else if (defaultTargetPlatform == TargetPlatform.macOS) {
     await Window.initialize();
     await Window.setEffect(
-      effect: initialTheme.isMica ? WindowEffect.mica : WindowEffect.transparent,
+      effect: initialTheme.isMica
+          ? WindowEffect.mica
+          : WindowEffect.transparent,
+      color: Color(schemeProvider.baseColorArgb),
     );
+    initialTheme.isMica
+        ? Window.makeTitlebarOpaque()
+        : Window.makeTitlebarTransparent();
   } else if (defaultTargetPlatform == TargetPlatform.windows) {
     await Window.initialize();
     await Window.setEffect(
-      effect: initialTheme.isMica ? WindowEffect.mica : WindowEffect.transparent,
+      effect: initialTheme.isMica
+          ? WindowEffect.mica
+          : WindowEffect.transparent,
+      color: Color(schemeProvider.baseColorArgb),
     );
+    initialTheme.isMica
+        ? Window.makeTitlebarOpaque()
+        : Window.makeTitlebarTransparent();
   } else if (defaultTargetPlatform == TargetPlatform.linux) {
     await Window.initialize();
     await Window.setEffect(
-      effect: initialTheme.isMica ? WindowEffect.mica : WindowEffect.transparent,
+      effect: initialTheme.isMica
+          ? WindowEffect.mica
+          : WindowEffect.transparent,
+      color: Color(schemeProvider.baseColorArgb),
     );
+    initialTheme.isMica
+        ? Window.makeTitlebarOpaque()
+        : Window.makeTitlebarTransparent();
   }
   initializeDateFormatting('tr_TR', null);
   runApp(
