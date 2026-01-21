@@ -59,12 +59,14 @@ import 'habits_page.dart';
 //    AnimatedSwitcher
 //    AnimatedRotation
 //    AnimatedScale
+//    AlignTransition
 //
-//  animated widgetlar kullanma
+//  animated widgetlar kullaılnması
 //  tamamlama efektleri
 //  reklam fikri sağol
 //
 //  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
+//  statsview gridview düzeltmesi
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //
 //  detail screende appbar şeffaf yapalım
