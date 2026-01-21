@@ -59,8 +59,9 @@ import 'habits_page.dart';
 //    AnimatedSwitcher
 //    AnimatedRotation
 //    AnimatedScale
+//    AlignTransition
 //
-//  animated widgetlar kullanma
+//  animated widgetlar kullaılnması
 //  tamamlama efektleri
 //  reklam fikri sağol
 //
