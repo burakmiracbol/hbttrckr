@@ -121,14 +121,24 @@ class StatisticsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                // problematic gridview
+                GridView(
+                  shrinkWrap: true,
+                    primary: false,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 320,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 1.0,
+                    ),
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: liquidGlassContainer(
-                        context: context,
-                        child: Expanded(
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: liquidGlassContainer(
+                          context: context,
                           child: Card(
                             color: Colors.transparent,
                             child: Padding(
@@ -145,22 +155,18 @@ class StatisticsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ],
-                ),
-
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Card(
-                            color: context.read<CurrentThemeMode>().isMica
-                                ? Theme.of(context).cardColor
-                                : Theme.of(
-                                    context,
-                                  ).cardColor.withValues(alpha: 0.2),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Card(
+                          color: context.read<CurrentThemeMode>().isMica
+                              ? Theme.of(context).cardColor
+                              : Theme.of(
+                            context,
+                          ).cardColor.withValues(alpha: 0.2),
+                          child: Align(
+                            alignment: Alignment.center,
                             child: StatCard(
                               "Toplam Alışkanlık",
                               totalHabits.toString(),
@@ -171,15 +177,19 @@ class StatisticsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Card(
-                            color: context.read<CurrentThemeMode>().isMica
-                                ? Theme.of(context).cardColor
-                                : Theme.of(
-                                    context,
-                                  ).cardColor.withValues(alpha: 0.2),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Card(
+                          color: context.read<CurrentThemeMode>().isMica
+                              ? Theme.of(context).cardColor
+                              : Theme.of(
+                            context,
+                          ).cardColor.withValues(alpha: 0.2),
+                          child: Align(
+                            alignment: Alignment.center,
                             child: StatCard(
                               "Aktif Streak",
                               activeHabits.toString(),
@@ -190,22 +200,19 @@ class StatisticsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Card(
-                            color: context.read<CurrentThemeMode>().isMica
-                                ? Theme.of(context).cardColor
-                                : Theme.of(
-                                    context,
-                                  ).cardColor.withValues(alpha: 0.2),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Card(
+                          color: context.read<CurrentThemeMode>().isMica
+                              ? Theme.of(context).cardColor
+                              : Theme.of(
+                            context,
+                          ).cardColor.withValues(alpha: 0.2),
+                          child: Align(
+                            alignment: Alignment.center,
                             child: StatCard(
                               "Efsane Seviye",
                               perfectHabits.toString(),
@@ -216,39 +223,43 @@ class StatisticsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Card(
-                            color: context.read<CurrentThemeMode>().isMica
-                                ? Theme.of(context).cardColor
-                                : Theme.of(
-                                    context,
-                                  ).cardColor.withValues(alpha: 0.2),
-                            child: liquidGlassContainer(
-                              context: context,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  top: 32.0,
-                                  bottom: 8.0,
-                                  right: 8.0,
-                                  left: 8.0,
-                                ),
-                                child: StrengthGauge(
-                                  seenStrength:
-                                      "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
-                                  strength:
-                                      (totalStrength / totalHabits.clamp(1, 999)),
-                                  size: MediaQuery.of(context).size.width * 0.3,
-                                ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Card(
+                          color: context.read<CurrentThemeMode>().isMica
+                              ? Theme.of(context).cardColor
+                              : Theme.of(
+                            context,
+                          ).cardColor.withValues(alpha: 0.2),
+                          child: liquidGlassContainer(
+                            context: context,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: 32.0,
+                                bottom: 8.0,
+                                right: 8.0,
+                                left: 8.0,
+                              ),
+                              child: StrengthGauge(
+                                seenStrength:
+                                "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
+                                strength:
+                                (totalStrength / totalHabits.clamp(1, 999)),
+                                size: MediaQuery.of(context).size.width * 0.3,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+
+
+
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Card(
