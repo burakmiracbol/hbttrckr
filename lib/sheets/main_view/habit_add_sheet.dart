@@ -421,12 +421,23 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                           'Renk Seç',
                           style: TextStyle(color: Colors.white),
                         ),
-                        content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: tempColor,
-                            onColorChanged: (color) => tempColor = color,
-                            labelTypes: [],
-                            pickerAreaHeightPercent: 0.8,
+                        content: IntrinsicWidth(
+                          child: IntrinsicHeight(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ColorPicker(
+                                    hexInputBar: true,
+                                    pickerColor: tempColor,
+                                    onColorChanged: (color) => tempColor = color,
+                                    labelTypes: [],
+                                    pickerAreaHeightPercent: 0.8,
+                                    portraitOnly: true,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         actions: [
