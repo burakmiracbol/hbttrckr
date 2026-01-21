@@ -35,19 +35,22 @@ class StatCard extends StatelessWidget {
           padding: EdgeInsets.all(padding),
           child: Opacity(
             opacity: 1,
-            child: Column(
-              children: [
-                Icon(icon, size: 32, color: color),
-                SizedBox(height: 8),
-                Text(
-                  value,
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-              ],
+            child: Align(
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  Icon(icon, size: 32, color: color),
+                  SizedBox(height: 8),
+                  Text(
+                    value,
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
