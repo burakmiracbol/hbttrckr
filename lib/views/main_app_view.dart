@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_acrylic/window.dart';
-import 'package:flutter_acrylic/window_effect.dart';
 import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/views/habit_detail_screen.dart';

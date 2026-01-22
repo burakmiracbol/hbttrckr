@@ -22,7 +22,6 @@ import 'package:provider/provider.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/classes/strength_gauge.dart';
-import 'package:hbttrckr/views/main_app_view.dart';
 
 import '../classes/glass_card.dart';
 import '../classes/stats_card.dart';

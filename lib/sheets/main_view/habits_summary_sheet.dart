@@ -19,7 +19,6 @@ import 'package:provider/provider.dart';
 import '../../classes/glass_card.dart';
 import '../../providers/habit_provider.dart';
 import '../../providers/scheme_provider.dart';
-import '../../views/main_app_view.dart';
 
 void showHabitsSummarySheet (
     BuildContext context
