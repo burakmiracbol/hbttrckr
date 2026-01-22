@@ -22,9 +22,9 @@ import 'package:provider/provider.dart';
 import 'package:hbttrckr/views/stats_view.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import '../providers/scheme_provider.dart';
-import '../sheets/main_view/habit_add_sheet.dart';
-import '../sheets/main_view/habits_summary_sheet.dart';
-import '../sheets/main_view/main_settings_sheet.dart';
+import '../actions/main_view/habit_add_sheet.dart';
+import '../actions/main_view/habits_summary_sheet.dart';
+import '../actions/main_view/main_settings_sheet.dart';
 import 'habits_page.dart';
 
 // TODO's taken from README:
