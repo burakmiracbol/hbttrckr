@@ -15,10 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_acrylic/window.dart';
+import 'package:flutter_acrylic/window_effect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Basit bir theme/scheme provider: kullanıcı hangi "scheme" tipini seçtiğini
 // ve temanın base color'unu değiştirebilmesini sağlar.
+
+class CurrentThemeMode with ChangeNotifier {
+  bool isDarkMode = true;
+  ThemeMode currentMode = ThemeMode.system;
+
+  bool isMica = true;
+
+  void changeThemeMode() {
+    isDarkMode = !isDarkMode;
+    currentMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+  }
+
+  Future<void> toggleMica() async {
+    if (isMica) {
+      await Window.setEffect(effect: WindowEffect.disabled);
+      await Future.delayed(const Duration(milliseconds: 100));
+      await Window.setEffect(effect: WindowEffect.transparent);
+      isMica = false;
+    } else {
+      await Window.setEffect(effect: WindowEffect.aero, dark: false);
+      isMica = true;
+    }
+    notifyListeners();
+  }
+}
 
 enum SchemeType {
   expressive,
