@@ -32,6 +32,15 @@ Core ideas and features (from the current implementation):
 - **Package manager:** Flutter/Dart Pub (`pubspec.yaml`)
 - **Notable packages:** `shared_preferences`, `flutter_local_notifications`, `flutter_quill`, `bitsdojo_window`, `flutter_acrylic`, `image_picker`
 
+## Note for this repo !!
+This is a not-a-production-ready repo. So if you using this repo for yourself, keep in mind that you can face some bugs. Some of them are available in issues and README.md (below)
+
+And currently this app developing in windows so maybe there are some issus with other environments (some native things)
+
+### For Windows 
+- Make sure that you are using this app with all release folder because this app needs some additional packages for native environment (don't just use with .exe )
+- Sometimes you can face with deadlock (just app is freeezing) so calm down there are much deadlocks we are trying to face with them
+
 ## Entry Points
 
 - `lib/main.dart` (app entry point)

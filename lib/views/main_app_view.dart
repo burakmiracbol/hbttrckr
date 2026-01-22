@@ -65,6 +65,31 @@ import 'habits_page.dart';
 //  tamamlama efektleri
 //  reklam fikri sağol
 //
+//  habits_page den girdim habite sonra ekranı büyülttüm sonra geri çıktım sonra deadlock yedik (assertion)
+//    bunun için farklı yöntemler denemeliyiz engellemek için future.microtask gibi ama gene de hata kodu şu
+//    ======== Exception caught by scheduler library =====================================================
+//    The following assertion was thrown during a scheduler callback:
+//    'package:flutter/src/rendering/mouse_tracker.dart': Failed assertion: line 199 pos 12: '!_debugDuringDeviceUpdate': is not true.
+//
+//
+//    Either the assertion indicates an error in the framework itself, or we should provide substantially more information in this error message to help you determine and fix the underlying cause.
+//    In either case, please report this assertion by filing a bug on GitHub:
+//    https://github.com/flutter/flutter/issues/new?template=02_bug.yml
+//
+//    When the exception was thrown, this was the stack:
+//    #2      MouseTracker._deviceUpdatePhase (package:flutter/src/rendering/mouse_tracker.dart:199:12)
+//    #3      MouseTracker.updateAllDevices (package:flutter/src/rendering/mouse_tracker.dart:367:5)
+//    #4      RendererBinding._scheduleMouseTrackerUpdate.<anonymous closure> (package:flutter/src/rendering/binding.dart:512:22)
+//    #5      SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1434:15)
+//    #6      SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1361:11)
+//    #7      SchedulerBinding._handleDrawFrame (package:flutter/src/scheduler/binding.dart:1200:5)
+//    #8      _invoke (dart:ui/hooks.dart:356:13)
+//    #9      PlatformDispatcher._drawFrame (dart:ui/platform_dispatcher.dart:444:5)
+//    #10     _drawFrame (dart:ui/hooks.dart:328:31)
+//    (elided 2 frames from class _AssertionError)
+//    ====================================================================================================
+//    yani gene mousetracker hatası
+//
 //  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
 //  statsview gridview düzeltmesi
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
