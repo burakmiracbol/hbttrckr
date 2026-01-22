@@ -17,14 +17,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-Widget liquidGlassContainer({required Widget child, double borderRadius = 24.0, required BuildContext context }) {
+Widget glassContainer({required Widget child, double borderRadiusRect = 24.0, BoxShape shape = BoxShape.rectangle, required BuildContext context }) {
   final theme = Theme.of(context);
   final colorScheme = theme.colorScheme;
-  final borderRadius = 24.0;
+  final borderRadius = shape == BoxShape.circle ? null :BorderRadius.circular(24);
   final isDark = theme.brightness == Brightness.dark;
 
   return ClipRRect(
-    borderRadius: BorderRadius.circular(borderRadius),
+    borderRadius: BorderRadius.circular(borderRadiusRect),
     child: BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
       child: Container(
@@ -32,7 +32,8 @@ Widget liquidGlassContainer({required Widget child, double borderRadius = 24.0, 
         decoration: BoxDecoration(
 // Uses surface with low opacity to allow background through
           color: colorScheme.surface.withValues(alpha: isDark ? 0.15 : 0.4),
-          borderRadius: BorderRadius.circular(24),
+          shape: shape,
+          borderRadius: borderRadius,
           border: Border.all(
 // Provides the "glass edge" highlight
             color: colorScheme.onSurface.withValues(alpha: isDark ? 0.1 : 0.2),
