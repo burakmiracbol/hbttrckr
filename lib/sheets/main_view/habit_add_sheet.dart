@@ -18,12 +18,59 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 
 import '../../classes/habit.dart';
+import '../../providers/habit_provider.dart';
 
 // Sık kullanılan Material Icons'ın custom map'i
 
+
+void showAddHabitSheet(BuildContext parentContext) {
+  showModalBottomSheet(
+    context: parentContext,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (sheetContext) => Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(parentContext).viewInsets.bottom,
+      ),
+      child: AddHabitSheet(
+        onAdd:
+            ({
+          required String name,
+          String description = '',
+          String? group,
+          required Color color,
+          required HabitType type,
+          required IconData icon,
+          double? targetCount,
+          double? maxCount,
+          double? targetSeconds,
+          TimeOfDay? reminderTime,
+          Set<int>? reminderDays,
+        }) {
+          parentContext.read<HabitProvider>().addHabit(
+            name: name,
+            description: description,
+            group: group,
+            color: color,
+            type: type,
+            targetCount: targetCount,
+            maxCount: maxCount,
+            targetSeconds: targetSeconds?.toDouble(),
+            reminderTime: reminderTime,
+            reminderDays: reminderDays,
+            icon: icon,
+          );
+
+          Navigator.pop(sheetContext);
+        },
+      ),
+    ),
+  );
+}
 
 class AddHabitSheet extends StatefulWidget {
   final Function({
