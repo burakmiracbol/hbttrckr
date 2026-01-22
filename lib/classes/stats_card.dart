@@ -28,33 +28,25 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return glassContainer(
-      context: context,
-      child: GlassGlow(
-        child: Padding(
-          padding: EdgeInsets.all(padding),
-          child: Opacity(
-            opacity: 1,
-            child: Align(
-              alignment: Alignment.center,
-              child: Column(
-                children: [
-                  Icon(icon, size: 32, color: color),
-                  SizedBox(height: 8),
-                  Text(
-                    value,
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    title,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                ],
+    return Padding(
+        padding: EdgeInsets.all(padding),
+        child: Opacity(
+          opacity: 1,
+          child: Column(
+            children: [
+              Icon(icon, size: 32, color: color),
+              SizedBox(height: 8),
+              Text(
+                value,
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
-            ),
+              Text(
+                title,
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
           ),
         ),
-      ),
-    );
+      );
   }
 }

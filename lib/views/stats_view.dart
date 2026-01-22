@@ -56,6 +56,7 @@ class StatisticsScreen extends StatelessWidget {
 
     final totalHabits = habits.length;
     final activeHabits = habits.where((h) => h.currentStreak > 0).length;
+    final groupHabits = context.read<HabitProvider>().getUniqueGroupNames(context.watch<HabitProvider>().habits).length;
     final perfectHabits = habits.where((h) => h.strength >= 90).length;
     final totalStrength = habits.fold(0.0, (sum, h) => sum + h.strength);
 
@@ -80,8 +81,7 @@ class StatisticsScreen extends StatelessWidget {
           1;
       totalCount += daysForThisHabit;
 
-
-      for ( final dynamicValues in habit.dailyProgress.values) {
+      for (final dynamicValues in habit.dailyProgress.values) {
         //final dynamic value = habit.dailyProgress[startDate];
         daysForThisHabit -= 1;
         //habit.dailyProgress.entries
@@ -95,7 +95,9 @@ class StatisticsScreen extends StatelessWidget {
             final achieved = (dynamicValues is num) ? dynamicValues.toInt() : 0;
             isDone = achieved >= (habit.targetCount ?? 1);
           } else if (habit.type == HabitType.time) {
-            final achievedSeconds = (dynamicValues is num) ? dynamicValues.toInt() : 0;
+            final achievedSeconds = (dynamicValues is num)
+                ? dynamicValues.toInt()
+                : 0;
             final targetSecs = habit.targetSeconds ?? 60;
             isDone = achievedSeconds >= targetSecs;
           }
@@ -107,7 +109,7 @@ class StatisticsScreen extends StatelessWidget {
           skippedCount++;
         }
       }
-      missedCount = totalCount - (doneCount+skippedCount);
+      missedCount = totalCount - (doneCount + skippedCount);
     }
 
     return GlassGlowLayer(
@@ -124,140 +126,179 @@ class StatisticsScreen extends StatelessWidget {
                 // problematic gridview
                 GridView(
                   shrinkWrap: true,
-                    primary: false,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 320,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      childAspectRatio: 1.0,
-                    ),
+                  primary: false,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 300,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 1.0,
+                  ),
+
                   children: [
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: AspectRatio(
                         aspectRatio: 1,
                         child: glassContainer(
                           context: context,
-                          child: Card(
-                            color: Colors.transparent,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: RateOfDoing(
-                                doneCount: doneCount,
-                                missedCount: missedCount,
-                                skippedCount: skippedCount,
-                                totalCount: totalCount,
-                                size: MediaQuery.of(context).size.width * 0.4,
-                              ),
+                          child: LayoutBuilder(
+                            builder: (context,constraints) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: RateOfDoing(
+                                  doneCount: doneCount,
+                                  missedCount: missedCount,
+                                  skippedCount: skippedCount,
+                                  totalCount: totalCount,
+                                  size: constraints.minWidth,
+                                ),
+                              );
+                            }
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: glassContainer(
+                        context: context,
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: LayoutBuilder(
+                                builder: (context,constraints) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                      top: 32.0,
+                                      bottom: 8.0,
+                                      right: 8.0,
+                                      left: 8.0,
+                                    ),
+                                    child: StrengthGauge(
+                                      seenStrength:
+                                      "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
+                                      strength:
+                                      (totalStrength / totalHabits.clamp(1, 999)),
+                                      size: constraints.minWidth,
+                                    ),
+                                  );}
                             ),
                           ),
                         ),
                       ),
                     ),
+
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: Card(
-                          color: context.read<CurrentThemeMode>().isMica
-                              ? Theme.of(context).cardColor
-                              : Theme.of(
-                            context,
-                          ).cardColor.withValues(alpha: 0.2),
+                      child: glassContainer(
+                        context: context,
+                        child: AspectRatio(
+                          aspectRatio: 1,
                           child: Align(
                             alignment: Alignment.center,
-                            child: StatCard(
-                              "Toplam Alışkanlık",
-                              totalHabits.toString(),
-                              Icons.list_alt,
-                              Colors.blue,
-                              16,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                StatCard(
+                                  "Toplam Alışkanlık",
+                                  totalHabits.toString(),
+                                  Icons.list_alt,
+                                  Colors.blue,
+                                  16,
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
+
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: Card(
-                          color: context.read<CurrentThemeMode>().isMica
-                              ? Theme.of(context).cardColor
-                              : Theme.of(
-                            context,
-                          ).cardColor.withValues(alpha: 0.2),
+                      child: glassContainer(
+                        context: context,
+                        child: AspectRatio(
+                          aspectRatio: 1,
                           child: Align(
                             alignment: Alignment.center,
-                            child: StatCard(
-                              "Aktif Streak",
-                              activeHabits.toString(),
-                              Icons.whatshot,
-                              Colors.orange,
-                              16,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                StatCard(
+                                  "Aktif Streak",
+                                  activeHabits.toString(),
+                                  Icons.whatshot,
+                                  Colors.orange,
+                                  16,
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
+
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: Card(
-                          color: context.read<CurrentThemeMode>().isMica
-                              ? Theme.of(context).cardColor
-                              : Theme.of(
-                            context,
-                          ).cardColor.withValues(alpha: 0.2),
+                      child: glassContainer(
+                        context: context,
+                        child: AspectRatio(
+                          aspectRatio: 1,
                           child: Align(
                             alignment: Alignment.center,
-                            child: StatCard(
-                              "Efsane Seviye",
-                              perfectHabits.toString(),
-                              Icons.star,
-                              Colors.purple,
-                              16,
-                            ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  StatCard(
+                                    "Efsane Seviye",
+                                    perfectHabits.toString(),
+                                    Icons.star,
+                                    Colors.purple,
+                                    16,
+                                  ),
+                                ],
+                              ),
+
                           ),
                         ),
                       ),
                     ),
+
+
+
                     Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: Card(
-                          color: context.read<CurrentThemeMode>().isMica
-                              ? Theme.of(context).cardColor
-                              : Theme.of(
-                            context,
-                          ).cardColor.withValues(alpha: 0.2),
-                          child: glassContainer(
-                            context: context,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                top: 32.0,
-                                bottom: 8.0,
-                                right: 8.0,
-                                left: 8.0,
-                              ),
-                              child: StrengthGauge(
-                                seenStrength:
-                                "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
-                                strength:
-                                (totalStrength / totalHabits.clamp(1, 999)),
-                                size: MediaQuery.of(context).size.width * 0.3,
-                              ),
+                      child: glassContainer(
+                        context: context,
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                StatCard(
+                                  "Alışkanlık Grup Sayısı",
+                                  groupHabits.toString(),
+                                  Icons.grid_view_rounded,
+                                  Colors.green,
+                                  16,
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
+
+
                   ],
                 ),
-
+                // GridView sonu
 
 
                 Padding(
@@ -315,7 +356,7 @@ class StatisticsScreen extends StatelessWidget {
                           },
 
                           markerBuilder: (context, day, events) {
-                            if (day.isAfter(todayDate)){
+                            if (day.isAfter(todayDate)) {
                               return null;
                             }
 
@@ -545,4 +586,3 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 }
-
