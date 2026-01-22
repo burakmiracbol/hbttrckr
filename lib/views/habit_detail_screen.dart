@@ -758,7 +758,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: LiquidGlass(
                                     shape: LiquidRoundedRectangle(
-                                      borderRadius: 24,
+                                      borderRadius: 96,
                                     ),
                                     child: GlassGlow(
                                       child: Padding(
@@ -796,14 +796,16 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: LiquidGlass(
                                             shape: LiquidRoundedRectangle(
-                                              borderRadius: 16,
+                                              borderRadius: 64,
                                             ),
-                                            child: StatCard(
-                                              "Aktif Streak",
-                                              "${currentHabit.currentStreak}",
-                                              Icons.whatshot,
-                                              Colors.orange,
-                                              16,
+                                            child: GlassGlow(
+                                              child: StatCard(
+                                                "Aktif Streak",
+                                                "${currentHabit.currentStreak}",
+                                                Icons.whatshot,
+                                                Colors.orange,
+                                                16,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -813,14 +815,16 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: LiquidGlass(
                                             shape: LiquidRoundedRectangle(
-                                              borderRadius: 16,
+                                              borderRadius: 64,
                                             ),
-                                            child: StatCard(
-                                              "Güç Seviyesi",
-                                              "%${currentHabit.strength}",
-                                              Icons.trending_up,
-                                              Colors.green,
-                                              16,
+                                            child: GlassGlow(
+                                              child: StatCard(
+                                                "Güç Seviyesi",
+                                                "%${currentHabit.strength}",
+                                                Icons.trending_up,
+                                                Colors.green,
+                                                16,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -839,33 +843,35 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: LiquidGlass(
                                             shape: LiquidRoundedRectangle(
-                                              borderRadius: 16,
+                                              borderRadius: 64,
                                             ),
-                                            child: StatCard(
-                                              "Alışkanlık Seviyesi",
-                                              currentHabit.strengthLevel,
-                                              currentHabit.strengthLevel ==
-                                                      "Efsane"
-                                                  ? Icons.hotel_class
-                                                  : currentHabit
-                                                            .strengthLevel ==
-                                                        "Usta"
-                                                  ? Icons.star
-                                                  : currentHabit
-                                                            .strengthLevel ==
-                                                        "Güçlü"
-                                                  ? Icons.star_half
-                                                  : currentHabit
-                                                            .strengthLevel ==
-                                                        "Orta"
-                                                  ? Icons.favorite
-                                                  : currentHabit
-                                                            .strengthLevel ==
-                                                        "Zayıf"
-                                                  ? Icons.all_out
-                                                  : Icons.question_mark,
-                                              Colors.blue,
-                                              8,
+                                            child: GlassGlow(
+                                              child: StatCard(
+                                                "Alışkanlık Seviyesi",
+                                                currentHabit.strengthLevel,
+                                                currentHabit.strengthLevel ==
+                                                        "Efsane"
+                                                    ? Icons.hotel_class
+                                                    : currentHabit
+                                                              .strengthLevel ==
+                                                          "Usta"
+                                                    ? Icons.star
+                                                    : currentHabit
+                                                              .strengthLevel ==
+                                                          "Güçlü"
+                                                    ? Icons.star_half
+                                                    : currentHabit
+                                                              .strengthLevel ==
+                                                          "Orta"
+                                                    ? Icons.favorite
+                                                    : currentHabit
+                                                              .strengthLevel ==
+                                                          "Zayıf"
+                                                    ? Icons.all_out
+                                                    : Icons.question_mark,
+                                                Colors.blue,
+                                                8,
+                                              ),
                                             ),
                                           ),
                                         ),
