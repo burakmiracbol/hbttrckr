@@ -30,7 +30,6 @@ import 'habits_page.dart';
 // TODO's taken from README:
 //  Implement statistics page and strengthen strength calculation
 //  Refactor Habit class and HabitProvider behavior
-//  Add 'skip' support and reflect skipped days in detail calendar
 //  Make detail screen completion UIs per habit type (task/count/time)
 //  Add navigation/adaptive scaffold improvements (navigation view)
 //  Background image and glass-like effects in parts
@@ -64,6 +63,7 @@ import 'habits_page.dart';
 //  tamamlama efektleri
 //  reklam fikri sağol
 //
+//
 //  habits_page den girdim habite sonra ekranı büyülttüm sonra geri çıktım sonra deadlock yedik (assertion)
 //    bunun için farklı yöntemler denemeliyiz engellemek için future.microtask gibi ama gene de hata kodu şu
 //    ======== Exception caught by scheduler library =====================================================
@@ -90,7 +90,7 @@ import 'habits_page.dart';
 //    yani gene mousetracker hatası
 //
 //  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
-//  statsview gridview düzeltmesi
+//  statsview gridview overflow düzeltilmeli
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //
 //  detail screende appbar şeffaf yapalım
