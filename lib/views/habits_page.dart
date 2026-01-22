@@ -300,7 +300,7 @@ Widget buildHabitsPage({
                                 borderRadius: BorderRadius.circular(24),
                               ),
                               color: habit.color.withValues(alpha: 0.2),
-                              child: liquidGlassContainer(
+                              child: glassContainer(
                                 context: context,
                                 child: ListTile(
                                   onTap: () => onHabitTapped(habit),

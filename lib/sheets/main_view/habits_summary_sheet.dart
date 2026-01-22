@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../classes/glass_card.dart';
 import '../../providers/habit_provider.dart';
+import '../../providers/scheme_provider.dart';
 import '../../views/main_app_view.dart';
 
 void showHabitsSummarySheet (
@@ -39,7 +40,7 @@ void showHabitsSummarySheet (
           controller: scrollController,
           child: Column(
             children: [
-              liquidGlassContainer(context: context,
+              glassContainer(context: context,
                 child: Padding(
                   padding: const EdgeInsets.only(top:8.0 ,bottom:8.0, left: 16.0, right: 16.0),
                   child: Text(

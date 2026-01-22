@@ -15,16 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:hbttrckr/sheets/main_view/backup_settings_sheet.dart';
 import 'package:hbttrckr/sheets/main_view/preferences_settings_sheet.dart';
 import 'account_settings_sheet.dart';
 import 'notifications_settings_sheet.dart';
 
 void showMainSettingsSheet(
-    BuildContext context,
-    TextEditingController accountController,
-    TextEditingController passwordController,
-    ) {
+  BuildContext context,
+  TextEditingController accountController,
+  TextEditingController passwordController,
+) {
   showModalBottomSheet(
     enableDrag: true,
     useSafeArea: true,
@@ -32,12 +33,7 @@ void showMainSettingsSheet(
     context: context,
     builder: (sheetContext) {
       return Padding(
-        padding: const EdgeInsets.only(
-          top: 16,
-          left: 8,
-          right: 8,
-          bottom: 8,
-        ),
+        padding: const EdgeInsets.only(top: 16, left: 8, right: 8, bottom: 8),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -45,13 +41,19 @@ void showMainSettingsSheet(
             children: [
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(
-                    "Ayarlar",
-                    style: TextStyle(
-                      fontSize: Theme.of(
-                        context,
-                      ).textTheme.headlineSmall?.fontSize,
+                  padding: const EdgeInsets.all(2.0),
+                  child: glassContainer(
+                    context: context,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 14.0, 8.0),
+                      child: Text(
+                        "Ayarlar",
+                        style: TextStyle(
+                          fontSize: Theme.of(
+                            context,
+                          ).textTheme.headlineSmall?.fontSize,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -94,9 +96,7 @@ void showMainSettingsSheet(
                 padding: const EdgeInsets.all(4.0),
                 child: Card(
                   child: ListTile(
-                    leading: CircleAvatar(
-                      child: Icon(Icons.tune),
-                    ),
+                    leading: CircleAvatar(child: Icon(Icons.tune)),
                     title: Text("Tercihler"),
                     trailing: Icon(Icons.chevron_right),
                     onTap: () {
@@ -109,15 +109,13 @@ void showMainSettingsSheet(
                 padding: const EdgeInsets.all(4.0),
                 child: Card(
                   child: ListTile(
-                    leading: CircleAvatar(
-                      child: Icon(Icons.backup),
-                    ),
+                    leading: CircleAvatar(child: Icon(Icons.backup)),
                     title: Text("Yedekler"),
                     trailing: Icon(Icons.chevron_right),
-                    onTap: (){
+                    onTap: () {
                       showBackupSettingsSheet(context);
                     },
-                  )
+                  ),
                 ),
               ),
             ],

@@ -23,6 +23,7 @@ import 'package:hbttrckr/views/habit_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/views/stats_view.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
+import '../providers/scheme_provider.dart';
 import '../sheets/main_view/habit_add_sheet.dart';
 import '../sheets/main_view/habits_summary_sheet.dart';
 import '../sheets/main_view/main_settings_sheet.dart';
@@ -127,77 +128,6 @@ typedef OnHabitUpdated = void Function(Habit updatedHabit);
 typedef OnHabitTapped = void Function(Habit habit);
 typedef OnHabitDeleted = void Function(String id);
 
-void showAddHabitSheet(BuildContext parentContext) {
-  showModalBottomSheet(
-    context: parentContext,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (sheetContext) => Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(parentContext).viewInsets.bottom,
-      ),
-      child: AddHabitSheet(
-        onAdd:
-            ({
-          required String name,
-          String description = '',
-          String? group,
-          required Color color,
-          required HabitType type,
-          required IconData icon,
-          double? targetCount,
-          double? maxCount,
-          double? targetSeconds,
-          TimeOfDay? reminderTime,
-          Set<int>? reminderDays,
-        }) {
-          parentContext.read<HabitProvider>().addHabit(
-            name: name,
-            description: description,
-            group: group,
-            color: color,
-            type: type,
-            targetCount: targetCount,
-            maxCount: maxCount,
-            targetSeconds: targetSeconds?.toDouble(),
-            reminderTime: reminderTime,
-            reminderDays: reminderDays,
-            icon: icon,
-          );
-
-          Navigator.pop(sheetContext);
-        },
-      ),
-    ),
-  );
-}
-
-class CurrentThemeMode with ChangeNotifier {
-  bool isDarkMode = true;
-  ThemeMode currentMode = ThemeMode.system;
-
-  bool isMica = true;
-
-  void changeThemeMode() {
-    isDarkMode = !isDarkMode;
-    currentMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
-    notifyListeners();
-  }
-
-  Future<void> toggleMica() async {
-    if (isMica) {
-      await Window.setEffect(effect: WindowEffect.disabled);
-      await Future.delayed(const Duration(milliseconds: 100));
-      await Window.setEffect(effect: WindowEffect.transparent);
-      isMica = false;
-    } else {
-      await Window.setEffect(effect: WindowEffect.aero, dark: false);
-      isMica = true;
-    }
-    notifyListeners();
-  }
-}
-
 class MainAppView extends StatefulWidget {
   const MainAppView({super.key});
 
@@ -213,10 +143,6 @@ class MainAppViewState extends State<MainAppView> {
   late ThemeMode currentThemeMode = context
       .watch<CurrentThemeMode>()
       .currentMode;
-
-  String titleForToday = "Today";
-  String titleForYesterday = "Yesterday";
-  String titleForTomorrow = "Tomorrow";
 
   bool isDarkMode = true;
 
@@ -274,7 +200,8 @@ class MainAppViewState extends State<MainAppView> {
       backgroundColor: context.watch<CurrentThemeMode>().isMica
           ? Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 1)
           : Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.3),
-      floatingActionButton: liquidGlassContainer(
+      floatingActionButton: glassContainer(
+        shape: BoxShape.circle,
         context: context,
         child: FloatingActionButton(
           foregroundColor: context.watch<CurrentThemeMode>().isMica
@@ -297,7 +224,7 @@ class MainAppViewState extends State<MainAppView> {
 
       appBar: AppBar(
         title: Center(
-          child: liquidGlassContainer(
+          child: glassContainer(
             context: context,
             child: Padding(
               padding: const EdgeInsets.only(
@@ -327,17 +254,21 @@ class MainAppViewState extends State<MainAppView> {
             return Consumer<HabitProvider>(
               builder: (ctx, habitProvider, child) {
                 final combinedColor = habitProvider.getCombinedMixedColor();
-                return liquidGlassContainer(
-                  context: context,
-                  child: IconButton(
-                    style: IconButton.styleFrom(padding: EdgeInsets.all(0)),
-                    icon: Icon(
-                      Icons.format_list_bulleted,
-                      color: combinedColor,
+                return Padding(
+                  padding: EdgeInsets.fromLTRB(8,4,4,4),
+                  child: glassContainer(
+                    shape: BoxShape.circle,
+                    context: context,
+                    child: IconButton(
+                      style: IconButton.styleFrom(padding: EdgeInsets.all(4)),
+                      icon: Icon(
+                        Icons.format_list_bulleted,
+                        color: combinedColor,
+                      ),
+                      onPressed: () {
+                        showHabitsSummarySheet(context);
+                      },
                     ),
-                    onPressed: () {
-                      showHabitsSummarySheet(context);
-                    },
                   ),
                 );
               },
@@ -346,17 +277,21 @@ class MainAppViewState extends State<MainAppView> {
         ),
 
         actions: [
-          liquidGlassContainer(
-            context: context,
-            child: IconButton(
-              onPressed: () {
-                showMainSettingsSheet(
-                  context,
-                  accountController,
-                  passwordController,
-                );
-              },
-              icon: Icon(Icons.settings),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: glassContainer(
+              shape: BoxShape.circle,
+              context: context,
+              child: IconButton(
+                onPressed: () {
+                  showMainSettingsSheet(
+                    context,
+                    accountController,
+                    passwordController,
+                  );
+                },
+                icon: Icon(Icons.settings),
+              ),
             ),
           ),
         ],

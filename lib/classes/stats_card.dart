@@ -28,7 +28,7 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return liquidGlassContainer(
+    return glassContainer(
       context: context,
       child: GlassGlow(
         child: Padding(

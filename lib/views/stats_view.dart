@@ -26,6 +26,7 @@ import 'package:hbttrckr/views/main_app_view.dart';
 
 import '../classes/glass_card.dart';
 import '../classes/stats_card.dart';
+import '../providers/scheme_provider.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
@@ -137,7 +138,7 @@ class StatisticsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: AspectRatio(
                         aspectRatio: 1,
-                        child: liquidGlassContainer(
+                        child: glassContainer(
                           context: context,
                           child: Card(
                             color: Colors.transparent,
@@ -234,7 +235,7 @@ class StatisticsScreen extends StatelessWidget {
                               : Theme.of(
                             context,
                           ).cardColor.withValues(alpha: 0.2),
-                          child: liquidGlassContainer(
+                          child: glassContainer(
                             context: context,
                             child: Padding(
                               padding: EdgeInsets.only(
@@ -266,7 +267,7 @@ class StatisticsScreen extends StatelessWidget {
                     color: context.read<CurrentThemeMode>().isMica
                         ? Theme.of(context).cardColor
                         : Theme.of(context).cardColor.withValues(alpha: 0.2),
-                    child: liquidGlassContainer(
+                    child: glassContainer(
                       context: context,
                       child: TableCalendar(
                         firstDay: DateTime.utc(2020, 1, 1),

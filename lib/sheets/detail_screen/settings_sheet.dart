@@ -208,8 +208,8 @@ void showShareDetailSheet(
                                       4.0,
                                       4.0,
                                     ),
-                                    child: liquidGlassContainer(
-                                      borderRadius: 300.0,
+                                    child: glassContainer(
+                                      borderRadiusRect: 300.0,
                                       context: context,
                                       child: AspectRatio(
                                         aspectRatio: 1,
@@ -249,7 +249,7 @@ void showShareDetailSheet(
                                                     4.0,
                                                     2.0,
                                                   ),
-                                              child: liquidGlassContainer(
+                                              child: glassContainer(
                                                 context: context,
                                                 child: Expanded(
                                                   child: Padding(
@@ -277,7 +277,7 @@ void showShareDetailSheet(
                                                     4.0,
                                                     2.0,
                                                   ),
-                                              child: liquidGlassContainer(
+                                              child: glassContainer(
                                                 context: context,
                                                 child: Expanded(
                                                   child: Padding(
@@ -308,7 +308,7 @@ void showShareDetailSheet(
                                         8.0,
                                         4.0,
                                       ),
-                                      child: liquidGlassContainer(
+                                      child: glassContainer(
                                         context: context,
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
@@ -344,7 +344,7 @@ void showShareDetailSheet(
                                       6.0,
                                       4.0,
                                     ),
-                                    child: liquidGlassContainer(
+                                    child: glassContainer(
                                       context: context,
                                       child: Card(
                                         color: Colors.transparent,
@@ -371,7 +371,7 @@ void showShareDetailSheet(
                                       6.0,
                                       4.0,
                                     ),
-                                    child: liquidGlassContainer(
+                                    child: glassContainer(
                                       context: context,
                                       child: Card(
                                         color: Colors.transparent,
@@ -407,7 +407,7 @@ void showShareDetailSheet(
                                       6.0,
                                       4.0,
                                     ),
-                                    child: liquidGlassContainer(
+                                    child: glassContainer(
                                       context: context,
                                       child: Card(
                                         color: Colors.transparent,
@@ -451,7 +451,7 @@ void showShareDetailSheet(
                                       6.0,
                                       4.0,
                                     ),
-                                    child: liquidGlassContainer(
+                                    child: glassContainer(
                                       context: context,
                                       child: Card(
                                         color: Colors.transparent,
