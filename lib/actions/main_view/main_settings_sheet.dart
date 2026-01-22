@@ -16,8 +16,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/glass_card.dart';
-import 'package:hbttrckr/sheets/main_view/backup_settings_sheet.dart';
-import 'package:hbttrckr/sheets/main_view/preferences_settings_sheet.dart';
+import 'package:hbttrckr/actions/main_view/backup_settings_sheet.dart';
+import 'package:hbttrckr/actions/main_view/preferences_settings_sheet.dart';
 import 'account_settings_sheet.dart';
 import 'notifications_settings_sheet.dart';
 
