@@ -89,7 +89,16 @@ import 'habits_page.dart';
 //    ====================================================================================================
 //    yani gene mousetracker hatası
 //
+//  açılış ekranı ilk ve ilk kullananlar için
+//
+//  shared_preferences ile daha fazla ayar cihaza kaydedilmeli esela en son şeffaf bıraktım niye bir sonrakinde şeffaf değil için
+//
+//  windowsta farklı bir arayüz tasarımı seçeneği
+//    kullanıcıya başta windows önerilen mi yoksa mobil önerilen mi diye sorulacak
+//
 //  detailscreende rate of doing
+//  alarmın haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
+//  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
 //  ayarlarda tercihler bölümüne tonla ayar gelicek
 //    şefffalıkla ilgili nerenin şeffaflığı nerede naslı olacak
 //      mesela habit detail screen hep mi şeffaf olsun yoksa sadece şeffaf modu açıldığında mı
@@ -97,6 +106,9 @@ import 'habits_page.dart';
 //      detail screen page olarak mı görüntülenecek ya da sheet olarak mı
 //      veya habits page de görünüm nasıl olacak ikili coolumn mu üçlü mü tekli mi
 //      veya settings logosu yerine kullanıcı fotosu mu gelmeli
+//    deneyimler için ayarlar değişitrilebilecek
+//      haftanın hangi gününden başladığı eklenmeli
+//
 //  detail screen şeffaflık desteği glow ve liquidler bozulmadan (tahminimce bozulmaz)
 //  tüm sheetlerin tasarımı düzeltilecek ve main settings sheet gibi olacak
 //  rate of doing atlananlar boyaması ??
@@ -108,17 +120,12 @@ import 'habits_page.dart';
 //  sadece calendar bölümü olabilir tek sferlik eventler için
 //  genel bir kronometre süre sayar da eklenebilir
 //  habitler için not kısmında hatalar düzeltilsin
-//  habitdetail screen hepsine bir glass glow ekle
 //  strentgh gauge a içinde strength seviyesine göre bize laf söylesin detail screende mesela strength levele göre sözler ve her zaman aynı sözler olmasın diye random sayı ile aynı seviyede farklı quote lar görünebilir
-//  haftanın hangi gününden başladığı eklenmeli
 //  kodu düzeltmeli hızımızı artırır eğer düzenler isek
-//  alarmın haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
-//  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
 //  custom bildirim gönderme olmalı
 //  bir icon paketi oluşturlmalı veya bulunmalı ama bize uyumlu olsun
 //  material 3 expressive veya material 3 tasarım biçimlerini uygulamaya koymalıyız
 //  ana ekrana eklemelik widgetlar yapılmalı
-//  windows gibi bilgisayarlara farklı bir tasarım olmalı
 //
 
 // TODO: ayarlar düğmesi ile bottom sheet açılacak ve farklı ayar menülerine gitme gösterilecek

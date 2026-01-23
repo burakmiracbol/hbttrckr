@@ -15,10 +15,13 @@ Core ideas and features (from the current implementation):
 - Calendar‑based main screen and daily completion markers
 - Completion‑rate tracking and updates
 - Glassmorphism styling
+- Glowing effects for attractive visual style
+- Capsule style for highlighting the important infos and actions
 - Daily progress tracking and skipping
 - Statistics view and monthly calendar progress
 - Habit level, strength, and streak features
-- Material Design 3 color schemes with selectable base color
+- selectable color scheme styles with base color
+- Material Design 3 following principle for now (in future every platform has their style and design so for example iOS -> LiquidGlass)
 - Notifications (beta) and notification testing
 - Rich‑text notes per habit
 - Bottom‑sheet summaries and settings (mobile‑friendly)
@@ -35,7 +38,7 @@ Core ideas and features (from the current implementation):
 ## Note for this repo !!
 This is a not-a-production-ready repo. So if you using this repo for yourself, keep in mind that you can face some bugs. Some of them are available in issues and README.md (below)
 
-And currently this app developing in windows so maybe there are some issus with other environments (some native things)
+And currently this app developing in windows (for tablets and mobile phones other platforms will be covered soon) so maybe there are some issus with other environments (some native things u know)
 
 ### For Windows 
 - Make sure that you are using this app with all release folder because this app needs some additional packages for native environment (don't just use with .exe )
