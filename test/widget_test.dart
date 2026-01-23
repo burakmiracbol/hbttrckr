@@ -17,6 +17,8 @@ import 'package:hbttrckr/providers/scheme_provider.dart';
 import 'package:hbttrckr/views/main_app_view.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/views/habit_detail_screen.dart';
+import 'package:hbttrckr/views/stats_view.dart';
+import 'package:hbttrckr/classes/stats_card.dart';
 
 void main() {
   setUp(() async {
@@ -90,5 +92,43 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(HabitDetailScreen), findsOneWidget);
+  });
+
+  testWidgets('Stats view renders wide StatCard layout in wide tiles',
+      (WidgetTester tester) async {
+    final binding = TestWidgetsFlutterBinding.ensureInitialized();
+    binding.window.physicalSizeTestValue = const Size(1200, 800);
+    binding.window.devicePixelRatioTestValue = 1.0;
+    addTearDown(() {
+      binding.window.clearPhysicalSizeTestValue();
+      binding.window.clearDevicePixelRatioTestValue();
+    });
+
+    final schemeProvider = SchemeProvider();
+    await schemeProvider.init();
+    final habitProvider = HabitProvider(enableNotifications: false);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CurrentThemeMode>(
+            create: (_) => CurrentThemeMode(),
+          ),
+          ChangeNotifierProvider<HabitProvider>.value(value: habitProvider),
+          ChangeNotifierProvider<SchemeProvider>.value(value: schemeProvider),
+        ],
+        child: const MaterialApp(home: StatisticsScreen()),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    final statCardFinder =
+        find.widgetWithText(StatCard, 'Toplam Alışkanlık');
+    expect(statCardFinder, findsOneWidget);
+    expect(
+      find.descendant(of: statCardFinder, matching: find.byType(Row)),
+      findsOneWidget,
+    );
   });
 }
