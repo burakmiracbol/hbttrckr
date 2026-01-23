@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hbttrckr/classes/rate_of_doing.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
@@ -56,7 +57,10 @@ class StatisticsScreen extends StatelessWidget {
 
     final totalHabits = habits.length;
     final activeHabits = habits.where((h) => h.currentStreak > 0).length;
-    final groupHabits = context.read<HabitProvider>().getUniqueGroupNames(context.watch<HabitProvider>().habits).length;
+    final groupHabits = context
+        .read<HabitProvider>()
+        .getUniqueGroupNames(context.watch<HabitProvider>().habits)
+        .length;
     final perfectHabits = habits.where((h) => h.strength >= 90).length;
     final totalStrength = habits.fold(0.0, (sum, h) => sum + h.strength);
 
@@ -124,53 +128,74 @@ class StatisticsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // problematic gridview
-                GridView(
-                  shrinkWrap: true,
-                  primary: false,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 300,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 1.0,
-                  ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    const maxTileExtent = 250.0;
+                    final crossAxisCount = (constraints.maxWidth /
+                            maxTileExtent)
+                        .floor()
+                        .clamp(1, 6)
+                        .toInt();
 
-                  children: [
+                    List<int> buildSpans(int columns, int count) {
+                      final spans = List<int>.filled(count, 1);
+                      if (count <= 2 || columns <= 3) {
+                        return spans;
+                      }
+                      if (count == 6 && columns == 4) {
+                        spans[2] = 2;
+                        spans[5] = 2;
+                        return spans;
+                      }
+                      if (count == 6 && columns == 5) {
+                        spans[3] = 2;
+                        spans[4] = 2;
+                        spans[5] = 3;
+                        return spans;
+                      }
+                      return spans;
+                    }
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: glassContainer(
-                          context: context,
-                          child: LayoutBuilder(
-                            builder: (context,constraints) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: RateOfDoing(
-                                  doneCount: doneCount,
-                                  missedCount: missedCount,
-                                  skippedCount: skippedCount,
-                                  totalCount: totalCount,
-                                  size: constraints.minWidth,
-                                ),
-                              );
-                            }
+                    const statCardCount = 6;
+                    final spans = buildSpans(
+                      crossAxisCount,
+                      statCardCount,
+                    );
+
+                    final statCards = <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: glassContainer(
+                            context: context,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: RateOfDoing(
+                                    doneCount: doneCount,
+                                    missedCount: missedCount,
+                                    skippedCount: skippedCount,
+                                    totalCount: totalCount,
+                                    size: constraints.minWidth,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: glassContainer(
-                        context: context,
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: LayoutBuilder(
-                                builder: (context,constraints) {
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: glassContainer(
+                          context: context,
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
                                   return Padding(
                                     padding: EdgeInsets.only(
                                       top: 32.0,
@@ -180,127 +205,104 @@ class StatisticsScreen extends StatelessWidget {
                                     ),
                                     child: StrengthGauge(
                                       seenStrength:
-                                      "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
+                                          "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
                                       strength:
-                                      (totalStrength / totalHabits.clamp(1, 999)),
+                                          (totalStrength /
+                                          totalHabits.clamp(1, 999)),
                                       size: constraints.minWidth,
                                     ),
-                                  );}
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: glassContainer(
-                        context: context,
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                StatCard(
-                                  "Toplam Alışkanlık",
-                                  totalHabits.toString(),
-                                  Icons.list_alt,
-                                  Colors.blue,
-                                  16,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: glassContainer(
-                        context: context,
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                StatCard(
-                                  "Aktif Streak",
-                                  activeHabits.toString(),
-                                  Icons.whatshot,
-                                  Colors.orange,
-                                  16,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: glassContainer(
-                        context: context,
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Align(
-                            alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  StatCard(
-                                    "Efsane Seviye",
-                                    perfectHabits.toString(),
-                                    Icons.star,
-                                    Colors.purple,
-                                    16,
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
-
-                          ),
-                        ),
-                      ),
-                    ),
-
-
-
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: glassContainer(
-                        context: context,
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                StatCard(
-                                  "Alışkanlık Grup Sayısı",
-                                  groupHabits.toString(),
-                                  Icons.grid_view_rounded,
-                                  Colors.green,
-                                  16,
-                                ),
-                              ],
                             ),
                           ),
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: glassContainer(
+                          context: context,
+                          child: SizedBox.expand(
+                            child: StatCard(
+                              "Toplam Alışkanlık",
+                              totalHabits.toString(),
+                              Icons.list_alt,
+                              Colors.blue,
+                              16,
+                              isWideOverride: spans[2] > 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: glassContainer(
+                          context: context,
+                          child: SizedBox.expand(
+                            child: StatCard(
+                              "Aktif Streak",
+                              activeHabits.toString(),
+                              Icons.whatshot,
+                              Colors.orange,
+                              16,
+                              isWideOverride: spans[3] > 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: glassContainer(
+                          context: context,
+                          child: SizedBox.expand(
+                            child: StatCard(
+                              "Efsane Seviye",
+                              perfectHabits.toString(),
+                              Icons.star,
+                              Colors.purple,
+                              16,
+                              isWideOverride: spans[4] > 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: glassContainer(
+                          context: context,
+                          child: SizedBox.expand(
+                            child: StatCard(
+                              "Alışkanlık Grup Sayısı",
+                              groupHabits.toString(),
+                              Icons.grid_view_rounded,
+                              Colors.green,
+                              16,
+                              isWideOverride: spans[5] > 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ];
 
-
-                  ],
+                    return StaggeredGrid.count(
+                      axisDirection: AxisDirection.down,
+                      crossAxisCount: crossAxisCount,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      children: List.generate(statCards.length, (index) {
+                        final span = spans[index];
+                        final mainSpan = index < 2 ? span : 1;
+                        return StaggeredGridTile.count(
+                          crossAxisCellCount: span,
+                          mainAxisCellCount: mainSpan,
+                          child: statCards[index],
+                        );
+                      }),
+                    );
+                  },
                 ),
+
                 // GridView sonu
-
-
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Card(
