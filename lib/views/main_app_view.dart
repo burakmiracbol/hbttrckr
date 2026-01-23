@@ -89,6 +89,8 @@ import 'habits_page.dart';
 //    ====================================================================================================
 //    yani gene mousetracker hatası
 //
+//  detailscreende rate of doing
+//  rate of doing atlananlar boyaması ??
 //  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
 //  statsview gridview overflow düzeltilmeli
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
