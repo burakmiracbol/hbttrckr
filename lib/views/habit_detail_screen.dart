@@ -847,6 +847,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                             ),
                                             child: GlassGlow(
                                               child: StatCard(
+                                                isWideOverride: true,
                                                 "Alışkanlık Seviyesi",
                                                 currentHabit.strengthLevel,
                                                 currentHabit.strengthLevel ==
