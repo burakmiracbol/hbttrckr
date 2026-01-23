@@ -90,6 +90,15 @@ import 'habits_page.dart';
 //    yani gene mousetracker hatası
 //
 //  detailscreende rate of doing
+//  ayarlarda tercihler bölümüne tonla ayar gelicek
+//    şefffalıkla ilgili nerenin şeffaflığı nerede naslı olacak
+//      mesela habit detail screen hep mi şeffaf olsun yoksa sadece şeffaf modu açıldığında mı
+//    tasarımlar kişiselleştirilebilecek
+//      detail screen page olarak mı görüntülenecek ya da sheet olarak mı
+//      veya habits page de görünüm nasıl olacak ikili coolumn mu üçlü mü tekli mi
+//      veya settings logosu yerine kullanıcı fotosu mu gelmeli
+//  detail screen şeffaflık desteği glow ve liquidler bozulmadan (tahminimce bozulmaz)
+//  tüm sheetlerin tasarımı düzeltilecek ve main settings sheet gibi olacak
 //  rate of doing atlananlar boyaması ??
 //  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
 //  statsview gridview overflow düzeltilmeli
