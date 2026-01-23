@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import '../../classes/glass_card.dart';
 import '../../providers/habit_provider.dart';
@@ -35,63 +36,71 @@ void showHabitsSummarySheet (
       maxChildSize: 0.95,
       builder: (context, scrollController) => Padding(
         padding: EdgeInsets.all(8),
-        child: SingleChildScrollView(
-          controller: scrollController,
-          child: Column(
-            children: [
-              glassContainer(context: context,
-                child: Padding(
-                  padding: const EdgeInsets.only(top:8.0 ,bottom:8.0, left: 16.0, right: 16.0),
-                  child: Text(
-                    "Tüm Alışkanlıklar",
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-              ),
-              Column(
+        child: LiquidGlassLayer(
+          child: GlassGlowLayer(
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
                 children: [
-                  ...context.watch<HabitProvider>().habits.map(
-                        (h) => Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      child: Card(
-                        color:
-                        context
-                            .watch<CurrentThemeMode>()
-                            .isMica
-                            ? Theme.of(context).cardColor
-                            : Theme.of(context).cardColor
-                            .withValues(alpha: 0.2),
-                        elevation: 3,
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: context.read<HabitProvider>().getMixedColor(h.id).withValues(alpha: 0.8),
-                            child: Icon(
-                              h.icon,
-                            ),
-                          ),
-                          title: Text(h.name),
-                          subtitle: Text(
-                            "${h.currentStreak} gün streak • ${h.strength}% güç",
-                          ),
-                          trailing: h.currentStreak > 0
-                              ? Icon(
-                            Icons.local_fire_department,
-                            color: context.read<HabitProvider>().getMixedColor(h.id),
-                          )
-                              : const Icon(
-                            Icons
-                                .local_fire_department_outlined,
-                            color: Colors.grey,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 12.0),
+                    child: LiquidGlass(
+                      shape: LiquidRoundedRectangle(borderRadius: 160),
+                      child: GlassGlow(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top:8.0 ,bottom:8.0, left: 16.0, right: 16.0),
+                          child: Text(
+                            "Tüm Alışkanlıklar",
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ),
                       ),
                     ),
                   ),
+                  Column(
+                    children: [
+                      ...context.watch<HabitProvider>().habits.map(
+                            (h) => Padding(
+                          padding: const EdgeInsets.fromLTRB(6.0, 4.0, 6.0, 4.0),
+                          child: LiquidGlass(
+                            shape: LiquidRoundedRectangle(borderRadius: 160),
+                            child: GlassGlow(
+                              child: Card(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(320)),
+                                color: Colors.transparent,
+                                elevation: 0,
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor: context.read<HabitProvider>().getMixedColor(h.id).withValues(alpha: 0.8),
+                                    child: Icon(
+                                      h.icon,
+                                    ),
+                                  ),
+                                  title: Text(h.name),
+                                  subtitle: Text(
+                                    "${h.currentStreak} gün streak • ${h.strength}% güç",
+                                  ),
+                                  trailing: h.currentStreak > 0
+                                      ? Icon(
+                                    Icons.local_fire_department,
+                                    color: context.read<HabitProvider>().getMixedColor(h.id),
+                                  )
+                                      : const Icon(
+                                    Icons
+                                        .local_fire_department_outlined,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
