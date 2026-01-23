@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:ui';
+
 import 'package:hbttrckr/classes/strength_gauge.dart';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/habit.dart';
@@ -134,9 +136,22 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (ctx) => HabitNotesEditorSheet(
-                            initialDeltaJson: current.notesDelta,
-                          ),
+                          builder: (ctx) => ClipRRect(
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.2), // İnce ışık yansıması (kenarlık)
+                                      width: 1.5,
+                                    ),
+                                  ),
+                            child: HabitNotesEditorSheet(
+                              initialDeltaJson: current.notesDelta,
+                            ),
+                          ),))
                         );
 
                         if (result != null) {

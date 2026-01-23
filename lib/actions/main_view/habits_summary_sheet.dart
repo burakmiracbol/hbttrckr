@@ -14,91 +14,130 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
-import '../../classes/glass_card.dart';
 import '../../providers/habit_provider.dart';
-import '../../providers/scheme_provider.dart';
 
-void showHabitsSummarySheet (
-    BuildContext context
-    ){
+void showHabitsSummarySheet(BuildContext context) {
   showModalBottomSheet(
+    backgroundColor: Colors.transparent,
     enableDrag: true,
     useSafeArea: true,
     isScrollControlled: true,
     context: context,
-    builder: (sheetContext) => DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.7, // başlangıçta ekranın %50'si
-      minChildSize: 0.25,
-      maxChildSize: 0.95,
-      builder: (context, scrollController) => Padding(
-        padding: EdgeInsets.all(8),
-        child: LiquidGlassLayer(
-          child: GlassGlowLayer(
-            child: SingleChildScrollView(
-              controller: scrollController,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 12.0),
-                    child: LiquidGlass(
-                      shape: LiquidRoundedRectangle(borderRadius: 160),
-                      child: GlassGlow(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top:8.0 ,bottom:8.0, left: 16.0, right: 16.0),
-                          child: Text(
-                            "Tüm Alışkanlıklar",
-                            style: Theme.of(context).textTheme.titleLarge,
+    builder: (sheetContext) => ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
+            border: Border.all(
+              color: Colors.white.withOpacity(
+                0.2,
+              ), // İnce ışık yansıması (kenarlık)
+              width: 1.5,
+            ),
+          ),
+          child: DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.7, // başlangıçta ekranın %50'si
+            minChildSize: 0.25,
+            maxChildSize: 0.95,
+            builder: (context, scrollController) => Padding(
+              padding: EdgeInsets.all(8),
+              child: LiquidGlassLayer(
+                child: GlassGlowLayer(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            8.0,
+                            8.0,
+                            8.0,
+                            12.0,
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      ...context.watch<HabitProvider>().habits.map(
-                            (h) => Padding(
-                          padding: const EdgeInsets.fromLTRB(6.0, 4.0, 6.0, 4.0),
                           child: LiquidGlass(
                             shape: LiquidRoundedRectangle(borderRadius: 160),
                             child: GlassGlow(
-                              child: Card(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(320)),
-                                color: Colors.transparent,
-                                elevation: 0,
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundColor: context.read<HabitProvider>().getMixedColor(h.id).withValues(alpha: 0.8),
-                                    child: Icon(
-                                      h.icon,
-                                    ),
-                                  ),
-                                  title: Text(h.name),
-                                  subtitle: Text(
-                                    "${h.currentStreak} gün streak • ${h.strength}% güç",
-                                  ),
-                                  trailing: h.currentStreak > 0
-                                      ? Icon(
-                                    Icons.local_fire_department,
-                                    color: context.read<HabitProvider>().getMixedColor(h.id),
-                                  )
-                                      : const Icon(
-                                    Icons
-                                        .local_fire_department_outlined,
-                                    color: Colors.grey,
-                                  ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 8.0,
+                                  bottom: 8.0,
+                                  left: 16.0,
+                                  right: 16.0,
+                                ),
+                                child: Text(
+                                  "Tüm Alışkanlıklar",
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Column(
+                          children: [
+                            ...context.watch<HabitProvider>().habits.map(
+                              (h) => Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  6.0,
+                                  4.0,
+                                  6.0,
+                                  4.0,
+                                ),
+                                child: LiquidGlass(
+                                  shape: LiquidRoundedRectangle(
+                                    borderRadius: 160,
+                                  ),
+                                  child: GlassGlow(
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          320,
+                                        ),
+                                      ),
+                                      color: Colors.transparent,
+                                      elevation: 0,
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: context
+                                              .read<HabitProvider>()
+                                              .getMixedColor(h.id)
+                                              .withValues(alpha: 0.8),
+                                          child: Icon(h.icon),
+                                        ),
+                                        title: Text(h.name),
+                                        subtitle: Text(
+                                          "${h.currentStreak} gün streak • ${h.strength}% güç",
+                                        ),
+                                        trailing: h.currentStreak > 0
+                                            ? Icon(
+                                                Icons.local_fire_department,
+                                                color: context
+                                                    .read<HabitProvider>()
+                                                    .getMixedColor(h.id),
+                                              )
+                                            : const Icon(
+                                                Icons
+                                                    .local_fire_department_outlined,
+                                                color: Colors.grey,
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
             ),
           ),

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
@@ -26,47 +28,63 @@ import '../../providers/habit_provider.dart';
 
 // Sık kullanılan Material Icons'ın custom map'i
 
-
 void showAddHabitSheet(BuildContext parentContext) {
   showModalBottomSheet(
     context: parentContext,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (sheetContext) => Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(parentContext).viewInsets.bottom,
-      ),
-      child: AddHabitSheet(
-        onAdd:
-            ({
-          required String name,
-          String description = '',
-          String? group,
-          required Color color,
-          required HabitType type,
-          required IconData icon,
-          double? targetCount,
-          double? maxCount,
-          double? targetSeconds,
-          TimeOfDay? reminderTime,
-          Set<int>? reminderDays,
-        }) {
-          parentContext.read<HabitProvider>().addHabit(
-            name: name,
-            description: description,
-            group: group,
-            color: color,
-            type: type,
-            targetCount: targetCount,
-            maxCount: maxCount,
-            targetSeconds: targetSeconds?.toDouble(),
-            reminderTime: reminderTime,
-            reminderDays: reminderDays,
-            icon: icon,
-          );
+    builder: (sheetContext) => ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
+            border: Border.all(
+              color: Colors.white.withOpacity(
+                0.2,
+              ), // İnce ışık yansıması (kenarlık)
+              width: 1.5,
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(parentContext).viewInsets.bottom,
+            ),
+            child: AddHabitSheet(
+              onAdd:
+                  ({
+                    required String name,
+                    String description = '',
+                    String? group,
+                    required Color color,
+                    required HabitType type,
+                    required IconData icon,
+                    double? targetCount,
+                    double? maxCount,
+                    double? targetSeconds,
+                    TimeOfDay? reminderTime,
+                    Set<int>? reminderDays,
+                  }) {
+                    parentContext.read<HabitProvider>().addHabit(
+                      name: name,
+                      description: description,
+                      group: group,
+                      color: color,
+                      type: type,
+                      targetCount: targetCount,
+                      maxCount: maxCount,
+                      targetSeconds: targetSeconds?.toDouble(),
+                      reminderTime: reminderTime,
+                      reminderDays: reminderDays,
+                      icon: icon,
+                    );
 
-          Navigator.pop(sheetContext);
-        },
+                    Navigator.pop(sheetContext);
+                  },
+            ),
+          ),
+        ),
       ),
     ),
   );
@@ -74,17 +92,17 @@ void showAddHabitSheet(BuildContext parentContext) {
 
 class AddHabitSheet extends StatefulWidget {
   final Function({
-  required String name,
-  String description,
-  String? group,
-  required Color color,
-  required HabitType type,
-  required IconData icon,
-  double? targetCount,
-  double? maxCount,
-  double? targetSeconds,
-  TimeOfDay? reminderTime,
-  Set<int>? reminderDays,
+    required String name,
+    String description,
+    String? group,
+    required Color color,
+    required HabitType type,
+    required IconData icon,
+    double? targetCount,
+    double? maxCount,
+    double? targetSeconds,
+    TimeOfDay? reminderTime,
+    Set<int>? reminderDays,
   })
   onAdd;
 
@@ -152,7 +170,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
         top: 20,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.9),
+        color: Colors.transparent,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SingleChildScrollView(
@@ -264,10 +282,10 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
               items: HabitType.values
                   .map(
                     (t) => DropdownMenuItem(
-                  value: t,
-                  child: Text(t.name.toUpperCase()),
-                ),
-              )
+                      value: t,
+                      child: Text(t.name.toUpperCase()),
+                    ),
+                  )
                   .toList(),
               onChanged: (v) => setState(() => _selectedType = v!),
             ),
@@ -320,7 +338,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     Expanded(
                       child: WheelSlider.number(
                         verticalListHeight:
-                        MediaQuery.of(context).size.height * 0.3,
+                            MediaQuery.of(context).size.height * 0.3,
                         horizontal: false,
                         totalCount: 24,
                         initValue: _currentHours,
@@ -330,8 +348,8 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                             _currentHours = val.toInt();
                             _totalSeconds =
                                 (_currentHours * 3600) +
-                                    (_currentMinutes * 60) +
-                                    _currentSeconds;
+                                (_currentMinutes * 60) +
+                                _currentSeconds;
                           });
                         },
                         selectedNumberStyle: const TextStyle(
@@ -348,7 +366,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     Expanded(
                       child: WheelSlider.number(
                         verticalListHeight:
-                        MediaQuery.of(context).size.height * 0.3,
+                            MediaQuery.of(context).size.height * 0.3,
                         horizontal: false,
                         totalCount: 60,
                         initValue: _currentMinutes,
@@ -358,8 +376,8 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                             _currentMinutes = val.toInt();
                             _totalSeconds =
                                 (_currentHours * 3600) +
-                                    (_currentMinutes * 60) +
-                                    _currentSeconds;
+                                (_currentMinutes * 60) +
+                                _currentSeconds;
                           });
                         },
                       ),
@@ -368,7 +386,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     Expanded(
                       child: WheelSlider.number(
                         verticalListHeight:
-                        MediaQuery.of(context).size.height * 0.3,
+                            MediaQuery.of(context).size.height * 0.3,
                         horizontal: false,
                         totalCount: 60,
                         initValue: _currentSeconds,
@@ -378,8 +396,8 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                             _currentSeconds = val.toInt();
                             _totalSeconds =
                                 (_currentHours * 3600) +
-                                    (_currentMinutes * 60) +
-                                    _currentSeconds;
+                                (_currentMinutes * 60) +
+                                _currentSeconds;
                           });
                         },
                       ),
@@ -477,7 +495,8 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                                   child: ColorPicker(
                                     hexInputBar: true,
                                     pickerColor: tempColor,
-                                    onColorChanged: (color) => tempColor = color,
+                                    onColorChanged: (color) =>
+                                        tempColor = color,
                                     labelTypes: [],
                                     pickerAreaHeightPercent: 0.8,
                                     portraitOnly: true,
@@ -552,7 +571,9 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     widget.onAdd(
                       name: _nameController.text.trim(),
                       description: _descController.text.trim(),
-                      group: _groupController.text.toString() == "" ? null : _groupController.text.trim(),
+                      group: _groupController.text.toString() == ""
+                          ? null
+                          : _groupController.text.trim(),
                       color: _selectedColor,
                       type: _selectedType,
                       icon: currentIconOfHabit,
@@ -566,13 +587,15 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                           ? _totalSeconds.toDouble()
                           : null,
                       reminderTime: _selectedTime,
-                      reminderDays: _selectedDays.isEmpty ? null : _selectedDays,
+                      reminderDays: _selectedDays.isEmpty
+                          ? null
+                          : _selectedDays,
                     );
                     // Navigator.pop() çağrısını kaldır - mainappview'da zaten çağrılıyor
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Hata oluştu: $e')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Hata oluştu: $e')));
                   }
                 },
                 child: Text(

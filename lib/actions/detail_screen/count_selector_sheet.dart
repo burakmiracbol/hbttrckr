@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
@@ -22,81 +24,93 @@ import '../../classes/habit.dart';
 import '../../providers/habit_provider.dart';
 
 void showCountSelectorSheet(
-    BuildContext context,
-    Habit currentHabit, {
-      required Habit habit,
-    }) {
+  BuildContext context,
+  Habit currentHabit, {
+  required Habit habit,
+}) {
   num? nCurrentValue;
   showModalBottomSheet(
     context: context,
-    isScrollControlled: true,
+    isScrollControlled: false,
     backgroundColor: Colors.transparent,
-    builder: (ctx) => Container(
-      height: 400,
-      decoration: const BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                  },
-                  child: const Icon(Icons.cancel_outlined),
-                ),
-                Text(
-                  "Sayı Seç",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // örnek değer, sen değiştireceksin
-                    Navigator.pop(ctx);
-                  },
-                  child: Icon(Icons.done),
-                ),
-              ],
+    useSafeArea: true,
+    enableDrag: false,
+    builder: (ctx) => ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
+            border: Border.all(
+              color: Colors.white.withOpacity(
+                0.2,
+              ), // İnce ışık yansıması (kenarlık)
+              width: 1.5,
             ),
           ),
-          // BURAYA SEN TASARIM YAPACAKSIN
-          Expanded(
-            child: WheelSlider.number(
-              horizontal: false,
-              isInfinite: false,
-              pointerColor: Colors.white,
-              showPointer: false,
-              perspective: 0.01,
-              verticalListHeight: double.infinity,
-              totalCount: habit.maxCount == null
-                  ? 999
-                  : habit.maxCount!.toInt(),
-              initValue: habit.achievedCount,
-              selectedNumberStyle: TextStyle(
-                fontSize: 13.0,
-                color: Colors.white,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                      },
+                      child: const Icon(Icons.cancel_outlined),
+                    ),
+                    Text(
+                      "Sayı Seç",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // örnek değer, sen değiştireceksin
+                        Navigator.pop(ctx);
+                      },
+                      child: Icon(Icons.done),
+                    ),
+                  ],
+                ),
               ),
-              unSelectedNumberStyle: TextStyle(
-                fontSize: 12.0,
-                color: Colors.white.withValues(alpha: 200),
-              ),
-              currentIndex: nCurrentValue,
-              onValueChanged: (val) {
-                Provider.of<HabitProvider>(
-                  context,
-                  listen: false,
-                ).changeCount(habit.id, val);
-              },
-              hapticFeedbackType: HapticFeedbackType.heavyImpact,
-            ),
-          ), // boş alan
-          const SizedBox(height: 20),
-        ],
+              // BURAYA SEN TASARIM YAPACAKSIN
+              Expanded(
+                child: WheelSlider.number(
+                  horizontal: false,
+                  isInfinite: false,
+                  pointerColor: Colors.white,
+                  showPointer: false,
+                  perspective: 0.01,
+                  verticalListHeight: double.infinity,
+                  totalCount: habit.maxCount == null
+                      ? 999
+                      : habit.maxCount!.toInt(),
+                  initValue: habit.achievedCount,
+                  selectedNumberStyle: TextStyle(
+                    fontSize: 13.0,
+                    color: Colors.white,
+                  ),
+                  unSelectedNumberStyle: TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.white.withValues(alpha: 200),
+                  ),
+                  currentIndex: nCurrentValue,
+                  onValueChanged: (val) {
+                    Provider.of<HabitProvider>(
+                      context,
+                      listen: false,
+                    ).changeCount(habit.id, val);
+                  },
+                  hapticFeedbackType: HapticFeedbackType.heavyImpact,
+                ),
+              ), // boş alan
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
       ),
     ),
   );
