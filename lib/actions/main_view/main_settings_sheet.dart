@@ -50,132 +50,129 @@ void showMainSettingsSheet(
             ),
             child: Padding(
               padding: const EdgeInsets.only(top: 14, left: 8, right: 8, bottom: 8),
-              child: SingleChildScrollView(
-                child: LiquidGlassLayer(
-                  child: GlassGlowLayer(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 6.0),
-                            child: LiquidGlass(
-                              shape: LiquidRoundedRectangle(borderRadius: 160),
-                              child: GlassGlow(
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16.0,
-                                    4.0,
-                                    14.0,
-                                    8.0,
-                                  ),
-                                  child: Text(
-                                    "Ayarlar",
-                                    style: TextStyle(
-                                      fontSize: Theme.of(
-                                        context,
-                                      ).textTheme.headlineSmall?.fontSize,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
+              child: LiquidGlassLayer(
+                child: GlassGlowLayer(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 6.0),
                           child: LiquidGlass(
                             shape: LiquidRoundedRectangle(borderRadius: 160),
                             child: GlassGlow(
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(320),
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  16.0,
+                                  4.0,
+                                  14.0,
+                                  8.0,
                                 ),
-                                shadowColor: Colors.transparent,
-                                color: Colors.transparent,
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Icon(Icons.account_circle_outlined),
-                                  ),
-                                  title: Text("Hesap Bilgileri"),
-                                  trailing: Icon(Icons.chevron_right),
-                                  onTap: () {
-                                    showAccountSettingsSheet(
+                                child: Text(
+                                  "Ayarlar",
+                                  style: TextStyle(
+                                    fontSize: Theme.of(
                                       context,
-                                      accountController,
-                                      passwordController,
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: LiquidGlass(
-                            shape: LiquidRoundedRectangle(borderRadius: 160),
-                            child: GlassGlow(
-                              child: Card(
-                                shadowColor: Colors.transparent,
-                                color: Colors.transparent,
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Icon(Icons.notifications_outlined),
+                                    ).textTheme.headlineSmall?.fontSize,
                                   ),
-                                  title: Text("Bildirimler"),
-                                  trailing: Icon(Icons.chevron_right),
-                                  onTap: () {
-                                    showNotificationsSettingsSheet(context);
-                                  },
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: LiquidGlass(
-                            shape: LiquidRoundedRectangle(borderRadius: 160),
-                            child: GlassGlow(
-                              child: Card(
-                                shadowColor: Colors.transparent,
-                                color: Colors.transparent,
-                                child: ListTile(
-                                  leading: CircleAvatar(child: Icon(Icons.tune)),
-                                  title: Text("Tercihler"),
-                                  trailing: Icon(Icons.chevron_right),
-                                  onTap: () {
-                                    showPreferencesSettingsSheet(context);
-                                  },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: LiquidGlass(
+                          shape: LiquidRoundedRectangle(borderRadius: 160),
+                          child: GlassGlow(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(320),
+                              ),
+                              shadowColor: Colors.transparent,
+                              color: Colors.transparent,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  child: Icon(Icons.account_circle_outlined),
                                 ),
+                                title: Text("Hesap Bilgileri"),
+                                trailing: Icon(Icons.chevron_right),
+                                onTap: () {
+                                  showAccountSettingsSheet(
+                                    context,
+                                    accountController,
+                                    passwordController,
+                                  );
+                                },
                               ),
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: LiquidGlass(
-                            shape: LiquidRoundedRectangle(borderRadius: 160),
-                            child: GlassGlow(
-                              child: Card(
-                                shadowColor: Colors.transparent,
-                                color: Colors.transparent,
-                                child: ListTile(
-                                  leading: CircleAvatar(child: Icon(Icons.backup)),
-                                  title: Text("Yedekler"),
-                                  trailing: Icon(Icons.chevron_right),
-                                  onTap: () {
-                                    showBackupSettingsSheet(context);
-                                  },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: LiquidGlass(
+                          shape: LiquidRoundedRectangle(borderRadius: 160),
+                          child: GlassGlow(
+                            child: Card(
+                              shadowColor: Colors.transparent,
+                              color: Colors.transparent,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  child: Icon(Icons.notifications_outlined),
                                 ),
+                                title: Text("Bildirimler"),
+                                trailing: Icon(Icons.chevron_right),
+                                onTap: () {
+                                  showNotificationsSettingsSheet(context);
+                                },
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: LiquidGlass(
+                          shape: LiquidRoundedRectangle(borderRadius: 160),
+                          child: GlassGlow(
+                            child: Card(
+                              shadowColor: Colors.transparent,
+                              color: Colors.transparent,
+                              child: ListTile(
+                                leading: CircleAvatar(child: Icon(Icons.tune)),
+                                title: Text("Tercihler"),
+                                trailing: Icon(Icons.chevron_right),
+                                onTap: () {
+                                  showPreferencesSettingsSheet(context);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: LiquidGlass(
+                          shape: LiquidRoundedRectangle(borderRadius: 160),
+                          child: GlassGlow(
+                            child: Card(
+                              shadowColor: Colors.transparent,
+                              color: Colors.transparent,
+                              child: ListTile(
+                                leading: CircleAvatar(child: Icon(Icons.backup)),
+                                title: Text("Yedekler"),
+                                trailing: Icon(Icons.chevron_right),
+                                onTap: () {
+                                  showBackupSettingsSheet(context);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
