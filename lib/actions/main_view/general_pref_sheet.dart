@@ -21,7 +21,7 @@ import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import '../../providers/scheme_provider.dart';
 
-void showPreferencesSettingsSheet(BuildContext context) {
+void showGeneralPrefsSheet(BuildContext context) {
   showModalBottomSheet(
     backgroundColor: Colors.transparent,
     enableDrag: true,

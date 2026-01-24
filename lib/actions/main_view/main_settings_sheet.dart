@@ -19,7 +19,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:hbttrckr/actions/main_view/backup_settings_sheet.dart';
-import 'package:hbttrckr/actions/main_view/preferences_settings_sheet.dart';
+import 'package:hbttrckr/actions/main_view/general_pref_sheet.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'account_settings_sheet.dart';
 import 'notifications_settings_sheet.dart';
@@ -145,7 +145,7 @@ void showMainSettingsSheet(
                                 title: Text("Tercihler"),
                                 trailing: Icon(Icons.chevron_right),
                                 onTap: () {
-                                  showPreferencesSettingsSheet(context);
+                                  showGeneralPrefsSheet(context);
                                 },
                               ),
                             ),
