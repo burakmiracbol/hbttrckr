@@ -99,6 +99,7 @@ import 'habits_page.dart';
 //  detailscreende rate of doing
 //  alarmın haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
 //  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
+
 //  ayarlarda tercihler bölümüne tonla ayar gelicek
 //    şefffalıkla ilgili nerenin şeffaflığı nerede naslı olacak
 //      mesela habit detail screen hep mi şeffaf olsun yoksa sadece şeffaf modu açıldığında mı
@@ -106,6 +107,7 @@ import 'habits_page.dart';
 //      detail screen page olarak mı görüntülenecek ya da sheet olarak mı
 //      veya habits page de görünüm nasıl olacak ikili coolumn mu üçlü mü tekli mi
 //      veya settings logosu yerine kullanıcı fotosu mu gelmeli
+//      time ve count selector sheetlerde slider lar yatay mı olacak
 //    deneyimler için ayarlar değişitrilebilecek
 //      haftanın hangi gününden başladığı eklenmeli
 //
