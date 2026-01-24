@@ -337,6 +337,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     // SAAT
                     Expanded(
                       child: WheelSlider.number(
+                        perspective: 0.009,
                         verticalListHeight:
                             MediaQuery.of(context).size.height * 0.3,
                         horizontal: false,
@@ -353,11 +354,11 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                           });
                         },
                         selectedNumberStyle: const TextStyle(
-                          fontSize: 30,
+                          fontSize: 24,
                           color: Colors.white,
                         ),
                         unSelectedNumberStyle: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           color: Colors.white54,
                         ),
                       ),
@@ -365,6 +366,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     // DAKİKA
                     Expanded(
                       child: WheelSlider.number(
+                        perspective: 0.009,
                         verticalListHeight:
                             MediaQuery.of(context).size.height * 0.3,
                         horizontal: false,
@@ -385,6 +387,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     // SANİYE
                     Expanded(
                       child: WheelSlider.number(
+                        perspective: 0.009,
                         verticalListHeight:
                             MediaQuery.of(context).size.height * 0.3,
                         horizontal: false,

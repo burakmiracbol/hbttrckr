@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
-
 import '../../classes/habit.dart';
 import '../../providers/habit_provider.dart';
 
@@ -34,7 +33,7 @@ void showCountSelectorSheet(
     isScrollControlled: false,
     backgroundColor: Colors.transparent,
     useSafeArea: true,
-    enableDrag: false,
+    enableDrag: true,
     builder: (ctx) => ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
       child: BackdropFilter(
@@ -49,66 +48,101 @@ void showCountSelectorSheet(
               width: 1.5,
             ),
           ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                      },
-                      child: const Icon(Icons.cancel_outlined),
+          child: LiquidGlassLayer(
+            child: GlassGlowLayer(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          LiquidGlass(
+                            shape: LiquidRoundedRectangle(borderRadius: 64),
+                            child: GlassGlow(
+                              child: ElevatedButton(
+
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                },
+                                child: const Icon(Icons.cancel_outlined),
+                              ),
+                            ),
+                          ),
+                          LiquidGlass(
+                            shape: LiquidRoundedRectangle(borderRadius: 64),
+                            child: GlassGlow(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(16,6,16,6),
+                                child: Text(
+                                  "Sayı Seç",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          LiquidGlass(
+                            shape: LiquidRoundedRectangle(borderRadius: 64),
+                            child: GlassGlow(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                },
+                                child: Icon(Icons.done),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Text(
-                      "Sayı Seç",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  // BURAYA SEN TASARIM YAPACAKSIN
+                  WheelSlider.number(
+                    horizontal: true,
+                    isInfinite: false,
+                    pointerColor: Colors.white,
+                    showPointer: false,
+                    perspective: 0.01,
+                    verticalListHeight: double.infinity,
+                    totalCount: habit.maxCount == null
+                        ? 999
+                        : habit.maxCount!.toInt(),
+                    initValue: habit.achievedCount,
+                    selectedNumberStyle: TextStyle(
+                      fontSize: 13.0,
+                      color: Colors.white,
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // örnek değer, sen değiştireceksin
-                        Navigator.pop(ctx);
-                      },
-                      child: Icon(Icons.done),
+                    unSelectedNumberStyle: TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.white.withValues(alpha: 200),
                     ),
-                  ],
-                ),
+                    currentIndex: nCurrentValue,
+                    onValueChanged: (val) {
+                      Provider.of<HabitProvider>(
+                        context,
+                        listen: false,
+                      ).changeCount(habit.id, val);
+                    },
+                    hapticFeedbackType: HapticFeedbackType.heavyImpact,
+                  ), // boş alan
+                  const SizedBox(height: 20),
+                ],
               ),
-              // BURAYA SEN TASARIM YAPACAKSIN
-              Expanded(
-                child: WheelSlider.number(
-                  horizontal: false,
-                  isInfinite: false,
-                  pointerColor: Colors.white,
-                  showPointer: false,
-                  perspective: 0.01,
-                  verticalListHeight: double.infinity,
-                  totalCount: habit.maxCount == null
-                      ? 999
-                      : habit.maxCount!.toInt(),
-                  initValue: habit.achievedCount,
-                  selectedNumberStyle: TextStyle(
-                    fontSize: 13.0,
-                    color: Colors.white,
-                  ),
-                  unSelectedNumberStyle: TextStyle(
-                    fontSize: 12.0,
-                    color: Colors.white.withValues(alpha: 200),
-                  ),
-                  currentIndex: nCurrentValue,
-                  onValueChanged: (val) {
-                    Provider.of<HabitProvider>(
-                      context,
-                      listen: false,
-                    ).changeCount(habit.id, val);
-                  },
-                  hapticFeedbackType: HapticFeedbackType.heavyImpact,
-                ),
-              ), // boş alan
-              const SizedBox(height: 20),
-            ],
+            ),
           ),
         ),
       ),
