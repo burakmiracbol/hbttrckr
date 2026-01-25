@@ -24,6 +24,8 @@ import 'package:hbttrckr/providers/notification_settings_provider.dart';
 import 'package:hbttrckr/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/views/main_app_view.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -160,6 +162,9 @@ Future<void> main() async {
   final schemeProvider = SchemeProvider();
   await schemeProvider.init();
 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   // NotificationService'i başlat
   await NotificationService().initialize();
 

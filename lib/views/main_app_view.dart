@@ -89,6 +89,9 @@ import 'habits_page.dart';
 //    ====================================================================================================
 //    yani gene mousetracker hatası
 //
+//
+//  TODO: GOOGLE SIGN-IN kurulacak !!!
+//
 //  açılış ekranı ilk ve ilk kullananlar için
 //
 //  shared_preferences ile daha fazla ayar cihaza kaydedilmeli esela en son şeffaf bıraktım niye bir sonrakinde şeffaf değil için

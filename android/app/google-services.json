@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "636065186155",
+    "project_id": "hbttrckr-b580a",
+    "storage_bucket": "hbttrckr-b580a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636065186155:android:63234ceeeb3513bd61cc2e",
+        "android_client_info": {
+          "package_name": "com.example.hbttrckr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCk0Kosrg29NsQbRjXNntfRs9niui37fdE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
