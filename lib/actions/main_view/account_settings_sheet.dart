@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:hbttrckr/main.dart';
+
 
 void showAccountSettingsSheet (
     BuildContext context,
@@ -89,135 +90,7 @@ void showAccountSettingsSheet (
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(
-                    4.0,
-                  ),
-                  child: Card(
-                    child: TextField(
-                      controller:
-                      accountController,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        hintText:
-                        'Account name',
-                        hintStyle: TextStyle(
-                          color: Colors.grey,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.circular(
-                            12,
-                          ),
-                        ),
-                        filled: true,
-                        fillColor:
-                        Colors.grey[900],
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(
-                    4.0,
-                  ),
-                  child: Card(
-                    child: TextField(
-                      controller:
-                      passwordController,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        hintText:
-                        'Password (that is secret don\'t share it)',
-                        hintStyle: TextStyle(
-                          color: Colors.grey,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.circular(
-                            12,
-                          ),
-                        ),
-                        filled: true,
-                        fillColor:
-                        Colors.grey[900],
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(
-                    4.0,
-                  ),
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Forgot your password ?\n(okay that is normal but we are tired)",
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.all(
-                    4.0,
-                  ),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style:
-                      ElevatedButton.styleFrom(
-                        backgroundColor:
-                        Color.fromARGB(
-                          255,
-                          140,
-                          140,
-                          73,
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text("Log in"),
-                    ),
-                  ),
-                ),
-
-                Stack(
-                  children: [
-                    Padding(
-                      padding:
-                      const EdgeInsets.only(
-                        top: 6.0,
-                      ),
-                      child: Center(
-                        child: Divider(),
-                      ),
-                    ),
-                    Center(
-                      child: Card(
-                        child: Padding(
-                          padding:
-                          const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
-                          ),
-                          child: Text("  or  "),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                Card(
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Create Account",
-                    ),
-                  ),
-                ),
+                buildSignInButton()
               ],
             ),
           ),
@@ -225,4 +98,25 @@ void showAccountSettingsSheet (
       );
     },
   );
+}
+
+Widget buildSignInButton() {
+  // Eğer platform klasik authenticate metodunu destekliyorsa (Mobil gibi)
+  if (googleSignIn.supportsAuthenticate()) {
+    return ElevatedButton(
+      onPressed: () async {
+        try {
+          // Asıl giriş işlemi burada yapılıyor
+          await googleSignIn.authenticate();
+        } catch (e) {
+          print("Giriş Hatası: $e");
+        }
+      },
+      child: const Text('GOOGLE İLE GİRİŞ YAP'),
+    );
+  } else {
+    // Web platformunda iseniz farklı bir buton render edilmelidir
+    // return GoogleSignInWeb.renderButton();
+    return const SizedBox();
+  }
 }

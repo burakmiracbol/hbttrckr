@@ -19,6 +19,7 @@ import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_acrylic/window.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/providers/notification_settings_provider.dart';
 import 'package:hbttrckr/services/notification_service.dart';
@@ -155,6 +156,25 @@ dynamic buildMaterialScheme(SchemeProvider sp, bool isDark) {
   }
 }
 
+final GoogleSignIn googleSignIn = GoogleSignIn.instance; // Singleton kullanımı
+
+void initializeGoogleSignIn() {
+  // Arka planda sessizce başlatıyoruz
+  googleSignIn.initialize(
+    // Web için clientId gerekebilir, Android/iOS için google-services.json yeterlidir
+  ).then((_) {
+    // Giriş olaylarını dinliyoruz
+    googleSignIn.authenticationEvents.listen((event) {
+      print("Giriş Durumu Değişti: $event");
+    }).onError((error) {
+      print("Hata: $error");
+    });
+
+    // Daha önce giriş yapmış mı diye kontrol et (Lightweight)
+    googleSignIn.attemptLightweightAuthentication();
+  });
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -165,6 +185,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  initializeGoogleSignIn();
   // NotificationService'i başlat
   await NotificationService().initialize();
 
