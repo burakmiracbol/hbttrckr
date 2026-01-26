@@ -79,7 +79,7 @@ class NotificationService {
       windows: windowsSettings,
     );
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
 
     // Android 13+ için izin iste
     await _requestAndroidNotificationPermission();
@@ -139,10 +139,10 @@ class NotificationService {
     );
 
     await flutterLocalNotificationsPlugin.show(
-      id,
-      title,
-      body,
-      notificationDetails,
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
       payload: payload,
     );
   }
@@ -177,11 +177,11 @@ class NotificationService {
     );
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      tz.TZDateTime.from(scheduledTime, tz.local),
-      notificationDetails,
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: tz.TZDateTime.from(scheduledTime, tz.local),
+      notificationDetails: notificationDetails,
       androidScheduleMode: AndroidScheduleMode.alarmClock,
       payload: payload,
     );
@@ -199,7 +199,7 @@ class NotificationService {
   }) async {
     // 1. ÖNCEKİ BİLDİRİMLERİ İPTAL ET
     try {
-      await flutterLocalNotificationsPlugin.cancel(id);
+      await flutterLocalNotificationsPlugin.cancel(id: id);
       debugPrint('🗑️ Eski bildirim iptal edildi (ID: $id)');
     } catch (e) {
       debugPrint('❌ İptal hatası: $e');
@@ -254,11 +254,11 @@ class NotificationService {
 
       // 3. PLANLA - matchDateTimeComponents.time KULLANMA! Kesin zaman kullan
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        scheduledDate,
-        notificationDetails,
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+        notificationDetails: notificationDetails,
         androidScheduleMode: AndroidScheduleMode.alarmClock,
         // matchDateTimeComponents KALDIR - kesin tarih/saat kullan
         payload: payload,
@@ -288,11 +288,11 @@ class NotificationService {
         scheduledDate = scheduledDate.add(Duration(days: daysUntil));
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          id + day,
-          title,
-          body,
-          scheduledDate,
-          notificationDetails,
+          id: id + day,
+          title: title,
+          body: body,
+          scheduledDate: scheduledDate,
+          notificationDetails: notificationDetails,
           androidScheduleMode: AndroidScheduleMode.alarmClock,
           payload: payload,
         );
@@ -302,7 +302,7 @@ class NotificationService {
 
   // Bildirimi iptal et
   Future<void> cancelNotification(int id) async {
-    await flutterLocalNotificationsPlugin.cancel(id);
+    await flutterLocalNotificationsPlugin.cancel(id: id);
   }
 
   // Tüm bildirimleri iptal et

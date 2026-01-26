@@ -16,29 +16,57 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 class BackupService {
+  static Future<Map<String, dynamic>> _buildBackupPayload() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final Map<String, dynamic> backupData = {
+      'version': '1.0',
+      'exportDate': DateTime.now().toIso8601String(),
+      'preferences': <String, dynamic>{},
+    };
+
+    final Set<String> keys = prefs.getKeys();
+    for (final key in keys) {
+      final value = prefs.get(key);
+      backupData['preferences'][key] = value;
+    }
+
+    return backupData;
+  }
+
+  static Future<void> _restorePreferences(
+    Map<String, dynamic> preferences,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    for (final entry in preferences.entries) {
+      final key = entry.key;
+      final value = entry.value;
+
+      if (value is String) {
+        await prefs.setString(key, value);
+      } else if (value is int) {
+        await prefs.setInt(key, value);
+      } else if (value is double) {
+        await prefs.setDouble(key, value);
+      } else if (value is bool) {
+        await prefs.setBool(key, value);
+      } else if (value is List) {
+        await prefs.setStringList(key, List<String>.from(value));
+      }
+    }
+  }
+
   /// Tüm verileri JSON dosyasına export et
   static Future<File?> exportBackup(String fileName) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-
-      // SharedPreferences'teki TÜM verileri al
-      final Map<String, dynamic> backupData = {
-        'version': '1.0',
-        'exportDate': DateTime.now().toIso8601String(),
-        'preferences': {},
-      };
-
-      // Tüm preferences'i al
-      final Set<String> keys = prefs.getKeys();
-      for (final key in keys) {
-        final value = prefs.get(key);
-        backupData['preferences'][key] = value;
-      }
+      final backupData = await _buildBackupPayload();
 
       // JSON'u format et
       final jsonString = jsonEncode(backupData);
@@ -79,26 +107,8 @@ class BackupService {
       }
 
       // Preferences'i restore et
-      final prefs = await SharedPreferences.getInstance();
       final preferences = backupData['preferences'] as Map<String, dynamic>;
-
-      for (final entry in preferences.entries) {
-        final key = entry.key;
-        final value = entry.value;
-
-        // Type'a göre set et
-        if (value is String) {
-          await prefs.setString(key, value);
-        } else if (value is int) {
-          await prefs.setInt(key, value);
-        } else if (value is double) {
-          await prefs.setDouble(key, value);
-        } else if (value is bool) {
-          await prefs.setBool(key, value);
-        } else if (value is List) {
-          await prefs.setStringList(key, List<String>.from(value));
-        }
-      }
+      await _restorePreferences(preferences);
 
       debugPrint('✅ Backup imported successfully');
       return true;
@@ -141,6 +151,81 @@ class BackupService {
     } catch (e) {
       debugPrint('❌ List backups error: $e');
       return [];
+    }
+  }
+
+  /// Yedeği buluta yükle
+  static Future<bool> uploadBackupToCloud(
+    GoogleSignInAccount user,
+  ) async {
+    try {
+      final backupData = await _buildBackupPayload();
+      await FirebaseFirestore.instance
+          .collection('user_backups')
+          .doc(user.id)
+          .set({
+        'user': {
+          'id': user.id,
+          'email': user.email,
+          'displayName': user.displayName,
+          'photoUrl': user.photoUrl,
+        },
+        'data': backupData,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      debugPrint('✅ Backup uploaded to cloud for: ${user.email}');
+      return true;
+    } catch (e) {
+      debugPrint('❌ Cloud upload error: $e');
+      return false;
+    }
+  }
+
+  /// Buluttan yedeği geri yükle
+  static Future<bool> restoreBackupFromCloud(
+    GoogleSignInAccount user,
+  ) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('user_backups')
+          .doc(user.id)
+          .get();
+
+      if (!snapshot.exists) {
+        return false;
+      }
+
+      final data = snapshot.data();
+      if (data == null) {
+        return false;
+      }
+
+      final rawBackup = data['data'];
+      if (rawBackup is! Map) {
+        return false;
+      }
+      final backupData = Map<String, dynamic>.from(rawBackup as Map);
+
+      final version = backupData['version'] ?? '1.0';
+      if (version != '1.0') {
+        debugPrint('⚠️ Backup version mismatch: $version');
+        return false;
+      }
+
+      final rawPreferences = backupData['preferences'];
+      if (rawPreferences is! Map) {
+        return false;
+      }
+
+      await _restorePreferences(
+        Map<String, dynamic>.from(rawPreferences as Map),
+      );
+      debugPrint('✅ Backup restored from cloud for: ${user.email}');
+      return true;
+    } catch (e) {
+      debugPrint('❌ Cloud restore error: $e');
+      return false;
     }
   }
 }

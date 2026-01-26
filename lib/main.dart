@@ -157,6 +157,8 @@ dynamic buildMaterialScheme(SchemeProvider sp, bool isDark) {
 }
 
 final GoogleSignIn googleSignIn = GoogleSignIn.instance; // Singleton kullanımı
+final ValueNotifier<GoogleSignInAccount?> googleUserNotifier =
+    ValueNotifier<GoogleSignInAccount?>(null);
 
 void initializeGoogleSignIn() {
   // Arka planda sessizce başlatıyoruz
@@ -165,13 +167,25 @@ void initializeGoogleSignIn() {
   ).then((_) {
     // Giriş olaylarını dinliyoruz
     googleSignIn.authenticationEvents.listen((event) {
+      if (event is GoogleSignInAuthenticationEventSignIn) {
+        googleUserNotifier.value = event.user;
+      } else if (event is GoogleSignInAuthenticationEventSignOut) {
+        googleUserNotifier.value = null;
+      }
       print("Giriş Durumu Değişti: $event");
     }).onError((error) {
       print("Hata: $error");
     });
 
     // Daha önce giriş yapmış mı diye kontrol et (Lightweight)
-    googleSignIn.attemptLightweightAuthentication();
+    final attempt = googleSignIn.attemptLightweightAuthentication();
+    if (attempt != null) {
+      attempt.then((account) {
+        if (account != null) {
+          googleUserNotifier.value = account;
+        }
+      });
+    }
   });
 }
 

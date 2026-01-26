@@ -16,6 +16,7 @@
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hbttrckr/main.dart';
 
 
@@ -90,7 +91,46 @@ void showAccountSettingsSheet (
                     ),
                   ],
                 ),
-                buildSignInButton()
+                ValueListenableBuilder<GoogleSignInAccount?>(
+                  valueListenable: googleUserNotifier,
+                  builder: (context, user, child) {
+                    if (user == null) {
+                      return buildSignInButton();
+                    }
+
+                    return Column(
+                      children: [
+                        if (user.photoUrl != null)
+                          CircleAvatar(
+                            radius: 32,
+                            backgroundImage: NetworkImage(user.photoUrl!),
+                          )
+                        else
+                          const CircleAvatar(
+                            radius: 32,
+                            child: Icon(Icons.person),
+                          ),
+                        const SizedBox(height: 12),
+                        Text(
+                          user.displayName ?? 'Google Kullanıcısı',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          user.email,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () async {
+                            await googleSignIn.signOut();
+                          },
+                          child: const Text('ÇIKIŞ YAP'),
+                        ),
+                      ],
+                    );
+                  },
+                )
               ],
             ),
           ),

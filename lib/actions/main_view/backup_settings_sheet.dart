@@ -18,6 +18,8 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hbttrckr/main.dart';
 import '../../services/backup_service.dart';
 
 void showBackupSettingsSheet(BuildContext context) {
@@ -169,6 +171,85 @@ void showBackupSettingsSheet(BuildContext context) {
                         minimumSize: Size(double.infinity, 50),
                         backgroundColor: Colors.green[700],
                       ),
+                    ),
+                    SizedBox(height: 12),
+
+                    // CLOUD SYNC SECTION
+                    Text(
+                      'Bulut Senkronizasyonu',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    ValueListenableBuilder<GoogleSignInAccount?>(
+                      valueListenable: googleUserNotifier,
+                      builder: (context, user, child) {
+                        if (user == null) {
+                          return Text(
+                            'Bulut senkronizasyonu için Google ile giriş yapın.',
+                            style: TextStyle(color: Colors.white60),
+                          );
+                        }
+
+                        return Column(
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                final success =
+                                    await BackupService.uploadBackupToCloud(
+                                  user,
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      success
+                                          ? '✅ Buluta yedeklendi.'
+                                          : '❌ Buluta yedekleme hatası',
+                                    ),
+                                    backgroundColor:
+                                        success ? null : Colors.red,
+                                  ),
+                                );
+                              },
+                              icon: Icon(Icons.cloud_upload_outlined),
+                              label: Text('Buluta Yedekle'),
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size(double.infinity, 50),
+                                backgroundColor: Colors.indigo[700],
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                final success =
+                                    await BackupService.restoreBackupFromCloud(
+                                  user,
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      success
+                                          ? '✅ Buluttan geri yüklendi.'
+                                          : '❌ Bulut yedeği bulunamadı',
+                                    ),
+                                    backgroundColor:
+                                        success ? null : Colors.red,
+                                  ),
+                                );
+                              },
+                              icon: Icon(Icons.cloud_download_outlined),
+                              label: Text('Buluttan Geri Yükle'),
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size(double.infinity, 50),
+                                backgroundColor: Colors.deepPurple[700],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                     SizedBox(height: 12),
 
