@@ -60,7 +60,7 @@ dependencies:
   zefyrka_new: ^1.0.1
   flutter_quill_extensions: ^11.0.0
   image_picker: ^1.2.1
-  flutter_local_notifications: ^19.5.0
+  flutter_local_notifications: ^20.0.0
   flutter_timezone: ^5.0.1
   icon_picker: ^2.1.0
   flutter_iconpicker: ^4.0.3
