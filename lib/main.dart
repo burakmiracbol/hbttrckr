@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_acrylic/window.dart';
@@ -35,6 +36,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:hbttrckr/providers/scheme_provider.dart';
 
 Color themeColor = Colors.teal;
+double backupVersion = 1.0;
 
 // Keep a couple of default scheme objects (will be overridden by provider at runtime)
 final defaultScheme = SchemeExpressive(
@@ -167,11 +169,36 @@ void initializeGoogleSignIn() {
     // Web için clientId gerekebilir, Android/iOS için google-services.json yeterlidir
   ).then((_) {
     // Giriş olaylarını dinliyoruz
-    googleSignIn.authenticationEvents.listen((event) {
+    googleSignIn.authenticationEvents.listen((event) async { // Firebase için async ekledik
       if (event is GoogleSignInAuthenticationEventSignIn) {
         googleUserNotifier.value = event.user;
+
+        // --- BURASI YENİ: Orijinal yapıyı bozmadan Firebase'i bağlıyoruz ---
+        try {
+          final GoogleSignInAuthentication googleAuth = await event.user!.authentication;
+  
+          // v7'de accessToken için authorizationClient kullanılıyor
+          String? accessToken;
+          try {
+            final authClient = googleSignIn.authorizationClient;
+            final authorization = await authClient.authorizationForScopes(['email', 'profile']);
+            accessToken = authorization?.accessToken;
+          } catch (_) {}
+          
+          final AuthCredential credential = GoogleAuthProvider.credential(
+            idToken: googleAuth.idToken,
+            accessToken: accessToken,
+          );
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          print("✅ Firebase Auth senkronize edildi. UID: ${FirebaseAuth.instance.currentUser?.uid}");
+        } catch (e) {
+          print("❌ Firebase Bağlantı Hatası: $e");
+        }
+              // -----------------------------------------------------------------
+
       } else if (event is GoogleSignInAuthenticationEventSignOut) {
         googleUserNotifier.value = null;
+        await FirebaseAuth.instance.signOut(); // Firebase'den de çıkış yap
       }
       print("Giriş Durumu Değişti: $event");
     }).onError((error) {

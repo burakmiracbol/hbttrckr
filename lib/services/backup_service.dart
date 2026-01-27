@@ -17,17 +17,19 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
 
 class BackupService {
   static Future<Map<String, dynamic>> _buildBackupPayload() async {
     final prefs = await SharedPreferences.getInstance();
 
     final Map<String, dynamic> backupData = {
-      'version': '1.0',
+      'version': backupVersion,
       'exportDate': DateTime.now().toIso8601String(),
       'preferences': <String, dynamic>{},
     };
@@ -100,8 +102,8 @@ class BackupService {
       final backupData = jsonDecode(jsonString) as Map<String, dynamic>;
 
       // Version kontrol et
-      final version = backupData['version'] ?? '1.0';
-      if (version != '1.0') {
+      final version = backupData['version'] ?? '$backupVersion';
+      if (version != '$backupVersion') {
         debugPrint('⚠️ Backup version mismatch: $version');
         return false;
       }
@@ -136,7 +138,9 @@ class BackupService {
   /// Backup dosyalarını listele
   static Future<List<File>> listBackups() async {
     try {
-      final directory = defaultTargetPlatform == TargetPlatform.android ? Directory('/storage/emulated/0/Downloads') : Directory.systemTemp;
+      final directory = defaultTargetPlatform == TargetPlatform.android
+          ? Directory('/storage/emulated/0/Downloads')
+          : Directory.systemTemp;
       if (!await directory.exists()) {
         return [];
       }
@@ -155,60 +159,126 @@ class BackupService {
   }
 
   /// Yedeği buluta yükle
-  static Future<bool> uploadBackupToCloud(
-    GoogleSignInAccount user,
-  ) async {
+  static Future<bool> uploadBackupToCloud(GoogleSignInAccount user) async {
     try {
-      final backupData = await _buildBackupPayload();
+      debugPrint('📤 Upload başlatılıyor...');
+      debugPrint('📧 Google User Email: ${user.email}');
+      debugPrint('🆔 Google User ID: ${user.id}');
+
+      // Firebase Auth durumunu kontrol et
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+      debugPrint('🔥 Firebase User: ${firebaseUser?.uid}');
+      debugPrint('🔥 Firebase Email: ${firebaseUser?.email}');
+
+      if (firebaseUser == null) {
+        debugPrint('❌ Firebase Auth henüz senkronize olmamış!');
+        // Firebase Auth'u yeniden senkronize etmeyi dene
+        try {
+          final googleAuth = await user.authentication;
+          debugPrint(
+            '🔑 idToken: ${googleAuth.idToken != null ? "VAR" : "YOK"}',
+          );
+
+          // v7'de accessToken için authorizationClient kullanılıyor
+          String? accessToken;
+          try {
+            final authClient = googleSignIn.authorizationClient;
+            final authorization = await authClient.authorizationForScopes([
+              'email',
+              'profile',
+            ]);
+            accessToken = authorization?.accessToken;
+            debugPrint(
+              '🔑 accessToken: ${accessToken != null ? "VAR" : "YOK"}',
+            );
+          } catch (e) {
+            debugPrint('🔑 accessToken alınamadı: $e');
+          }
+
+          final credential = GoogleAuthProvider.credential(
+            idToken: googleAuth.idToken,
+            accessToken: accessToken,
+          );
+          final userCredential = await FirebaseAuth.instance
+              .signInWithCredential(credential);
+          debugPrint(
+            '✅ Firebase Auth yeniden senkronize edildi: ${userCredential.user?.uid}',
+          );
+        } catch (authError) {
+          debugPrint('❌ Firebase Auth senkronizasyon hatası: $authError');
+          return false;
+        }
+      }
+
+      final currentUid = FirebaseAuth.instance.currentUser?.uid;
+      if (currentUid == null) {
+        debugPrint('❌ UID hala null, işlem iptal ediliyor.');
+        return false;
+      }
+
+      debugPrint('📦 Backup payload oluşturuluyor...');
+      final backupPayload = await _buildBackupPayload();
+      debugPrint(
+        '📦 Payload boyutu: ${jsonEncode(backupPayload).length} karakter',
+      );
+
+      debugPrint(
+        '☁️ Firestore\'a yazılıyor... Collection: user-backups, Doc: $currentUid',
+      );
+
       await FirebaseFirestore.instance
-          .collection('user_backups')
-          .doc(user.id)
+          .collection('user-backups')
+          .doc(currentUid)
           .set({
-        'user': {
-          'id': user.id,
-          'email': user.email,
-          'displayName': user.displayName,
-          'photoUrl': user.photoUrl,
-        },
-        'data': backupData,
-        'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+            'user': {
+              'id': user.id,
+              'uid': currentUid,
+              'email': user.email,
+              'displayName': user.displayName,
+              'photoUrl': user.photoUrl,
+            },
+            'payload': backupPayload,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
 
       debugPrint('✅ Backup uploaded to cloud for: ${user.email}');
       return true;
-    } catch (e) {
+    } on FirebaseException catch (e) {
+      debugPrint('❌ Firebase hatası:');
+      debugPrint('   Code: ${e.code}');
+      debugPrint('   Message: ${e.message}');
+      debugPrint('   Plugin: ${e.plugin}');
+      return false;
+    } catch (e, stackTrace) {
       debugPrint('❌ Cloud upload error: $e');
+      debugPrint('📍 Stack trace: $stackTrace');
       return false;
     }
   }
 
   /// Buluttan yedeği geri yükle
-  static Future<bool> restoreBackupFromCloud(
-    GoogleSignInAccount user,
-  ) async {
+  static Future<bool> restoreBackupFromCloud(GoogleSignInAccount user) async {
     try {
       final snapshot = await FirebaseFirestore.instance
-          .collection('user_backups')
-          .doc(user.id)
+          .collection('user-backups')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
           .get();
 
-      if (!snapshot.exists) {
-        return false;
-      }
-
       final data = snapshot.data();
-      if (data == null) {
+
+      if (!snapshot.exists || snapshot.data() == null) {
+        debugPrint('⚠️ No cloud backup found for this user.');
         return false;
       }
 
-      final rawBackup = data['data'];
+      final rawBackup = data?['payload'];
       if (rawBackup is! Map) {
         return false;
       }
-      final backupData = Map<String, dynamic>.from(rawBackup as Map);
+      final backupData = Map<String, dynamic>.from(rawBackup);
 
-      final version = backupData['version'] ?? '1.0';
-      if (version != '1.0') {
+      final version = backupData['version'] ?? "$backupVersion";
+      if (version != '$backupVersion') {
         debugPrint('⚠️ Backup version mismatch: $version');
         return false;
       }
@@ -218,9 +288,7 @@ class BackupService {
         return false;
       }
 
-      await _restorePreferences(
-        Map<String, dynamic>.from(rawPreferences as Map),
-      );
+      await _restorePreferences(Map<String, dynamic>.from(rawPreferences));
       debugPrint('✅ Backup restored from cloud for: ${user.email}');
       return true;
     } catch (e) {
@@ -229,4 +297,3 @@ class BackupService {
     }
   }
 }
-

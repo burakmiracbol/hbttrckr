@@ -100,32 +100,50 @@ void showAccountSettingsSheet (
 
                     return Column(
                       children: [
-                        if (user.photoUrl != null)
-                          CircleAvatar(
-                            radius: 32,
-                            backgroundImage: NetworkImage(user.photoUrl!),
-                          )
-                        else
-                          const CircleAvatar(
-                            radius: 32,
-                            child: Icon(Icons.person),
+                        Card(
+                          child: IntrinsicWidth(
+                            child: Row(
+                              children: [
+                                if (user.photoUrl != null)
+                                  CircleAvatar(
+                                    radius: 32,
+                                    backgroundImage: NetworkImage(user.photoUrl!),
+                                  )
+                                else
+                                  const CircleAvatar(
+                                    radius: 32,
+                                    child: Icon(Icons.person),
+                                  ),
+
+                                Column(
+                                  children: [
+                                    Text(
+                                      user.displayName ?? 'Google Kullanıcısı',
+                                      style: Theme.of(context).textTheme.titleMedium,
+                                    ),
+                                    Text(
+                                      user.email,
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                    Text(
+                                      user.id,
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ]
+                                ),
+                              ]
+                            ),
                           ),
-                        const SizedBox(height: 12),
-                        Text(
-                          user.displayName ?? 'Google Kullanıcısı',
-                          style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          user.email,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () async {
-                            await googleSignIn.signOut();
-                          },
-                          child: const Text('ÇIKIŞ YAP'),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await googleSignIn.signOut();
+                            },
+                            child: const Text('Hesaptan çıkış yap'),
+                          ),
                         ),
                       ],
                     );
@@ -152,7 +170,7 @@ Widget buildSignInButton() {
           print("Giriş Hatası: $e");
         }
       },
-      child: const Text('GOOGLE İLE GİRİŞ YAP'),
+      child: const Text('Google Sign-in'),
     );
   } else {
     // Web platformunda iseniz farklı bir buton render edilmelidir
