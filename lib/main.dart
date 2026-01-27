@@ -36,7 +36,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:hbttrckr/providers/scheme_provider.dart';
 
 Color themeColor = Colors.teal;
-double backupVersion = 1.0;
+String backupVersion = "1.0";
 
 // Keep a couple of default scheme objects (will be overridden by provider at runtime)
 final defaultScheme = SchemeExpressive(

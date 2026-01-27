@@ -102,9 +102,10 @@ class BackupService {
       final backupData = jsonDecode(jsonString) as Map<String, dynamic>;
 
       // Version kontrol et
-      final version = backupData['version'] ?? '$backupVersion';
-      if (version != '$backupVersion') {
-        debugPrint('⚠️ Backup version mismatch: $version');
+      final version = backupData['version']?.toString() ?? backupVersion;
+      if (version != backupVersion) {
+        debugPrint(
+            '⚠️ Backup version mismatch: $version (expected: $backupVersion)');
         return false;
       }
 
@@ -259,40 +260,60 @@ class BackupService {
   /// Buluttan yedeği geri yükle
   static Future<bool> restoreBackupFromCloud(GoogleSignInAccount user) async {
     try {
+      debugPrint('📥 Cloud restore başlatılıyor...');
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      debugPrint('🔥 Firebase User ID: $uid');
+      if (uid == null) {
+        debugPrint('❌ UID null, işlem iptal ediliyor.');
+        return false;
+      }
+
       final snapshot = await FirebaseFirestore.instance
           .collection('user-backups')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .doc(uid)
           .get();
 
       final data = snapshot.data();
+      debugPrint('☁️ Snapshot exists: ${snapshot.exists}');
+      debugPrint('☁️ Snapshot data: ${data != null ? "VAR" : "YOK"}');
 
-      if (!snapshot.exists || snapshot.data() == null) {
-        debugPrint('⚠️ No cloud backup found for this user.');
+      if (!snapshot.exists || data == null) {
+        debugPrint('⚠️ Bu kullanıcı için bulut yedeği bulunamadı.');
         return false;
       }
 
-      final rawBackup = data?['payload'];
+      debugPrint('📦 Ham yedek alınıyor (payload)...');
+      final rawBackup = data['payload'];
       if (rawBackup is! Map) {
+        debugPrint('❌ Payload bir harita (Map) değil.');
         return false;
       }
       final backupData = Map<String, dynamic>.from(rawBackup);
+      debugPrint('📦 Yedek verisi: ${jsonEncode(backupData)}');
 
-      final version = backupData['version'] ?? "$backupVersion";
-      if (version != '$backupVersion') {
-        debugPrint('⚠️ Backup version mismatch: $version');
+      final version = backupData['version']?.toString() ?? backupVersion;
+      debugPrint('📦 Yedek versiyonu: $version, Beklenen: $backupVersion');
+      if (version != backupVersion) {
+        debugPrint(
+            '⚠️ Yedek versiyonu uyuşmuyor: $version (beklenen: $backupVersion)');
         return false;
       }
 
+      debugPrint('⚙️ Ham tercihler alınıyor (preferences)...');
       final rawPreferences = backupData['preferences'];
       if (rawPreferences is! Map) {
+        debugPrint('❌ Tercihler bir harita (Map) değil.');
         return false;
       }
+      final preferences = Map<String, dynamic>.from(rawPreferences);
+      debugPrint('⚙️ Tercihler verisi: ${jsonEncode(preferences)}');
 
-      await _restorePreferences(Map<String, dynamic>.from(rawPreferences));
-      debugPrint('✅ Backup restored from cloud for: ${user.email}');
+      await _restorePreferences(preferences);
+      debugPrint('✅ Yedek buluttan geri yüklendi: ${user.email}');
       return true;
-    } catch (e) {
-      debugPrint('❌ Cloud restore error: $e');
+    } catch (e, stackTrace) {
+      debugPrint('❌ Cloud restore hatası: $e');
+      debugPrint('📍 Stack trace: $stackTrace');
       return false;
     }
   }
