@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/providers/notification_settings_provider.dart';
+import 'package:hbttrckr/providers/uix_provider.dart';
 import 'package:hbttrckr/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/views/main_app_view.dart';
@@ -268,6 +269,7 @@ Future<void> main() async {
       providers: [
         // provide the same instance so MyApp and widgets read the same object
         ChangeNotifierProvider<CurrentThemeMode>.value(value: initialTheme),
+        ChangeNotifierProvider(create: (_) => UIXProvider()),
         ChangeNotifierProvider(create: (_) => HabitProvider()),
         ChangeNotifierProvider(create: (_) => NotificationSettings()),
         ChangeNotifierProvider<SchemeProvider>.value(value: schemeProvider),

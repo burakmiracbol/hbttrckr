@@ -30,6 +30,7 @@ import '../classes/stats_card.dart';
 import '../extensions/duration_formatter.dart';
 import '../actions/detail_screen/count_selector_sheet.dart';
 import '../actions/detail_screen/time_selector_sheet.dart';
+import '../providers/uix_provider.dart';
 
 // TODO ERROR : düzenleme oluyor iki iptal tuşu var
 
@@ -98,12 +99,6 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
               Navigator.of(context).pop();
             }
 
-            // Eski yaklaşım (commented out):
-            // FocusScope.of(context).unfocus();
-            // await Future.delayed(const Duration(milliseconds: 10));
-            // if (context.mounted) {
-            //   Navigator.of(context).pop();
-            // }
           },
           child: Scaffold(
             primary: false,
@@ -158,182 +153,37 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               children: [
                                 Stack(
                                   children: [
-                                    IntrinsicHeight(
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          LiquidGlass(
-                                            shape: LiquidRoundedRectangle(
-                                              borderRadius: 320,
-                                            ),
-                                            child: GlassGlow(
-                                              child: Card(
-                                                color: Colors.transparent,
-                                                elevation: 0,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        160,
+                                    LiquidGlass(
+                                      shape: LiquidRoundedRectangle(
+                                        borderRadius: 160,
+                                      ),
+                                      child: GlassGlow(
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.fromLTRB(
+                                                18,
+                                                6,
+                                                18,
+                                                8,
+                                              ),
+                                          child: IntrinsicWidth(
+                                            child: Center(
+                                              child: Text(
+                                                currentHabit.group ??
+                                                    "grupsuz",
+                                                style: TextStyle(
+                                                  fontStyle:
+                                                      FontStyle.italic,
+                                                  fontSize: 15,
+                                                  color: Colors.white
+                                                      .withValues(
+                                                        alpha: 0.9,
                                                       ),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                        8,
-                                                        4,
-                                                        8,
-                                                        4,
-                                                      ),
-                                                  child: Row(
-                                                    spacing: 8,
-                                                    children: [
-                                                      LiquidGlass(
-                                                        shape: LiquidOval(),
-                                                        child: GlassGlow(
-                                                          child: IconButton(
-                                                            icon: Icon(
-                                                              Icons
-                                                                  .note_alt_outlined,
-                                                            ),
-                                                            onPressed: () async {
-                                                              final provider =
-                                                                  context
-                                                                      .read<
-                                                                        HabitProvider
-                                                                      >();
-                                                              final current = provider
-                                                                  .getHabitById(
-                                                                    currentHabit
-                                                                        .id,
-                                                                  );
-                                                              final result = await showModalBottomSheet<String?>(
-                                                                context:
-                                                                    context,
-                                                                isScrollControlled:
-                                                                    true,
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                builder: (ctx) => ClipRRect(
-                                                                  borderRadius:
-                                                                      const BorderRadius.vertical(
-                                                                        top: Radius.circular(
-                                                                          64,
-                                                                        ),
-                                                                      ),
-                                                                  child: BackdropFilter(
-                                                                    filter:
-                                                                        ImageFilter.blur(
-                                                                          sigmaX:
-                                                                              5,
-                                                                          sigmaY:
-                                                                              5,
-                                                                        ),
-                                                                    child: Container(
-                                                                      decoration: BoxDecoration(
-                                                                        borderRadius: BorderRadius.vertical(
-                                                                          top: Radius.circular(
-                                                                            64,
-                                                                          ),
-                                                                        ),
-                                                                        border: Border.all(
-                                                                          color: Colors.white.withOpacity(
-                                                                            0.2,
-                                                                          ), // İnce ışık yansıması (kenarlık)
-                                                                          width:
-                                                                              1.5,
-                                                                        ),
-                                                                      ),
-                                                                      child: HabitNotesEditorSheet(
-                                                                        initialDeltaJson:
-                                                                            current.notesDelta,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              );
-
-                                                              if (result !=
-                                                                  null) {
-                                                                final updated =
-                                                                    current.copyWith(
-                                                                      notesDelta:
-                                                                          result,
-                                                                    );
-                                                                provider
-                                                                    .updateHabit(
-                                                                      updated,
-                                                                    );
-                                                                widget
-                                                                    .onHabitUpdated
-                                                                    .call(
-                                                                      updated,
-                                                                    );
-                                                              }
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      LiquidGlass(
-                                                        shape: LiquidOval(),
-                                                        child: GlassGlow(
-                                                          child: IconButton(
-                                                            icon: Icon(
-                                                              Icons
-                                                                  .format_list_bulleted_rounded,
-                                                            ),
-                                                            onPressed: () {
-                                                              detailSettingsSheet(
-                                                                context,
-                                                                currentHabit,
-                                                                selectedDate ??
-                                                                    DateTime.now(),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                           LiquidGlass(
-                                                  shape: LiquidRoundedRectangle(
-                                                    borderRadius: 160,
-                                                  ),
-                                                  child: GlassGlow(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.fromLTRB(
-                                                            26,
-                                                            6,
-                                                            26,
-                                                            8,
-                                                          ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          currentHabit.group ??
-                                                              "grupsuz",
-                                                          style: TextStyle(
-                                                            fontStyle: FontStyle
-                                                                .italic,
-                                                            fontSize: 20,
-                                                            color: Colors.white
-                                                                .withValues(
-                                                                  alpha: 0.9,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                        ],
+                                        ),
                                       ),
                                     ),
 
@@ -350,7 +200,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                   .withValues(alpha: 0.3),
                                               child: Icon(
                                                 currentHabit.icon,
-                                                size: 60,
+                                                size: 50,
                                                 color: currentHabit.color,
                                               ),
                                             ),
@@ -361,32 +211,182 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                   ],
                                 ),
 
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: LiquidGlass(
-                                    shape: LiquidRoundedRectangle(
-                                      borderRadius: 160,
-                                    ),
-                                    child: GlassGlow(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(6.0),
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                            left: 18.0,
-                                            right: 18.0,
-                                            bottom: 4.0,
-                                          ),
-                                          child: Text(
-                                            currentHabit.name,
-                                            style: TextStyle(
-                                              fontSize: 32,
-                                              fontWeight: FontWeight.bold,
+                                Stack(
+                                  children: [
+                                    Center(
+                                      child: Card(
+                                        color: Colors.transparent,
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(16),
+                                        ),
+                                        child: IntrinsicHeight(
+                                          child: IntrinsicWidth(
+                                            child: LiquidGlass(
+                                              shape: LiquidRoundedRectangle(borderRadius: 320),
+                                              child: GlassGlow(
+                                                child: Card(
+                                                  color: Colors.transparent,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(160),
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Padding(
+                                                        padding: const EdgeInsets.fromLTRB(4,2,4,2),
+                                                        child: LiquidGlass(
+                                                          shape: LiquidOval(),
+                                                          child: GlassGlow(
+                                                            child: IconButton(
+                                                              icon: Icon(
+                                                                Icons.note_alt_outlined,
+                                                              ),
+                                                              onPressed: () async {
+                                                                final provider = context
+                                                                    .read<HabitProvider>();
+                                                                final current = provider
+                                                                    .getHabitById(
+                                                                      currentHabit.id,
+                                                                    );
+                                                                final result = await showModalBottomSheet<String?>(
+                                                                  context: context,
+                                                                  isScrollControlled: true,
+                                                                  backgroundColor:
+                                                                      Colors.transparent,
+                                                                  builder: (ctx) => ClipRRect(
+                                                                    borderRadius:
+                                                                        const BorderRadius.vertical(
+                                                                          top: Radius.circular(
+                                                                            64,
+                                                                          ),
+                                                                        ),
+                                                                    child: BackdropFilter(
+                                                                      filter: ImageFilter.blur(
+                                                                        sigmaX: 5,
+                                                                        sigmaY: 5,
+                                                                      ),
+                                                                      child: Container(
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.vertical(
+                                                                                top:
+                                                                                    Radius.circular(
+                                                                                      64,
+                                                                                    ),
+                                                                              ),
+                                                                          border: Border.all(
+                                                                            color: Colors.white
+                                                                                .withOpacity(
+                                                                                  0.2,
+                                                                                ), // İnce ışık yansıması (kenarlık)
+                                                                            width: 1.5,
+                                                                          ),
+                                                                        ),
+                                                                        child:
+                                                                            HabitNotesEditorSheet(
+                                                                              initialDeltaJson:
+                                                                                  current
+                                                                                      .notesDelta,
+                                                                            ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+
+                                                                if (result != null) {
+                                                                  final updated = current
+                                                                      .copyWith(
+                                                                        notesDelta: result,
+                                                                      );
+                                                                  provider.updateHabit(updated);
+                                                                  widget.onHabitUpdated.call(
+                                                                    updated,
+                                                                  );
+                                                                }
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                      Padding(
+                                                        padding: const EdgeInsets.fromLTRB(26,0,26,0),
+                                                        child: Text(currentHabit.name ,style: TextStyle(
+                                                            fontSize: 32,
+                                                            color: Colors.transparent
+                                                        )),
+                                                      ),
+
+                                                      Padding(
+                                                        padding: const EdgeInsets.fromLTRB(4,2,4,2),
+                                                        child: LiquidGlass(
+                                                          shape: LiquidOval(),
+                                                          child: GlassGlow(
+                                                            child: IconButton(
+                                                              icon: Icon(
+                                                                Icons
+                                                                    .format_list_bulleted_rounded,
+                                                              ),
+                                                              onPressed: () {
+                                                                detailSettingsSheet(
+                                                                  context,
+                                                                  currentHabit,
+                                                                  selectedDate ??
+                                                                      DateTime.now(),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
+
+
+
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                          8,
+                                          0,
+                                          8,
+                                          0,
+                                        ),
+                                        child: LiquidGlass(
+                                          shape: LiquidRoundedRectangle(
+                                            borderRadius: 160,
+                                          ),
+                                          child: GlassGlow(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(6.0),
+                                              child: Container(
+                                                margin: EdgeInsets.only(
+                                                  left: 18.0,
+                                                  right: 18.0,
+                                                  bottom: 4.0,
+                                                ),
+                                                child: Text(
+                                                  currentHabit.name,
+                                                  style: TextStyle(
+                                                    fontSize: 32,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
