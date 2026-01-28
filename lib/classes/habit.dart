@@ -34,12 +34,8 @@ class Habit {
   final HabitType type;
   final String? group;
   final IconData icon;
-  final double achievedCount;
   final double? targetCount;
-  final double? maxCount;
-  final double? achievedSeconds;
   final double? targetSeconds;
-  final double? maxSeconds;
   final Map<DateTime, dynamic> dailyProgress;
   final String? notesDelta;
 
@@ -54,13 +50,9 @@ class Habit {
     required this.type,
     this.group,
     required this.icon,
-    required this.achievedCount,
-    this.maxCount,
     this.targetCount,
-    this.achievedSeconds,
     this.targetSeconds,
     Map<DateTime, dynamic>? dailyProgress,
-    this.maxSeconds,
     this.notesDelta,
   }) : dailyProgress = dailyProgress ?? {};
 
@@ -111,9 +103,9 @@ class Habit {
     }
 
     if (type == HabitType.time) {
-      final achievedSeconds = getSecondsProgressForDate(date);
+      final achievedSecs = getSecondsProgressForDate(date);
       final targetSecs = targetSeconds ?? 60;
-      return achievedSeconds >= targetSecs;
+      return achievedSecs >= targetSecs;
     }
 
     return false;
@@ -152,9 +144,9 @@ class Habit {
       }).fold(0.0, (previousValue, element) => previousValue + element);
     } else if (type == HabitType.time) {
       totalCompletedDays = dailyProgress.values.map((v) {
-        final achievedSeconds = (v is num) ? v.toDouble() : 0.0;
+        final achievedSecs = (v is num) ? v.toDouble() : 0.0;
         final targetSecs = targetSeconds ?? 60.0;
-        return (achievedSeconds >= targetSecs) ? 1.0 : (achievedSeconds / targetSecs);
+        return (achievedSecs >= targetSecs) ? 1.0 : (achievedSecs / targetSecs);
       }).fold(0.0, (previousValue, element) => previousValue + element);
     }
 
@@ -207,9 +199,9 @@ class Habit {
         doneRateOfThatDay = achieved >= (targetCount ?? 1) ? 1 : achieved / (targetCount ?? 1) ;
       } else if (type == HabitType.time) {
         final value = dailyProgress[day];
-        final double achievedSeconds = (value is num) ? value.toDouble() : 0;
+        final double achievedSecs = (value is num) ? value.toDouble() : 0;
         final double targetSecs = targetSeconds ?? 60; // default 1 dakika
-        doneRateOfThatDay = achievedSeconds >= targetSecs ? 1 : achievedSeconds / targetSecs ;
+        doneRateOfThatDay = achievedSecs >= targetSecs ? 1 : achievedSecs / targetSecs ;
       }
 
       status.add(doneRateOfThatDay);
@@ -268,12 +260,8 @@ class Habit {
     HabitType? type,
     String? group,
     IconData? icon,
-    double? achievedCount,
     double? targetCount,
-    double? maxCount,
-    double? achievedSeconds,
     double? targetSeconds,
-    double? maxSeconds,
     Map<DateTime, dynamic>? dailyProgress,
     String? notesDelta,
   }) {
@@ -288,12 +276,8 @@ class Habit {
       type: type ?? this.type,
       group: group,
       icon: icon ?? this.icon,
-      achievedCount: achievedCount ?? this.achievedCount,
       targetCount: targetCount ?? this.targetCount,
-      maxCount: maxCount ?? this.maxCount,
-      achievedSeconds: achievedSeconds ?? this.achievedSeconds,
       targetSeconds: targetSeconds ?? this.targetSeconds,
-      maxSeconds: maxSeconds ?? this.maxSeconds,
       dailyProgress: dailyProgress ?? this.dailyProgress,
       notesDelta: notesDelta ?? this.notesDelta,
     );
@@ -313,12 +297,8 @@ class Habit {
     'type': type.index,
     'group': group,
     'icon': icon.codePoint,
-    'achievedCount': achievedCount,
     'targetCount': targetCount,
-    'maxCount': maxCount,
-    'achievedSeconds': achievedSeconds,
     'targetSeconds': targetSeconds,
-    'maxSeconds': maxSeconds,
     'completedDates': dailyProgress.entries
         .where((e) => e.value == true)
         .map((e) => e.key.millisecondsSinceEpoch)
@@ -369,12 +349,8 @@ class Habit {
         json['icon'] ?? Icons.favorite.codePoint,
         fontFamily: 'MaterialIcons',
       ),
-      achievedCount: json['achievedCount'] ?? 0,
       targetCount: json['targetCount'],
-      maxCount: json['maxCount'],
-      achievedSeconds: json['achievedSeconds'],
       targetSeconds: json['targetSeconds'],
-      maxSeconds: json['maxSeconds'],
       dailyProgress: parsedDaily,
       notesDelta: parsedNotes,
     );

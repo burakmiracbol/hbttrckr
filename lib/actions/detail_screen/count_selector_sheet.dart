@@ -23,6 +23,7 @@ import '../../classes/habit.dart';
 import '../../providers/habit_provider.dart';
 
 void showCountSelectorSheet(
+    DateTime selectedDate,
   BuildContext context,
   Habit currentHabit, {
   required Habit habit,
@@ -118,10 +119,8 @@ void showCountSelectorSheet(
                     showPointer: false,
                     perspective: 0.01,
                     verticalListHeight: double.infinity,
-                    totalCount: habit.maxCount == null
-                        ? 999
-                        : habit.maxCount!.toInt(),
-                    initValue: habit.achievedCount,
+                    totalCount: 999,
+                    initValue: habit.dailyProgress[selectedDate],
                     selectedNumberStyle: TextStyle(
                       fontSize: 13.0,
                       color: Colors.white,

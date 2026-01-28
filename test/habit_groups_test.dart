@@ -19,7 +19,6 @@ Habit _buildHabit({
     createdAt: DateTime(2026, 1, 1),
     type: HabitType.task,
     icon: Icons.favorite,
-    achievedCount: 0,
   );
 }
 
