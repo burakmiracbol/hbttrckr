@@ -41,7 +41,7 @@ class HabitProvider with ChangeNotifier {
   HabitProvider({bool enableNotifications = true})
       : _enableNotifications = enableNotifications {
     _colorMixer = ColorMixer();
-    _loadHabits();
+    loadHabits();
     // Alışkanlıklar yüklendikten sonra bildirimleri planla
     if (_enableNotifications) {
       Future.microtask(rescheduleAllNotifications);
@@ -368,7 +368,6 @@ class HabitProvider with ChangeNotifier {
     double? targetSeconds,
     TimeOfDay? reminderTime,
     Set<int>? reminderDays,
-    double? maxCount,
   }) {
     final newHabit = Habit(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -382,7 +381,6 @@ class HabitProvider with ChangeNotifier {
       targetSeconds: targetSeconds,
       reminderTime: reminderTime,
       reminderDays: reminderDays,
-      achievedCount: 0,
       icon: icon,
     );
 
@@ -646,7 +644,7 @@ class HabitProvider with ChangeNotifier {
     _saveHabits();
   }
 
-  Future<void> _loadHabits() async {
+  Future<void> loadHabits() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final String? data = prefs.getString('habits');

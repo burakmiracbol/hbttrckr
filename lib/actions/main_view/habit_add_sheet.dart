@@ -61,7 +61,6 @@ void showAddHabitSheet(BuildContext parentContext) {
                     required HabitType type,
                     required IconData icon,
                     double? targetCount,
-                    double? maxCount,
                     double? targetSeconds,
                     TimeOfDay? reminderTime,
                     Set<int>? reminderDays,
@@ -73,7 +72,6 @@ void showAddHabitSheet(BuildContext parentContext) {
                       color: color,
                       type: type,
                       targetCount: targetCount,
-                      maxCount: maxCount,
                       targetSeconds: targetSeconds?.toDouble(),
                       reminderTime: reminderTime,
                       reminderDays: reminderDays,
@@ -99,7 +97,6 @@ class AddHabitSheet extends StatefulWidget {
     required HabitType type,
     required IconData icon,
     double? targetCount,
-    double? maxCount,
     double? targetSeconds,
     TimeOfDay? reminderTime,
     Set<int>? reminderDays,
@@ -118,7 +115,6 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
 
   final _groupController = TextEditingController();
   final _countController = TextEditingController();
-  final _maxCountController = TextEditingController();
 
   late IconData currentIconOfHabit;
 
@@ -311,20 +307,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  TextField(
-                    controller: _maxCountController,
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'maximum sayı',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[900],
-                    ),
-                  ),
+
                 ],
               ),
 
@@ -582,9 +565,6 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                       icon: currentIconOfHabit,
                       targetCount: _selectedType == HabitType.count
                           ? double.tryParse(_countController.text)
-                          : null,
-                      maxCount: _selectedType == HabitType.count
-                          ? double.tryParse(_maxCountController.text)
                           : null,
                       targetSeconds: _selectedType == HabitType.time
                           ? _totalSeconds.toDouble()

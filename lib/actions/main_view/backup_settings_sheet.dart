@@ -20,6 +20,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hbttrckr/main.dart';
+import 'package:hbttrckr/providers/habit_provider.dart';
+import 'package:provider/provider.dart';
 import '../../services/backup_service.dart';
 
 void showBackupSettingsSheet(BuildContext context) {
@@ -224,21 +226,35 @@ void showBackupSettingsSheet(BuildContext context) {
                             SizedBox(height: 12),
                             ElevatedButton.icon(
                               onPressed: () async {
-                                final success =
-                                    await BackupService.restoreBackupFromCloud(
-                                  user,
-                                );
+                                final success = await BackupService.restoreBackupFromCloud(user);
+
+                                // 2. Widget hala ekranda mı kontrol et (En kritik nokta!)
+                                if (!context.mounted) return;
+
+                                if (success) {
+                                  // 3. Verileri Provider üzerinden tekrar yükle
+                                  // Provider kullanıyorsan notifyListeners() zaten UI'ı yenileyeceği için
+                                  // ekstradan setState(() {}) yapmana gerek kalmayabilir.
+                                  await context.read<HabitProvider>().loadHabits();
+
+                                  // Eğer ana ekranın (Home) bu değişikliği hemen görmesini istiyorsan
+                                  // ve Provider içinde notifyListeners() varsa UI otomatik yenilenir.
+                                }
+
+                                // 4. SnackBar göster
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      success
-                                          ? '✅ Buluttan geri yüklendi.'
-                                          : '❌ Bulut yedeği bulunamadı',
+                                      success ? '✅ Buluttan geri yüklendi.' : '❌ Bulut yedeği bulunamadı',
                                     ),
-                                    backgroundColor:
-                                        success ? null : Colors.red,
+                                    backgroundColor: success ? Colors.green : Colors.red,
                                   ),
                                 );
+
+                                // 5. Başarılıysa sheet'i kapat (opsiyonel)
+                                if (success) {
+                                  Navigator.of(context).pop();
+                                }
                               },
                               icon: Icon(Icons.cloud_download_outlined),
                               label: Text('Buluttan Geri Yükle'),

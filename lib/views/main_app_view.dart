@@ -318,81 +318,78 @@ class MainAppViewState extends State<MainAppView> {
         ],
       ),
       body: _selectedIndex == 0
-          ? Container(
-        color: Colors.black12,
-            child: buildHabitsPage(
-                onDateSelected: (date) {
-                  context.read<HabitProvider>().setSelectedDate(date);
-                },
-                habits: habits,
-                onHabitTapped: (habit) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HabitDetailScreen(
-                        habitId: habit.id,
-                        selectedDate:
-                            context.read<HabitProvider>().selectedDate ??
-                            DateTime.now(),
-                        onHabitUpdated: (updatedHabit) {
-                          setState(() {
-                            // habits listesi unmodifiable olduğu için yeni liste oluştur
-                            final index = habits.indexWhere(
-                              (h) => h.id == updatedHabit.id,
-                            );
-                            if (index != -1) {
-                              habits = [
-                                ...habits.sublist(0, index),
-                                updatedHabit,
-                                ...habits.sublist(index + 1),
-                              ];
-                            }
-                          });
+          ? buildHabitsPage(
+              onDateSelected: (date) {
+                context.read<HabitProvider>().setSelectedDate(date);
+              },
+              habits: habits,
+              onHabitTapped: (habit) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HabitDetailScreen(
+                      habitId: habit.id,
+                      selectedDate:
+                          context.read<HabitProvider>().selectedDate ??
+                          DateTime.now(),
+                      onHabitUpdated: (updatedHabit) {
+                        setState(() {
+                          // habits listesi unmodifiable olduğu için yeni liste oluştur
+                          final index = habits.indexWhere(
+                            (h) => h.id == updatedHabit.id,
+                          );
+                          if (index != -1) {
+                            habits = [
+                              ...habits.sublist(0, index),
+                              updatedHabit,
+                              ...habits.sublist(index + 1),
+                            ];
+                          }
+                        });
 
-                          // HabitProvider'ı güncelle - bu bildirimleri yeniden planlar
-                          context.read<HabitProvider>().updateHabit(updatedHabit);
-                        },
-                        onHabitDeleted: (String id) {
-                          setState(() {
-                            habits = habits.where((h) => h.id != id).toList();
-                          });
-                          // HabitProvider'dan da sil (bildirimler iptal edilecek)
-                          context.read<HabitProvider>().deleteHabit(id);
-                        },
-                      ),
+                        // HabitProvider'ı güncelle - bu bildirimleri yeniden planlar
+                        context.read<HabitProvider>().updateHabit(updatedHabit);
+                      },
+                      onHabitDeleted: (String id) {
+                        setState(() {
+                          habits = habits.where((h) => h.id != id).toList();
+                        });
+                        // HabitProvider'dan da sil (bildirimler iptal edilecek)
+                        context.read<HabitProvider>().deleteHabit(id);
+                      },
                     ),
-                  );
-                  context.read<HabitProvider>().setGroupToView(null);
-                },
-                onHabitUpdated: (updatedHabit) {
-                  // bu satır aslında gerekmiyor çünkü Navigator içinden çağırılıyor
-                  // ama tutarlılık için bırakabilirsin
-                },
-                onHabitDeleted: (String id) {
-                  // 1. Önce sil
-                  setState(() {
-                    habits.removeWhere((h) => h.id == id);
-                  });
+                  ),
+                );
+                context.read<HabitProvider>().setGroupToView(null);
+              },
+              onHabitUpdated: (updatedHabit) {
+                // bu satır aslında gerekmiyor çünkü Navigator içinden çağırılıyor
+                // ama tutarlılık için bırakabilirsin
+              },
+              onHabitDeleted: (String id) {
+                // 1. Önce sil
+                setState(() {
+                  habits.removeWhere((h) => h.id == id);
+                });
 
-                  // 2. Sonra tekrar ekle (eğer edit yapıyorsan)
-                  final habit = habits.firstWhere(
-                    (h) => h.id == id,
-                  ); // habit burada tanımlı!
+                // 2. Sonra tekrar ekle (eğer edit yapıyorsan)
+                final habit = habits.firstWhere(
+                  (h) => h.id == id,
+                ); // habit burada tanımlı!
 
-                  context.read<HabitProvider>().addHabit(
-                    name: habit.name,
-                    description: habit.description,
-                    color: habit.color,
-                    type: habit.type,
-                    targetCount: habit.targetCount,
-                    targetSeconds: habit.targetSeconds,
-                    reminderTime: habit.reminderTime,
-                    reminderDays: habit.reminderDays,
-                    icon: habit.icon,
-                  );
-                },
-              ),
-          ) // 1. sayfa: alışkanlıklar
+                context.read<HabitProvider>().addHabit(
+                  name: habit.name,
+                  description: habit.description,
+                  color: habit.color,
+                  type: habit.type,
+                  targetCount: habit.targetCount,
+                  targetSeconds: habit.targetSeconds,
+                  reminderTime: habit.reminderTime,
+                  reminderDays: habit.reminderDays,
+                  icon: habit.icon,
+                );
+              },
+            ) // 1. sayfa: alışkanlıklar
           : StatisticsScreen(), // 2. sayfa: istatistikler
       bottomNavigationBar: BottomAppBar(
         color: context.watch<CurrentThemeMode>().isMica

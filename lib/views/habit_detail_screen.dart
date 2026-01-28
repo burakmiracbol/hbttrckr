@@ -665,6 +665,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                               .shrinkWrap, // Tıklama alanını sıkıştırır
                                                                     ),
                                                                     onPressed: () => showCountSelectorSheet(
+                                                                      selectedDate ?? DateTime.now(),
                                                                       context,
                                                                       currentHabit,
                                                                       habit:

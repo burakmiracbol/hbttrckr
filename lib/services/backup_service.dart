@@ -73,17 +73,9 @@ class BackupService {
       // JSON'u format et
       final jsonString = jsonEncode(backupData);
 
-      // Dosya olarak kaydet (Downloads folder'a)
-      final directory = Directory('/storage/emulated/0/Downloads'); // Android
-      if (!await directory.exists()) {
-        // Fallback: Temp directory
-        final tempDir = Directory.systemTemp;
-        final file = File('${tempDir.path}/$fileName');
-        await file.writeAsString(jsonString);
-        return file;
-      }
 
-      final file = File('${directory.path}/$fileName');
+      final tempDir = Directory.systemTemp;
+      final file = File('${tempDir.path}/$fileName');
       await file.writeAsString(jsonString);
 
       debugPrint('✅ Backup exported to: ${file.path}');
@@ -105,7 +97,8 @@ class BackupService {
       final version = backupData['version']?.toString() ?? backupVersion;
       if (version != backupVersion) {
         debugPrint(
-            '⚠️ Backup version mismatch: $version (expected: $backupVersion)');
+          '⚠️ Backup version mismatch: $version (expected: $backupVersion)',
+        );
         return false;
       }
 
@@ -139,9 +132,7 @@ class BackupService {
   /// Backup dosyalarını listele
   static Future<List<File>> listBackups() async {
     try {
-      final directory = defaultTargetPlatform == TargetPlatform.android
-          ? Directory('/storage/emulated/0/Downloads')
-          : Directory.systemTemp;
+      final directory = Directory.systemTemp;
       if (!await directory.exists()) {
         return [];
       }
@@ -295,7 +286,8 @@ class BackupService {
       debugPrint('📦 Yedek versiyonu: $version, Beklenen: $backupVersion');
       if (version != backupVersion) {
         debugPrint(
-            '⚠️ Yedek versiyonu uyuşmuyor: $version (beklenen: $backupVersion)');
+          '⚠️ Yedek versiyonu uyuşmuyor: $version (beklenen: $backupVersion)',
+        );
         return false;
       }
 
