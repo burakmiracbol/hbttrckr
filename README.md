@@ -10,6 +10,7 @@ Core ideas and features (from the current implementation):
 
 - Habit types: **task** (bool), **count** (number), **time** (duration)
 - Habit grouping (currently alpha)
+- Sign-in w/ Google (currently works for Android only)
 - Cross‑platform targets (mobile + desktop)
 - Persisted settings on device
 - Calendar‑based main screen and daily completion markers
@@ -118,3 +119,5 @@ This project is licensed under the **GNU GPL v3**. See [LICENSE](./LICENSE).
 ## Contributing
 
 Issues, PRs, and suggestions are welcome. You can also help by addressing TODOs in the codebase (for example in `lib/views/mainappview.dart`).
+
+(don't tryna use my api keys for bad things you only gonna hurt yourself and waste time)
