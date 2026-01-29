@@ -28,17 +28,6 @@ import '../actions/main_view/habits_summary_sheet.dart';
 import '../actions/main_view/main_settings_sheet.dart';
 import 'habits_page.dart';
 
-// TODO's taken from README:
-//  Implement statistics page and strengthen strength calculation
-//  Refactor Habit class and HabitProvider behavior
-//  Make detail screen completion UIs per habit type (task/count/time)
-//  Add navigation/adaptive scaffold improvements (navigation view)
-//  Background image and glass-like effects in parts
-//  Replace many setState usages with Provider where appropriate
-//  Add more habit properties (types, strength, icons) and auto-assign types
-//  Add backup/account linking for syncing or local export
-//  Add widgets for home screen and make desktop-specific designs
-
 // TODO's
 //
 //  doğa modu
@@ -93,6 +82,8 @@ import 'habits_page.dart';
 //
 //  Linux için google sign-in
 //
+//  mobilde transparanlık araştırılacak
+//
 //  açılış ekranı ilk kullananlar için
 //
 //  shared_preferences ile daha fazla ayar cihaza kaydedilmeli esela en son şeffaf bıraktım niye bir sonrakinde şeffaf değil için
@@ -103,8 +94,9 @@ import 'habits_page.dart';
 //  detailscreende rate of doing
 //  alarmın haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
 //  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
-
+//
 //  ayarlarda tercihler bölümüne tonla ayar gelicek
+//    arkaplanı image yapma
 //    şefffalıkla ilgili nerenin şeffaflığı nerede naslı olacak
 //      mesela habit detail screen hep mi şeffaf olsun yoksa sadece şeffaf modu açıldığında mı
 //    tasarımlar kişiselleştirilebilecek
@@ -134,18 +126,6 @@ import 'habits_page.dart';
 //  ana ekrana eklemelik widgetlar yapılmalı
 //
 
-// TODO: ayarlar düğmesi ile bottom sheet açılacak ve farklı ayar menülerine gitme gösterilecek
-// NOTE: sheet yapıldı
-
-// TODO: mobilde tranparan yöntemleri bakılacak ve her yerde liquid glass kullanılmaya çalışılacak (transparan ekranda olmuyor çünkü içindeki şeyleri transparan arka planda göstermiyor bu son paket)
-
-// TODO: habit yazı rengi de transparan olmaya göre bakılacak ayrıca bottom app bar a sonradan dönülecek çünkü rengi şüpheli
-
-// isMica taşıdı: artık CurrentThemeMode içinde tutuluyor ve provider ile erişiliyor
-// bool isMica = true;
-
-// TODO : kod düzenlemesi yapılması lazım. Birgün alıp bu tüm belirli widgetları sayfaları felan ayrı dosyalara ayıralım
-
 typedef OnHabitUpdated = void Function(Habit updatedHabit);
 typedef OnHabitTapped = void Function(Habit habit);
 typedef OnHabitDeleted = void Function(String id);
@@ -158,13 +138,6 @@ class MainAppView extends StatefulWidget {
 }
 
 class MainAppViewState extends State<MainAppView> {
-
-  late ThemeMode currentThemeMode = context
-      .watch<CurrentThemeMode>()
-      .currentMode;
-
-  bool isDarkMode = true;
-
   int _selectedIndex = 0;
 
   List<Habit> habits = [];
@@ -173,14 +146,6 @@ class MainAppViewState extends State<MainAppView> {
   void initState() {
     googleSignIn.silentSignIn();
     super.initState();
-  }
-
-
-
-  void toggleTheme() {
-    setState(() {
-      isDarkMode = !isDarkMode;
-    });
   }
 
   void onItemTapped(int index) {
@@ -388,6 +353,7 @@ class MainAppViewState extends State<MainAppView> {
               },
             ) // 1. sayfa: alışkanlıklar
           : StatisticsScreen(), // 2. sayfa: istatistikler
+
       bottomNavigationBar: BottomAppBar(
         color: context.watch<CurrentThemeMode>().isMica
             ? Theme.of(context).bottomAppBarTheme.color?.withValues(alpha: 1)
