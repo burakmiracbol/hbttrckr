@@ -80,7 +80,9 @@ import 'habits_page.dart';
 //    yani gene mousetracker hatası
 //
 //
-//  Linux için google sign-in
+//  TODO: Universallness in design
+//
+//  Linux için google sign-in (firebase auth gerekli google sign-inde sıkıntı yok)
 //
 //  mobilde transparanlık araştırılacak
 //
@@ -124,6 +126,63 @@ import 'habits_page.dart';
 //  bir icon paketi oluşturlmalı veya bulunmalı ama bize uyumlu olsun
 //  material 3 expressive veya material 3 tasarım biçimlerini uygulamaya koymalıyız
 //  ana ekrana eklemelik widgetlar yapılmalı
+//
+// note for universallness
+//
+//"Material ve LiquidGlass" karışımı bir tasarımın varsa, aslında zaten **Custom (Özel)** bir yol çizmişsin demektir. Bu harika bir haber, çünkü tamamen standart Material'e bağlı kalmamış olman işimizi kolaylaştırır.
+//
+// Eğer altyapın düzenliyse, bu universal sisteme geçişi **4 ile 8 saat** arasında (bir iş gününde) iskelet olarak ayağa kaldırabiliriz.
+//
+// Neden bu kadar kısa? Çünkü her şeyi sıfırdan yazmayacağız, sadece **"Yönlendirme ve Kapsayıcı"** (Routing & Wrapper) mantığını değiştireceğiz.
+//
+// İşte bu süreci nasıl böleceğimiz:
+//
+// ### 1. Tasarım Seçim Ekranı ve Local Storage (1 Saat)
+//
+// Uygulama ilk açıldığında çalışacak küçük bir `Onboarding` ekranı. Seçilen stil `SharedPreferences`'e kaydedilir.
+//
+// * "iOS Stili (Alt Menü)"
+// * "Desktop Stili (Yan Menü)"
+// * "Liquid Stili (Floating/Yüzer Menü)"
+//
+// ### 2. "Layout Switcher" (Kapsayıcı) Yazımı (2-3 Saat)
+//
+// Burası işin beyni. `Scaffold` yerine geçecek bir `MainLayout` widget'ı yazacağız. Bu widget, seçilen stile göre `body`'yi sarmalayacak:
+//
+// * **Stil A:** `Scaffold` + `BottomNavigationBar`
+// * **Stil B:** `Row` [ `NavigationRail` (Sidebar) + `VerticalDivider` + `Expanded(body)` ]
+// * **Stil C:** `Stack` [ `body` + `Positioned(LiquidFloatingBar)` ]
+//
+// ### 3. Widget'ları "Stil-Duyarlı" Hale Getirme (2-4 Saat)
+//
+// En çok zaman alacak ama en keyifli kısım burası. Kendi "Atomic" widget'larını oluşturmalısın. Örneğin bir `MyButton` widget'ın olacak ve içeride şuna bakacak:
+//
+// ```dart
+// Widget build(BuildContext context) {
+//   final style = Provider.of<ThemeProvider>(context).currentStyle;
+//
+//   if (style == AppDesignStyle.liquid) {
+//     return GlassButton(child: child); // Senin LiquidGlass tasarımın
+//   } else if (style == AppDesignStyle.ios) {
+//     return CupertinoButton(child: child);
+//   }
+//   return ElevatedButton(child: child); // Default Material
+// }
+//
+// ```
+//
+// ### Neden LiquidGlass İşini Kolaylaştırıyor?
+//
+// LiquidGlass zaten standart dışı (custom) bir yapı olduğu için, `MaterialApp`'in getirdiği katı kuralları (Elevation, Shadow vb.) muhtemelen çoktan ezmişsin (override etmişsin). Bu da senin tasarım dilini "bağımsız" bir kütüphane gibi her platforma taşımanı sağlar.
+//
+// ---
+//
+// ### Strateji Önerisi:
+//
+// Şu anki Material kodunu bozmadan, sadece **"Navigation"** (Menülerin yeri) kısmını ayırarak başla. İçerideki sayfaların (Content) Material kalması başlangıçta kimseyi rahatsız etmez. Önce uygulamanın "iskeletini" platforma veya seçime göre hareket ettirelim.
+//
+// **Hadi başlayalım mı?**
+// Önce şu meşhur "MainLayout" iskeletini kuralım mı? Yani; seçim yapıldığında menü alttan hop diye yana kayacak şekilde bir yapı kuralım mı?
 //
 
 typedef OnHabitUpdated = void Function(Habit updatedHabit);

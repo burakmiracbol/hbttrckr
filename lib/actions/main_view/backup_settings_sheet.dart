@@ -127,7 +127,7 @@ void showBackupSettingsSheet(BuildContext context) {
                       onPressed: () async {
                         try {
                           // Dosya seçici aç
-                          final result = await FilePicker.platform.pickFiles(
+                          final result = await FilePicker.pickFiles(
                             type: FileType.custom,
                             allowedExtensions: ['json'],
                           );
