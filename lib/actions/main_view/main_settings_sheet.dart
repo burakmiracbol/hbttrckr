@@ -26,8 +26,6 @@ import 'notifications_settings_sheet.dart';
 
 void showMainSettingsSheet(
   BuildContext context,
-  TextEditingController accountController,
-  TextEditingController passwordController,
 ) {
   showModalBottomSheet(
     backgroundColor: Colors.transparent,
@@ -100,9 +98,7 @@ void showMainSettingsSheet(
                                 trailing: Icon(Icons.chevron_right),
                                 onTap: () {
                                   showAccountSettingsSheet(
-                                    context,
-                                    accountController,
-                                    passwordController,
+                                    context
                                   );
                                 },
                               ),

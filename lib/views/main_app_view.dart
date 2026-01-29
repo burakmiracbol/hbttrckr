@@ -91,9 +91,9 @@ import 'habits_page.dart';
 //    yani gene mousetracker hatası
 //
 //
-//  TODO: GOOGLE SIGN-IN kurulacak !!!
+//  Linux için google sign-in
 //
-//  açılış ekranı ilk ve ilk kullananlar için
+//  açılış ekranı ilk kullananlar için
 //
 //  shared_preferences ile daha fazla ayar cihaza kaydedilmeli esela en son şeffaf bıraktım niye bir sonrakinde şeffaf değil için
 //
@@ -158,9 +158,6 @@ class MainAppView extends StatefulWidget {
 }
 
 class MainAppViewState extends State<MainAppView> {
-  static TextEditingController accountController = TextEditingController();
-
-  static TextEditingController passwordController = TextEditingController();
 
   late ThemeMode currentThemeMode = context
       .watch<CurrentThemeMode>()
@@ -309,8 +306,6 @@ class MainAppViewState extends State<MainAppView> {
                 onPressed: () {
                   showMainSettingsSheet(
                     context,
-                    accountController,
-                    passwordController,
                   );
                 },
                 icon: Icon(Icons.settings),

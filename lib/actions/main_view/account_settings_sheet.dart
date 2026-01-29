@@ -24,8 +24,6 @@ import 'package:hbttrckr/main.dart';
 
 void showAccountSettingsSheet (
     BuildContext context,
-    TextEditingController accountController,
-    TextEditingController passwordController,
     ) {
   showModalBottomSheet(
     backgroundColor: Colors.transparent,
