@@ -10,7 +10,7 @@ Core ideas and features (from the current implementation):
 
 - Habit types: **task** (bool), **count** (number), **time** (duration)
 - Habit grouping (currently alpha)
-- Sign-in w/ Google (currently works for Android only)
+- Sign-in w/ Google in multi-platform (currently not working for linux because of firebase_auth is not compatible with Linux)
 - Cross‑platform targets (mobile + desktop)
 - Persisted settings on device
 - Calendar‑based main screen and daily completion markers
