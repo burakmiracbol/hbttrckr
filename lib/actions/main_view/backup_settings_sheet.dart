@@ -19,6 +19,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in_all_platforms/google_sign_in_all_platforms.dart';
 import 'package:hbttrckr/main.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:provider/provider.dart';
@@ -186,10 +187,10 @@ void showBackupSettingsSheet(BuildContext context) {
                       ),
                     ),
                     SizedBox(height: 12),
-                    ValueListenableBuilder<GoogleSignInAccount?>(
+                    ValueListenableBuilder<GoogleSignInCredentials?>(
                       valueListenable: googleUserNotifier,
-                      builder: (context, user, child) {
-                        if (user == null) {
+                      builder: (context, credentials, child) {
+                        if (credentials == null) {
                           return Text(
                             'Bulut senkronizasyonu için Google ile giriş yapın.',
                             style: TextStyle(color: Colors.white60),
@@ -202,7 +203,7 @@ void showBackupSettingsSheet(BuildContext context) {
                               onPressed: () async {
                                 final success =
                                     await BackupService.uploadBackupToCloud(
-                                  user,
+                                      credentials,
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -226,7 +227,7 @@ void showBackupSettingsSheet(BuildContext context) {
                             SizedBox(height: 12),
                             ElevatedButton.icon(
                               onPressed: () async {
-                                final success = await BackupService.restoreBackupFromCloud(user);
+                                final success = await BackupService.restoreBackupFromCloud(credentials);
 
                                 // 2. Widget hala ekranda mı kontrol et (En kritik nokta!)
                                 if (!context.mounted) return;

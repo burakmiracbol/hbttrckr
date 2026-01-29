@@ -20,7 +20,7 @@ import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_acrylic/window.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in_all_platforms/google_sign_in_all_platforms.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/providers/notification_settings_provider.dart';
 import 'package:hbttrckr/providers/uix_provider.dart';
@@ -159,62 +159,79 @@ dynamic buildMaterialScheme(SchemeProvider sp, bool isDark) {
   }
 }
 
-final GoogleSignIn googleSignIn = GoogleSignIn.instance; // Singleton kullanımı
-final ValueNotifier<GoogleSignInAccount?> googleUserNotifier =
-    ValueNotifier<GoogleSignInAccount?>(null);
+final googleSignIn = GoogleSignIn(
+  // See 'How to Get Google OAuth Credentials' section below
+  params: const GoogleSignInParams(
+    clientId: '1050920329447-i5e1gdora94j3bprsu65p3oee3tv0mre.apps.googleusercontent.com',
+    clientSecret: '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', // Don't worry - not truly a secret! See 'Client Secret Requirements'
+    redirectPort: 8000,
+    scopes: ['email', 'profile'],
+  ),
+);
+
+final googleUserNotifier = ValueNotifier<GoogleSignInCredentials?>(null);
 
 void initializeGoogleSignIn() {
-  // Arka planda sessizce başlatıyoruz
-  googleSignIn.initialize(
-    // Web için clientId gerekebilir, Android/iOS için google-services.json yeterlidir
-  ).then((_) {
-    // Giriş olaylarını dinliyoruz
-    googleSignIn.authenticationEvents.listen((event) async { // Firebase için async ekledik
-      if (event is GoogleSignInAuthenticationEventSignIn) {
-        googleUserNotifier.value = event.user;
+  // 1. Durum değişikliklerini dinle (Bu stream tüm platformlarda çalışır)
+  googleSignIn.authenticationState.listen((credentials) async {
+    if (credentials != null) {
+      // Kullanıcı verilerini bir şekilde saklamak istersen credentials içinde her şey var
+      // googleUserNotifier.value = ... (Burada credentials'ı notifier'a pasla)
 
-        // --- BURASI YENİ: Orijinal yapıyı bozmadan Firebase'i bağlıyoruz ---
-        try {
-          final GoogleSignInAuthentication googleAuth = await event.user!.authentication;
-  
-          // v7'de accessToken için authorizationClient kullanılıyor
-          String? accessToken;
-          try {
-            final authClient = googleSignIn.authorizationClient;
-            final authorization = await authClient.authorizationForScopes(['email', 'profile']);
-            accessToken = authorization?.accessToken;
-          } catch (_) {}
-          
-          final AuthCredential credential = GoogleAuthProvider.credential(
-            idToken: googleAuth.idToken,
-            accessToken: accessToken,
-          );
-          await FirebaseAuth.instance.signInWithCredential(credential);
-          print("✅ Firebase Auth senkronize edildi. UID: ${FirebaseAuth.instance.currentUser?.uid}");
-        } catch (e) {
-          print("❌ Firebase Bağlantı Hatası: $e");
-        }
-              // -----------------------------------------------------------------
+      try {
+        // --- Firebase Senkronizasyonu ---
+        // Bu paket credentials içinde hem idToken hem accessToken'ı doğrudan veriyor
 
-      } else if (event is GoogleSignInAuthenticationEventSignOut) {
-        googleUserNotifier.value = null;
-        await FirebaseAuth.instance.signOut(); // Firebase'den de çıkış yap
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          idToken: credentials.idToken,
+          accessToken: credentials.accessToken,
+        );
+
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        print("✅ Firebase Auth senkronize edildi. UID: ${FirebaseAuth.instance.currentUser?.uid}");
+
+        // Hatırla: Veriyi gördüğün an yedeklemeyi de burada tetikleyebilirsin
+        // BackupService.uploadBackupToCloud(...);
+
+      } catch (e) {
+        print("❌ Firebase Bağlantı Hatası: $e");
       }
-      print("Giriş Durumu Değişti: $event");
-    }).onError((error) {
-      print("Hata: $error");
-    });
-
-    // Daha önce giriş yapmış mı diye kontrol et (Lightweight)
-    final attempt = googleSignIn.attemptLightweightAuthentication();
-    if (attempt != null) {
-      attempt.then((account) {
-        if (account != null) {
-          googleUserNotifier.value = account;
-        }
-      });
+    } else {
+      // Kullanıcı çıkış yaptı
+      googleUserNotifier.value = null;
+      await FirebaseAuth.instance.signOut();
+      print("🚪 Firebase Auth oturumu kapatıldı.");
     }
+  }).onError((error) {
+    print("⚠️ Stream Hatası: $error");
   });
+
+  // 2. Uygulama açılışında önceki oturumu kontrol et (Silent SignIn)
+  // Bu, senin eski 'attemptLightweightAuthentication' kısmının yerini alır.
+  googleSignIn.silentSignIn();
+}
+
+Future<GoogleSignInCredentials?> seamlessAuthentication() async {
+  // 1. Önce sessizce dene (Kullanıcı hiçbir şey görmez, token yenilenir)
+  final silentCreds = await googleSignIn.silentSignIn();
+  if (silentCreds != null) {
+    googleUserNotifier.value = silentCreds; // UI'ı güncelliyoruz
+    return silentCreds;
+  }
+
+  // 2. Hafif giriş dene (Mobil/Web'de 1-2 tık, Windows'ta genelde pas geçer)
+  final lightCreds = await googleSignIn.lightweightSignIn();
+  if (lightCreds != null) {
+    googleUserNotifier.value = lightCreds;
+    return lightCreds;
+  }
+
+  // 3. Son çare tam akış (Tarayıcı açılır)
+  final onlineCreds = await googleSignIn.signInOnline();
+  if (onlineCreds != null) {
+    googleUserNotifier.value = onlineCreds;
+  }
+  return onlineCreds;
 }
 
 Future<void> main() async {
@@ -228,6 +245,8 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   initializeGoogleSignIn();
+  seamlessAuthentication();
+
   // NotificationService'i başlat
   await NotificationService().initialize();
 

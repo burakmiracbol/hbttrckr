@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in_all_platforms/google_sign_in_all_platforms.dart';
 import 'package:hbttrckr/main.dart';
 
 
@@ -91,47 +93,59 @@ void showAccountSettingsSheet (
                     ),
                   ],
                 ),
-                ValueListenableBuilder<GoogleSignInAccount?>(
+                ValueListenableBuilder<GoogleSignInCredentials?>(
                   valueListenable: googleUserNotifier,
-                  builder: (context, user, child) {
-                    if (user == null) {
-                      return buildSignInButton();
+                  builder: (context, credentials, child) {
+                    if (credentials == null) {
+                      return buildSignInSection();
                     }
+
+                    // Bilgileri paketten değil, Firebase'den çekiyoruz
+                    final firebaseUser = FirebaseAuth.instance.currentUser;
 
                     return Column(
                       children: [
                         Card(
                           child: IntrinsicWidth(
-                            child: Row(
-                              children: [
-                                if (user.photoUrl != null)
-                                  CircleAvatar(
-                                    radius: 32,
-                                    backgroundImage: NetworkImage(user.photoUrl!),
-                                  )
-                                else
-                                  const CircleAvatar(
-                                    radius: 32,
-                                    child: Icon(Icons.person),
-                                  ),
-
-                                Column(
+                            child: Padding( // Biraz nefes payı ekleyelim
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text(
-                                      user.displayName ?? 'Google Kullanıcısı',
-                                      style: Theme.of(context).textTheme.titleMedium,
-                                    ),
-                                    Text(
-                                      user.email,
-                                      style: Theme.of(context).textTheme.bodySmall,
-                                    ),
-                                    Text(
-                                      user.id,
-                                      style: Theme.of(context).textTheme.bodySmall,
+                                    // Profil fotoğrafını Firebase'den alıyoruz
+                                    if (firebaseUser?.photoURL != null)
+                                      CircleAvatar(
+                                        radius: 32,
+                                        backgroundImage: NetworkImage(firebaseUser!.photoURL!),
+                                      )
+                                    else
+                                      const CircleAvatar(
+                                        radius: 32,
+                                        child: Icon(Icons.person),
+                                      ),
+
+                                    const SizedBox(width: 12), // Boşluk olmazsa olmaz
+
+                                    Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            firebaseUser?.displayName ?? 'Google Kullanıcısı',
+                                            style: Theme.of(context).textTheme.titleMedium,
+                                          ),
+                                          Text(
+                                            firebaseUser?.email ?? 'Email yok',
+                                            style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                          Text(
+                                            // Firebase UID veya Google ID (Credentials'dan gelen idToken decode edilebilir ama UID yeterli)
+                                            'ID: ${firebaseUser?.uid.substring(0, 8)}...',
+                                            style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                        ]
                                     ),
                                   ]
-                                ),
-                              ]
+                              ),
                             ),
                           ),
                         ),
@@ -141,6 +155,7 @@ void showAccountSettingsSheet (
                           child: ElevatedButton(
                             onPressed: () async {
                               await googleSignIn.signOut();
+                              // initialize içindeki listen zaten notifier'ı null yapacak ama garantiye alabilirsin
                             },
                             child: const Text('Hesaptan çıkış yap'),
                           ),
@@ -158,23 +173,19 @@ void showAccountSettingsSheet (
   );
 }
 
-Widget buildSignInButton() {
-  // Eğer platform klasik authenticate metodunu destekliyorsa (Mobil gibi)
-  if (googleSignIn.supportsAuthenticate()) {
-    return ElevatedButton(
-      onPressed: () async {
-        try {
-          // Asıl giriş işlemi burada yapılıyor
-          await googleSignIn.authenticate();
-        } catch (e) {
-          print("Giriş Hatası: $e");
-        }
-      },
-      child: const Text('Google Sign-in'),
-    );
-  } else {
-    // Web platformunda iseniz farklı bir buton render edilmelidir
-    // return GoogleSignInWeb.renderButton();
-    return const SizedBox();
+// backup_settings_sheet.dart içinde butonun olduğu yer:
+
+Widget buildSignInSection() {
+  // Eğer Web'deysen paketin kendi butonunu göster
+  if (kIsWeb) {
+    return googleSignIn.signInButton() ?? const SizedBox.shrink();
   }
+
+  // Diğer platformlarda (Android, Windows vb.) senin kendi butonun
+  return ElevatedButton(
+    onPressed: () async {
+      await seamlessAuthentication(); // Bu metod Android'de lightweight, Windows'ta browser açar
+    },
+    child: const Text("Google ile Giriş Yap"),
+  );
 }

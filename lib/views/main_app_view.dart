@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/main.dart';
 import 'package:hbttrckr/views/habit_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/views/stats_view.dart';
@@ -173,6 +174,7 @@ class MainAppViewState extends State<MainAppView> {
 
   @override
   void initState() {
+    googleSignIn.silentSignIn();
     super.initState();
   }
 

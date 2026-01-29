@@ -19,9 +19,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in_all_platforms/google_sign_in_all_platforms.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../main.dart';
 
 class BackupService {
@@ -151,95 +150,66 @@ class BackupService {
   }
 
   /// Yedeği buluta yükle
-  static Future<bool> uploadBackupToCloud(GoogleSignInAccount user) async {
+  // Parametre tipi GoogleSignInCredentials olarak güncellendi
+  static Future<bool> uploadBackupToCloud(GoogleSignInCredentials credentials) async {
     try {
-      debugPrint('📤 Upload başlatılıyor...');
-      debugPrint('📧 Google User Email: ${user.email}');
-      debugPrint('🆔 Google User ID: ${user.id}');
+      debugPrint('📤 Upload başlatılıyor (All Platforms)...');
 
-      // Firebase Auth durumunu kontrol et
-      final firebaseUser = FirebaseAuth.instance.currentUser;
+      // 1. Firebase Auth durumunu kontrol et
+      var firebaseUser = FirebaseAuth.instance.currentUser;
       debugPrint('🔥 Firebase User: ${firebaseUser?.uid}');
-      debugPrint('🔥 Firebase Email: ${firebaseUser?.email}');
 
+      // 2. Eğer Firebase User null ise veya oturum düşmüşse credentials ile tekrar bağlan
       if (firebaseUser == null) {
-        debugPrint('❌ Firebase Auth henüz senkronize olmamış!');
-        // Firebase Auth'u yeniden senkronize etmeyi dene
+        debugPrint('❌ Firebase Auth bağlı değil, credentials ile bağlanılıyor...');
         try {
-          final googleAuth = await user.authentication;
-          debugPrint(
-            '🔑 idToken: ${googleAuth.idToken != null ? "VAR" : "YOK"}',
-          );
-
-          // v7'de accessToken için authorizationClient kullanılıyor
-          String? accessToken;
-          try {
-            final authClient = googleSignIn.authorizationClient;
-            final authorization = await authClient.authorizationForScopes([
-              'email',
-              'profile',
-            ]);
-            accessToken = authorization?.accessToken;
-            debugPrint(
-              '🔑 accessToken: ${accessToken != null ? "VAR" : "YOK"}',
-            );
-          } catch (e) {
-            debugPrint('🔑 accessToken alınamadı: $e');
-          }
-
           final credential = GoogleAuthProvider.credential(
-            idToken: googleAuth.idToken,
-            accessToken: accessToken,
+            idToken: credentials.idToken,
+            accessToken: credentials.accessToken,
           );
-          final userCredential = await FirebaseAuth.instance
-              .signInWithCredential(credential);
-          debugPrint(
-            '✅ Firebase Auth yeniden senkronize edildi: ${userCredential.user?.uid}',
-          );
+          final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+          firebaseUser = userCredential.user;
+          debugPrint('✅ Firebase Auth yeniden senkronize edildi: ${firebaseUser?.uid}');
         } catch (authError) {
           debugPrint('❌ Firebase Auth senkronizasyon hatası: $authError');
           return false;
         }
       }
 
-      final currentUid = FirebaseAuth.instance.currentUser?.uid;
+      // UID kontrolü
+      final currentUid = firebaseUser?.uid;
       if (currentUid == null) {
         debugPrint('❌ UID hala null, işlem iptal ediliyor.');
         return false;
       }
 
+      // 3. Payload oluşturma
       debugPrint('📦 Backup payload oluşturuluyor...');
       final backupPayload = await _buildBackupPayload();
-      debugPrint(
-        '📦 Payload boyutu: ${jsonEncode(backupPayload).length} karakter',
-      );
 
-      debugPrint(
-        '☁️ Firestore\'a yazılıyor... Collection: user-backups, Doc: $currentUid',
-      );
+      // 4. Firestore'a yazma
+      debugPrint('☁️ Firestore\'a yazılıyor... Doc: $currentUid');
 
       await FirebaseFirestore.instance
           .collection('user-backups')
           .doc(currentUid)
           .set({
-            'user': {
-              'id': user.id,
-              'uid': currentUid,
-              'email': user.email,
-              'displayName': user.displayName,
-              'photoUrl': user.photoUrl,
-            },
-            'payload': backupPayload,
-            'updatedAt': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
+        'user': {
+          'uid': currentUid,
+          'email': firebaseUser?.email, // Bilgileri Firebase'den çekmek en garantisi
+          'displayName': firebaseUser?.displayName,
+          'photoUrl': firebaseUser?.photoURL,
+        },
+        'payload': backupPayload,
+        'updatedAt': FieldValue.serverTimestamp(),
+        'version': '1.0', // Versiyon kontrolü için ekledik
+      }, SetOptions(merge: true));
 
-      debugPrint('✅ Backup uploaded to cloud for: ${user.email}');
+      debugPrint('✅ Backup uploaded to cloud for: ${firebaseUser?.email}');
       return true;
+
     } on FirebaseException catch (e) {
-      debugPrint('❌ Firebase hatası:');
-      debugPrint('   Code: ${e.code}');
-      debugPrint('   Message: ${e.message}');
-      debugPrint('   Plugin: ${e.plugin}');
+      debugPrint('❌ Firebase hatası: Code: ${e.code}, Message: ${e.message}');
       return false;
     } catch (e, stackTrace) {
       debugPrint('❌ Cloud upload error: $e');
@@ -249,13 +219,16 @@ class BackupService {
   }
 
   /// Buluttan yedeği geri yükle
-  static Future<bool> restoreBackupFromCloud(GoogleSignInAccount user) async {
+  static Future<bool> restoreBackupFromCloud(GoogleSignInCredentials credentials) async {
     try {
-      debugPrint('📥 Cloud restore başlatılıyor...');
+      debugPrint('📥 Cloud restore başlatılıyor (All Platforms)...');
+
+      // UID'yi Firebase'den alıyoruz (Tüm platformlarda ortak anahtar)
       final uid = FirebaseAuth.instance.currentUser?.uid;
       debugPrint('🔥 Firebase User ID: $uid');
+
       if (uid == null) {
-        debugPrint('❌ UID null, işlem iptal ediliyor.');
+        debugPrint('❌ UID null, işlem iptal ediliyor. Firebase Auth oturumu kontrol edilmeli.');
         return false;
       }
 
@@ -264,12 +237,14 @@ class BackupService {
           .doc(uid)
           .get();
 
-      final data = snapshot.data();
-      debugPrint('☁️ Snapshot exists: ${snapshot.exists}');
-      debugPrint('☁️ Snapshot data: ${data != null ? "VAR" : "YOK"}');
-
-      if (!snapshot.exists || data == null) {
+      if (!snapshot.exists) {
         debugPrint('⚠️ Bu kullanıcı için bulut yedeği bulunamadı.');
+        return false;
+      }
+
+      final data = snapshot.data();
+      if (data == null) {
+        debugPrint('❌ Snapshot verisi boş.');
         return false;
       }
 
@@ -279,9 +254,10 @@ class BackupService {
         debugPrint('❌ Payload bir harita (Map) değil.');
         return false;
       }
-      final backupData = Map<String, dynamic>.from(rawBackup);
-      debugPrint('📦 Yedek verisi: ${jsonEncode(backupData)}');
 
+      final backupData = Map<String, dynamic>.from(rawBackup);
+
+      // Versiyon Kontrolü
       final version = backupData['version']?.toString() ?? backupVersion;
       debugPrint('📦 Yedek versiyonu: $version, Beklenen: $backupVersion');
       if (version != backupVersion) {
@@ -294,19 +270,24 @@ class BackupService {
       debugPrint('⚙️ Ham tercihler alınıyor (preferences)...');
       final rawPreferences = backupData['preferences'];
       if (rawPreferences is! Map) {
-        debugPrint('❌ Tercihler bir harita (Map) değil.');
+        debugPrint('❌ Tercihler formatı hatalı.');
         return false;
       }
-      final preferences = Map<String, dynamic>.from(rawPreferences);
-      debugPrint('⚙️ Tercihler verisi: ${jsonEncode(preferences)}');
 
+      final preferences = Map<String, dynamic>.from(rawPreferences);
+
+      // Yerel depolamaya (SharedPreferences/Isar vb.) yazma işlemi
       await _restorePreferences(preferences);
-      debugPrint('✅ Yedek buluttan geri yüklendi: ${user.email}');
+
+      // Başarı logu için emaili Firebase'den alıyoruz
+      debugPrint('✅ Yedek buluttan geri yüklendi: ${FirebaseAuth.instance.currentUser?.email}');
       return true;
+
     } catch (e, stackTrace) {
       debugPrint('❌ Cloud restore hatası: $e');
       debugPrint('📍 Stack trace: $stackTrace');
       return false;
     }
   }
+
 }
