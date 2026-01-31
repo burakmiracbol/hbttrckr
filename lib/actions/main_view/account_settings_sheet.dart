@@ -35,134 +35,111 @@ void showAccountSettingsSheet(BuildContext context) {
       return Padding(
         padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 8),
         child: SingleChildScrollView(
-          child: LiquidGlassLayer(
-            child: GlassGlowLayer(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Center(
-                    child:
-                        context.read<StyleProvider>().current ==
-                            AppDesignMode.liquid
-                        ? glassContainer(
-                            context: context,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(16,6,16,8),
-                              child: Text(
-                                "Account",
-                                style: TextStyle(
-                                  fontSize: Theme.of(
-                                    context,
-                                  ).textTheme.headlineSmall?.fontSize,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Text(
-                              "Account",
-                              style: TextStyle(
-                                fontSize: Theme.of(
-                                  context,
-                                ).textTheme.headlineSmall?.fontSize,
-                              ),
-                            ),
-                          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: PlatformTitle(
+                    fontSize: Theme.of(context,).textTheme.headlineSmall!.fontSize,
+                    title: 'Account',
+                    padding: EdgeInsets.fromLTRB(16,2,16,2)
                   ),
-              
-                  ValueListenableBuilder<GoogleSignInCredentials?>(
-                    valueListenable: googleUserNotifier,
-                    builder: (context, credentials, child) {
-                      if (credentials == null) {
-                        return buildSignInSection();
-                      }
-              
-                      // Bilgileri paketten değil, Firebase'den çekiyoruz
-                      final firebaseUser = FirebaseAuth.instance.currentUser;
-              
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: PlatformCard(
-                              child: IntrinsicWidth(
-                                child: Padding(
-                                  // Biraz nefes payı ekleyelim
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0,
-                                    vertical: 12.0,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
+                ),
+              ),
+
+              ValueListenableBuilder<GoogleSignInCredentials?>(
+                valueListenable: googleUserNotifier,
+                builder: (context, credentials, child) {
+                  if (credentials == null) {
+                    return buildSignInSection();
+                  }
+
+                  // Bilgileri paketten değil, Firebase'den çekiyoruz
+                  final firebaseUser = FirebaseAuth.instance.currentUser;
+
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: PlatformCard(
+                          child: IntrinsicWidth(
+                            child: Padding(
+                              // Biraz nefes payı ekleyelim
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 12.0,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Profil fotoğrafını Firebase'den alıyoruz
+                                  if (firebaseUser?.photoURL != null)
+                                    CircleAvatar(
+                                      radius: 32,
+                                      backgroundImage: NetworkImage(
+                                        firebaseUser!.photoURL!,
+                                      ),
+                                    )
+                                  else
+                                    const CircleAvatar(
+                                      radius: 32,
+                                      child: Icon(Icons.person),
+                                    ),
+
+                                  const SizedBox(
+                                    width: 12,
+                                  ), // Boşluk olmazsa olmaz
+
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      // Profil fotoğrafını Firebase'den alıyoruz
-                                      if (firebaseUser?.photoURL != null)
-                                        CircleAvatar(
-                                          radius: 32,
-                                          backgroundImage: NetworkImage(
-                                            firebaseUser!.photoURL!,
-                                          ),
-                                        )
-                                      else
-                                        const CircleAvatar(
-                                          radius: 32,
-                                          child: Icon(Icons.person),
-                                        ),
-              
-                                      const SizedBox(
-                                        width: 12,
-                                      ), // Boşluk olmazsa olmaz
-              
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            firebaseUser?.displayName ??
-                                                'Google Kullanıcısı',
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.titleMedium,
-                                          ),
-                                          Text(
-                                            firebaseUser?.email ?? 'Email yok',
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodySmall,
-                                          ),
-                                          Text(
-                                            // Firebase UID veya Google ID (Credentials'dan gelen idToken decode edilebilir ama UID yeterli)
-                                            'ID: ${firebaseUser?.uid.substring(0, 8)}...',
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodySmall,
-                                          ),
-                                        ],
+                                      Text(
+                                        firebaseUser?.displayName ??
+                                            'Google Kullanıcısı',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium,
+                                      ),
+                                      Text(
+                                        firebaseUser?.email ?? 'Email yok',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodySmall,
+                                      ),
+                                      Text(
+                                        // Firebase UID veya Google ID (Credentials'dan gelen idToken decode edilebilir ama UID yeterli)
+                                        'ID: ${firebaseUser?.uid.substring(0, 8)}...',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodySmall,
                                       ),
                                     ],
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
-              
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: PlatformButton(
-                              onPressed: () async {
-                                await googleSignIn.signOut();
-                                // initialize içindeki listen zaten notifier'ı null yapacak ama garantiye alabilirsin
-                              },
-                              child: const Text('Hesaptan çıkış yap'),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: PlatformButton(
+                          onPressed: () async {
+                            await googleSignIn.signOut();
+                            // initialize içindeki listen zaten notifier'ı null yapacak ama garantiye alabilirsin
+                          },
+                          child: const Text('Hesaptan çıkış yap'),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
-            ),
+            ],
           ),
         ),
       );
@@ -171,7 +148,6 @@ void showAccountSettingsSheet(BuildContext context) {
 }
 
 // backup_settings_sheet.dart içinde butonun olduğu yer:
-
 Widget buildSignInSection() {
   // Eğer Web'deysen paketin kendi butonunu göster
   if (kIsWeb) {

@@ -174,42 +174,66 @@ class UniversalScaffold extends StatelessWidget {
 class PlatformButton extends StatelessWidget {
   final Widget child;
   final VoidCallback onPressed;
+  final EdgeInsets padding;
 
   const PlatformButton({
     super.key,
     required this.child,
     required this.onPressed,
+    this.padding = const EdgeInsets.all(8.0),
   });
 
   @override
   Widget build(BuildContext context) {
     switch (context.read<StyleProvider>().current) {
       case AppDesignMode.cupertino:
-        return cupertino.CupertinoButton.filled(
-          onPressed: onPressed,
-          child: child,
+        return cupertino.Padding(
+          padding: padding,
+          child: cupertino.CupertinoButton.filled(
+            onPressed: onPressed,
+            child: child,
+          ),
         );
       case AppDesignMode.fluent:
-        return fluent.FilledButton(onPressed: onPressed, child: child);
+        return cupertino.Padding(
+          padding: padding,
+          child: fluent.FilledButton(onPressed: onPressed, child: child),
+        );
       case AppDesignMode.liquid:
-        return LiquidGlass(
-          shape: LiquidRoundedRectangle(borderRadius: 160),
-          child: material.ElevatedButton(
-              style: material.ElevatedButton.styleFrom(
-                backgroundColor: material.Colors.transparent
+        return cupertino.Padding(
+          padding: padding,
+          child: LiquidGlass(
+            shape: LiquidRoundedRectangle(borderRadius: 160),
+            child: GlassGlow(
+              child: material.ElevatedButton(
+                style: material.ElevatedButton.styleFrom(
+                  backgroundColor: material.Colors.transparent,
+                ),
+                onPressed: onPressed,
+                child: child,
               ),
-              onPressed: onPressed, child: child),
+            ),
+          ),
         );
       case AppDesignMode.material:
-        return material.ElevatedButton(onPressed: onPressed, child: child);
+        return Padding(
+          padding: padding,
+          child: material.ElevatedButton(onPressed: onPressed, child: child),
+        );
       case AppDesignMode.macos:
-        return macos.PushButton(
-          onPressed: onPressed,
-          controlSize: macos.ControlSize.regular,
-          child: child,
+        return cupertino.Padding(
+          padding: padding,
+          child: macos.PushButton(
+            onPressed: onPressed,
+            controlSize: macos.ControlSize.regular,
+            child: child,
+          ),
         );
       case AppDesignMode.yaru:
-        return yaru.YaruOptionButton(onPressed: onPressed, child: child);
+        return Padding(
+          padding: padding,
+          child: yaru.YaruOptionButton(onPressed: onPressed, child: child),
+        );
     }
   }
 }
@@ -229,37 +253,69 @@ class PlatformTextField extends StatelessWidget {
     final style = context.read<StyleProvider>().current;
     switch (style) {
       case AppDesignMode.cupertino:
-        return cupertino.CupertinoTextField(
-          controller: controller,
-          placeholder: hintText,
+        return Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: cupertino.CupertinoTextField(
+            controller: controller,
+            placeholder: hintText,
+          ),
         );
       case AppDesignMode.fluent:
-        return fluent.TextBox(
-          controller: controller,
-          placeholder: hintText,
+        return Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: fluent.TextBox(
+            controller: controller,
+            placeholder: hintText,
+          ),
         ); // fluent_ui
       case AppDesignMode.liquid:
-        return LiquidGlass(
-          shape: LiquidRoundedRectangle(borderRadius: 12),
-          child: material.TextField(
-            controller: controller,
-            decoration: material.InputDecoration(
-              hintText: hintText,
-              border: material.InputBorder.none,
+        return Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: LiquidGlass(
+            shape: LiquidRoundedRectangle(borderRadius: 64),
+            child: material.TextField(
+              controller: controller,
+              style: TextStyle(color: material.Colors.white),
+              decoration: material.InputDecoration(
+                hintText: hintText,
+                hintStyle: TextStyle(color: material.Colors.grey),
+                border: material.OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                filled: false,
+              ),
             ),
           ),
         );
       case AppDesignMode.macos:
-        return macos.MacosTextField(
-          controller: controller,
-          placeholder: hintText,
+        return Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: macos.MacosTextField(
+            controller: controller,
+            placeholder: hintText,
+          ),
         );
       case AppDesignMode.yaru:
-        return yaru.YaruSearchField(controller: controller, hintText: hintText);
+        return Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: yaru.YaruSearchField(controller: controller, hintText: hintText),
+        );
       case AppDesignMode.material:
-        return material.TextField(
-          controller: controller,
-          decoration: material.InputDecoration(hintText: hintText),
+        return Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: material.TextField(
+            controller: controller,
+            style: TextStyle(color: material.Colors.white),
+            decoration: material.InputDecoration(
+              hintText: hintText,
+              hintStyle: TextStyle(color: material.Colors.grey),
+              border: material.OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: material.Colors.grey[900],
+            ),
+          ),
         );
     }
   }
@@ -298,18 +354,163 @@ class PlatformSwitch extends StatelessWidget {
   }
 }
 
+class PlatformTitle extends StatelessWidget {
+  final EdgeInsets padding;
+  final String title;
+
+  // TextStyle Parametreleri
+  final bool inherit;
+  final Color? color;
+  final Color? backgroundColor;
+  final double? fontSize;
+  final FontWeight? fontWeight;
+  final FontStyle? fontStyle;
+  final double? letterSpacing;
+  final double? wordSpacing;
+  final TextBaseline? textBaseline;
+  final double? height;
+  final TextLeadingDistribution? leadingDistribution;
+  final Locale? locale;
+  final Paint? foreground;
+  final Paint? background;
+  final List<Shadow>? shadows;
+  final List<FontFeature>? fontFeatures;
+  final List<FontVariation>? fontVariations;
+  final TextDecoration? decoration;
+  final Color? decorationColor;
+  final TextDecorationStyle? decorationStyle;
+  final double? decorationThickness;
+  final String? debugLabel;
+  final String? fontFamily;
+  final List<String>? fontFamilyFallback;
+  final String? package;
+  final TextOverflow? overflow;
+
+  const PlatformTitle({
+    super.key,
+    this.padding = EdgeInsets.zero,
+    required this.title,
+    this.inherit = true,
+    this.color,
+    this.backgroundColor,
+    this.fontSize,
+    this.fontWeight,
+    this.fontStyle,
+    this.letterSpacing,
+    this.wordSpacing,
+    this.textBaseline,
+    this.height,
+    this.leadingDistribution,
+    this.locale,
+    this.foreground,
+    this.background,
+    this.shadows,
+    this.fontFeatures,
+    this.fontVariations,
+    this.decoration,
+    this.decorationColor,
+    this.decorationStyle,
+    this.decorationThickness,
+    this.debugLabel,
+    this.fontFamily,
+    this.fontFamilyFallback,
+    this.package,
+    this.overflow,
+  });
+
+  // Üçü de aynı parametreleri kabul ettiği için ortak bir stil üretici
+  material.TextStyle _buildStyle() {
+    return material.TextStyle(
+      inherit: inherit,
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      leadingDistribution: leadingDistribution,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      fontVariations: fontVariations,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      debugLabel: debugLabel,
+      fontFamily: fontFamily,
+      fontFamilyFallback: fontFamilyFallback,
+      package: package,
+      overflow: overflow,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mode = context.read<StyleProvider>().current;
+    final commonStyle = _buildStyle();
+
+    switch (mode) {
+      case AppDesignMode.cupertino:
+        return Padding(
+          padding: padding,
+          child: material.Text(title, style: commonStyle),
+        );
+      case AppDesignMode.fluent:
+        return Padding(
+          padding: padding,
+          child: material.Text(title, style: commonStyle),
+        );
+      case AppDesignMode.liquid:
+        return LiquidGlass(
+          shape: const LiquidRoundedRectangle(borderRadius: 160),
+          child: GlassGlow(
+            child: Padding(
+              padding: padding,
+              child: material.Text(title, style: commonStyle),
+            ),
+          ),
+        );
+      case AppDesignMode.macos:
+        return Padding(
+          padding: padding,
+          child: material.Text(title, style: commonStyle),
+        );
+      case AppDesignMode.yaru:
+      return Padding(
+        padding: padding,
+        child: material.Text(title, style: commonStyle),
+      );
+      case AppDesignMode.material:
+        return Padding(
+          padding: padding,
+          child: material.Text(title, style: commonStyle),
+        );
+    }
+  }
+}
+
 class PlatformCard extends StatelessWidget {
   final Widget child;
-  final double padding;
+  final EdgeInsets padding;
 
-  const PlatformCard({super.key, required this.child, this.padding = 12.0});
+  const PlatformCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(8.0),
+  });
 
   @override
   Widget build(BuildContext context) {
     switch (context.read<StyleProvider>().current) {
       case AppDesignMode.cupertino:
         return Container(
-          padding: EdgeInsets.all(padding),
+          padding: padding,
           decoration: BoxDecoration(
             color: cupertino.CupertinoColors.secondarySystemGroupedBackground,
             borderRadius: BorderRadius.circular(10),
@@ -319,17 +520,19 @@ class PlatformCard extends StatelessWidget {
       case AppDesignMode.fluent:
         return fluent.Card(
           // fluent_ui Card
-          padding: EdgeInsets.all(padding),
+          padding: padding,
           child: child,
         );
       case AppDesignMode.liquid:
         return LiquidGlass(
           shape: LiquidRoundedRectangle(borderRadius: 24),
-          child: Padding(padding: EdgeInsets.all(padding), child: child),
+          child: GlassGlow(
+            child: Padding(padding: padding, child: child),
+          ),
         );
       case AppDesignMode.macos:
         return material.Container(
-          padding: material.EdgeInsets.all(padding),
+          padding: padding,
           decoration: material.BoxDecoration(
             color: macos.MacosColors.controlBackgroundColor,
             borderRadius: material.BorderRadius.circular(8),
@@ -342,7 +545,7 @@ class PlatformCard extends StatelessWidget {
       case AppDesignMode.yaru:
         return yaru.YaruSection(
           // yaru.dart ile gelen bölüm yapısı
-          child: Padding(padding: EdgeInsets.all(padding), child: child),
+          child: Padding(padding: padding, child: child),
         );
       case AppDesignMode.material:
         return material.Card(
@@ -350,7 +553,7 @@ class PlatformCard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Padding(padding: EdgeInsets.all(padding), child: child),
+          child: Padding(padding: padding, child: child),
         );
     }
   }
@@ -393,15 +596,29 @@ class PlatformListTile extends StatelessWidget {
           onPressed: onTap,
         );
       case AppDesignMode.liquid:
-        return LiquidGlass(
-          shape: LiquidRoundedRectangle(borderRadius: 16),
-          child: material.ListTile(
-            title: title,
-            subtitle: subtitle,
-            leading: leading,
-            trailing: trailing,
-            onTap: onTap,
-            tileColor: material.Colors.transparent, // Camın arkasını kapatmasın
+        return cupertino.Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: LiquidGlass(
+            shape: LiquidRoundedRectangle(borderRadius: 320),
+            child: GlassGlow(
+              child: material.Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(640),
+                ),
+                shadowColor: material.Colors.transparent,
+                color: material.Colors.transparent,
+                child: material.ListTile(
+                  splashColor: null,
+                  title: title,
+                  subtitle: subtitle,
+                  leading: leading,
+                  trailing: trailing,
+                  onTap: onTap,
+                  tileColor:
+                      material.Colors.transparent, // Camın arkasını kapatmasın
+                ),
+              ),
+            ),
           ),
         );
       case AppDesignMode.macos:
@@ -633,7 +850,9 @@ Future<T?> showPlatformModalSheet<T>({
                     top: Radius.circular(30),
                   ),
                 ),
-                child: builder(context),
+                child: LiquidGlassLayer(
+                  child: GlassGlowLayer(child: builder(context)),
+                ),
               ),
             ),
           ),

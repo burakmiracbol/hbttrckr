@@ -15,74 +15,55 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
-
+import '../../classes/all_widgets.dart';
 import '../../classes/habit.dart';
 import '../../providers/habit_provider.dart';
 
 // Sık kullanılan Material Icons'ın custom map'i
 
 void showAddHabitSheet(BuildContext parentContext) {
-  showModalBottomSheet(
+  showPlatformModalSheet(
     context: parentContext,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (sheetContext) => ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
-            border: Border.all(
-              color: Colors.white.withOpacity(
-                0.2,
-              ), // İnce ışık yansıması (kenarlık)
-              width: 1.5,
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(parentContext).viewInsets.bottom,
-            ),
-            child: AddHabitSheet(
-              onAdd:
-                  ({
-                    required String name,
-                    String description = '',
-                    String? group,
-                    required Color color,
-                    required HabitType type,
-                    required IconData icon,
-                    double? targetCount,
-                    double? targetSeconds,
-                    TimeOfDay? reminderTime,
-                    Set<int>? reminderDays,
-                  }) {
-                    parentContext.read<HabitProvider>().addHabit(
-                      name: name,
-                      description: description,
-                      group: group,
-                      color: color,
-                      type: type,
-                      targetCount: targetCount,
-                      targetSeconds: targetSeconds?.toDouble(),
-                      reminderTime: reminderTime,
-                      reminderDays: reminderDays,
-                      icon: icon,
-                    );
+    builder: (sheetContext) => Padding(
+      padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
+      child: AddHabitSheet(
+        onAdd:
+            ({
+              required String name,
+              String description = '',
+              String? group,
+              required Color color,
+              required HabitType type,
+              required IconData icon,
+              double? targetCount,
+              double? targetSeconds,
+              TimeOfDay? reminderTime,
+              Set<int>? reminderDays,
+            }) {
+              parentContext.read<HabitProvider>().addHabit(
+                name: name,
+                description: description,
+                group: group,
+                color: color,
+                type: type,
+                targetCount: targetCount,
+                targetSeconds: targetSeconds?.toDouble(),
+                reminderTime: reminderTime,
+                reminderDays: reminderDays,
+                icon: icon,
+              );
 
-                    Navigator.pop(sheetContext);
-                  },
-            ),
-          ),
-        ),
+              Navigator.pop(sheetContext);
+            },
       ),
     ),
   );
@@ -112,7 +93,6 @@ class AddHabitSheet extends StatefulWidget {
 class _AddHabitSheetState extends State<AddHabitSheet> {
   final _nameController = TextEditingController();
   final _descController = TextEditingController();
-
   final _groupController = TextEditingController();
   final _countController = TextEditingController();
 
@@ -159,12 +139,6 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-        left: 20,
-        right: 20,
-        top: 20,
-      ),
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -175,144 +149,94 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Kapat + Başlık
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                Text(
-                  'New Habit',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 8.0),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: PlatformTitle(
+                        fontSize: Theme.of(context,).textTheme.headlineSmall!.fontSize,
+                        title: 'New Habit',
+                        padding: EdgeInsets.fromLTRB(16,2,16,2)
+                    ),
                   ),
                 ),
-                SizedBox(width: 48),
-              ],
+              ),
             ),
-            SizedBox(height: 20),
 
             // Habit Name
-            TextField(
+            PlatformTextField(
               controller: _nameController,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Habit name',
-                hintStyle: TextStyle(color: Colors.grey),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-                fillColor: Colors.grey[900],
-              ),
+              hintText: 'Habit name',
             ),
-            SizedBox(height: 16),
 
             // Description
-            TextField(
+            PlatformTextField(
               controller: _descController,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Description',
-                hintStyle: TextStyle(color: Colors.grey),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-                fillColor: Colors.grey[900],
-              ),
+              hintText: 'Description',
             ),
-            SizedBox(height: 16),
 
-            TextField(
+            PlatformTextField(
               controller: _groupController,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Group (optional)',
-                hintStyle: TextStyle(color: Colors.grey),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-                fillColor: Colors.grey[900],
+              hintText: 'Group (optional)',
+            ),
+
+            Center(
+              child: PlatformButton(
+                onPressed: () async {
+                  IconPickerIcon? icon = await showIconPicker(
+                    context,
+                    configuration: SinglePickerConfiguration(
+                      iconPackModes: [IconPack.material],
+                    ),
+                  );
+
+                  if (icon != null) {
+                    setState(() {
+                      currentIconOfHabit = icon.data;
+                    });
+                  }
+                },
+                child: Text('Icon Seç'),
               ),
             ),
-            SizedBox(height: 16),
-
-            ElevatedButton.icon(
-              onPressed: () async {
-                IconPickerIcon? icon = await showIconPicker(
-                  context,
-                  configuration: SinglePickerConfiguration(
-                    iconPackModes: [IconPack.material],
-                  ),
-                );
-
-                if (icon != null) {
-                  setState(() {
-                    currentIconOfHabit = icon.data;
-                  });
-                }
-              },
-              icon: Icon(currentIconOfHabit),
-              label: Text('Icon Seç'),
-            ),
-            SizedBox(height: 24),
 
             // Habit Type
-            Text(
-              'Tür',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            PlatformListTile(
+              title: Text("Alışkanlığın Türünü Seçin"),
+              onTap: () {},
+              trailing: DropdownButton<HabitType>(
+                value: _selectedType,
+                dropdownColor: Colors.grey[900],
+                style: TextStyle(color: Colors.white),
+                items: HabitType.values
+                    .map(
+                      (t) => DropdownMenuItem(
+                        value: t,
+                        child: Text(t.name.toUpperCase()),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (v) => setState(() => _selectedType = v!),
               ),
             ),
-            SizedBox(height: 8),
-            DropdownButton<HabitType>(
-              value: _selectedType,
-              dropdownColor: Colors.grey[900],
-              style: TextStyle(color: Colors.white),
-              items: HabitType.values
-                  .map(
-                    (t) => DropdownMenuItem(
-                      value: t,
-                      child: Text(t.name.toUpperCase()),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (v) => setState(() => _selectedType = v!),
-            ),
-            SizedBox(height: 16),
 
             // Target (Count / Time)
             if (_selectedType == HabitType.count)
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  TextField(
+                  PlatformTextField(
                     controller: _countController,
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'Hedef sayı (örn: 10)',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[900],
-                    ),
+                    // keyboardType: TextInputType.number,
+                    hintText: 'Hedef sayı (örn: 10)',
                   ),
-                  SizedBox(height: 10),
-
                 ],
               ),
 
             if (_selectedType == HabitType.time)
-              Container(
+              SizedBox(
                 height: MediaQuery.of(context).size.height * 0.3,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -392,159 +316,142 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                 ),
               ),
 
-            SizedBox(height: 24),
-
-            // Reminder
-            Text(
-              'Reminder',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            // Reminder Time
+            PlatformListTile(
+              title: Text(
+                'Reminder Time',
+                style: TextStyle(color: Colors.white70),
               ),
-            ),
-            SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Time', style: TextStyle(color: Colors.white70)),
-                TextButton(
-                  onPressed: selectTime,
-                  child: Text(
-                    _selectedTime.format(context),
-                    style: TextStyle(fontSize: 16, color: Colors.blue),
-                  ),
+              trailing: TextButton(
+                onPressed: selectTime,
+                child: Text(
+                  _selectedTime.format(context),
+                  style: TextStyle(fontSize: 16, color: Colors.blue),
                 ),
-              ],
+              ),
+              onTap: () {},
             ),
-            SizedBox(height: 16),
 
-            // Days
-            Text(
-              'Days',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            // Reminder Days
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6.0),
+              child: Center(
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    Center(
+                      child: Text(
+                        'Reminder Days',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: List.generate(7, (i) {
+                        return FilterChip(
+                          label: Text(
+                            dayNames[i],
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          selected: _selectedDays.contains(i),
+                          onSelected: (selected) {
+                            setState(() {
+                              selected
+                                  ? _selectedDays.add(i)
+                                  : _selectedDays.remove(i);
+                            });
+                          },
+                          selectedColor: Colors.blue[600],
+                          checkmarkColor: Colors.white,
+                          backgroundColor: Colors.grey[800],
+                        );
+                      }),
+                    ),
+                  ],
+                ),
               ),
             ),
-            SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 8,
-              children: List.generate(7, (i) {
-                return FilterChip(
-                  label: Text(
-                    dayNames[i],
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  selected: _selectedDays.contains(i),
-                  onSelected: (selected) {
-                    setState(() {
-                      selected ? _selectedDays.add(i) : _selectedDays.remove(i);
-                    });
-                  },
-                  selectedColor: Colors.blue[600],
-                  checkmarkColor: Colors.white,
-                  backgroundColor: Colors.grey[800],
-                );
-              }),
-            ),
-            SizedBox(height: 24),
 
             // Color Picker
-            Text(
-              'Renk seç',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            PlatformListTile(
+              leading: Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: _selectedColor,
+                  shape: BoxShape.rectangle,
+                  border: Border.all(color: Colors.white, width: 3),
+                ),
+                child: Icon(Icons.color_lens, color: Colors.white),
               ),
-            ),
-            SizedBox(height: 12),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Color tempColor = _selectedColor;
-                    showDialog(
-                      context: context,
-                      builder: (ctx) => AlertDialog(
-                        backgroundColor: Colors.grey[900],
-                        title: Text(
-                          'Renk Seç',
+              title: Text(
+                'Renk seç',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              onTap: () {
+                Color tempColor = _selectedColor;
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    backgroundColor: Colors.grey[900],
+                    title: Text(
+                      'Renk Seç',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    content: IntrinsicWidth(
+                      child: IntrinsicHeight(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ColorPicker(
+                                hexInputBar: true,
+                                pickerColor: tempColor,
+                                onColorChanged: (color) => tempColor = color,
+                                labelTypes: [],
+                                pickerAreaHeightPercent: 0.8,
+                                portraitOnly: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        child: Text(
+                          'İptal',
                           style: TextStyle(color: Colors.white),
                         ),
-                        content: IntrinsicWidth(
-                          child: IntrinsicHeight(
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ColorPicker(
-                                    hexInputBar: true,
-                                    pickerColor: tempColor,
-                                    onColorChanged: (color) =>
-                                        tempColor = color,
-                                    labelTypes: [],
-                                    pickerAreaHeightPercent: 0.8,
-                                    portraitOnly: true,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            child: Text(
-                              'İptal',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () => Navigator.pop(ctx),
-                          ),
-                          TextButton(
-                            child: Text(
-                              'Seç',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                            onPressed: () {
-                              setState(() => _selectedColor = tempColor);
-                              Navigator.pop(ctx);
-                            },
-                          ),
-                        ],
+                        onPressed: () => Navigator.pop(ctx),
                       ),
-                    );
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: _selectedColor,
-                      shape: BoxShape.rectangle,
-                      border: Border.all(color: Colors.white, width: 3),
-                    ),
-                    child: Icon(Icons.color_lens, color: Colors.white),
+                      TextButton(
+                        child: Text(
+                          'Seç',
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                        onPressed: () {
+                          setState(() => _selectedColor = tempColor);
+                          Navigator.pop(ctx);
+                        },
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(width: 12),
-                Text(
-                  'Seçilen renk',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
-                ),
-              ],
+                );
+              },
             ),
-            SizedBox(height: 24),
 
             // SAVE BUTONU
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  backgroundColor: Colors.blue[700],
-                ),
+              child: PlatformButton(
                 onPressed: () {
                   if (_nameController.text.trim().isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -591,7 +498,6 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
           ],
         ),
       ),
