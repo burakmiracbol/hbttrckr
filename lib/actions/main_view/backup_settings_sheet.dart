@@ -18,9 +18,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_all_platforms/google_sign_in_all_platforms.dart';
-import 'package:hbttrckr/main.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:provider/provider.dart';
 import '../../services/backup_service.dart';
@@ -41,8 +39,8 @@ void showBackupSettingsSheet(BuildContext context) {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
             border: Border.all(
-              color: Colors.white.withOpacity(
-                0.2,
+              color: Colors.white.withValues(
+                alpha: 0.2,
               ), // İnce ışık yansıması (kenarlık)
               width: 1.5,
             ),
@@ -205,7 +203,7 @@ void showBackupSettingsSheet(BuildContext context) {
                                 final success =
                                     await BackupService.uploadBackupToCloud(
                                       credentials,
-                                );
+                                    );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
@@ -213,8 +211,9 @@ void showBackupSettingsSheet(BuildContext context) {
                                           ? '✅ Buluta yedeklendi.'
                                           : '❌ Buluta yedekleme hatası',
                                     ),
-                                    backgroundColor:
-                                        success ? null : Colors.red,
+                                    backgroundColor: success
+                                        ? null
+                                        : Colors.red,
                                   ),
                                 );
                               },
@@ -228,7 +227,10 @@ void showBackupSettingsSheet(BuildContext context) {
                             SizedBox(height: 12),
                             ElevatedButton.icon(
                               onPressed: () async {
-                                final success = await BackupService.restoreBackupFromCloud(credentials);
+                                final success =
+                                    await BackupService.restoreBackupFromCloud(
+                                      credentials,
+                                    );
 
                                 // 2. Widget hala ekranda mı kontrol et (En kritik nokta!)
                                 if (!context.mounted) return;
@@ -237,7 +239,9 @@ void showBackupSettingsSheet(BuildContext context) {
                                   // 3. Verileri Provider üzerinden tekrar yükle
                                   // Provider kullanıyorsan notifyListeners() zaten UI'ı yenileyeceği için
                                   // ekstradan setState(() {}) yapmana gerek kalmayabilir.
-                                  await context.read<HabitProvider>().loadHabits();
+                                  await context
+                                      .read<HabitProvider>()
+                                      .loadHabits();
 
                                   // Eğer ana ekranın (Home) bu değişikliği hemen görmesini istiyorsan
                                   // ve Provider içinde notifyListeners() varsa UI otomatik yenilenir.
@@ -247,9 +251,13 @@ void showBackupSettingsSheet(BuildContext context) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      success ? '✅ Buluttan geri yüklendi.' : '❌ Bulut yedeği bulunamadı',
+                                      success
+                                          ? '✅ Buluttan geri yüklendi.'
+                                          : '❌ Bulut yedeği bulunamadı',
                                     ),
-                                    backgroundColor: success ? Colors.green : Colors.red,
+                                    backgroundColor: success
+                                        ? Colors.green
+                                        : Colors.red,
                                   ),
                                 );
 

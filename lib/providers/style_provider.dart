@@ -16,8 +16,12 @@
 
 import 'package:flutter/material.dart';
 
-class UIXProvider with ChangeNotifier {
+import '../classes/all_widgets.dart';
+
+class StyleProvider with ChangeNotifier {
 
   // if i need provider for something
+
+  AppDesignMode current = AppDesignMode.material;
 
 }

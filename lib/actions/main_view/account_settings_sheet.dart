@@ -19,7 +19,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in_all_platforms/google_sign_in_all_platforms.dart';
-import 'package:hbttrckr/main.dart';
+
+import '../../services/google_sign-in.dart';
 
 
 void showAccountSettingsSheet (
@@ -40,7 +41,7 @@ void showAccountSettingsSheet (
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2), // İnce ışık yansıması (kenarlık)
+                    color: Colors.white.withValues(alpha: 0.2), // İnce ışık yansıması (kenarlık)
                     width: 1.5,
                   ),
                 ),

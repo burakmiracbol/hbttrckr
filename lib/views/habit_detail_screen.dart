@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:ui';
-
 import 'package:hbttrckr/classes/strength_gauge.dart';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/habit.dart';
@@ -30,7 +29,6 @@ import '../classes/stats_card.dart';
 import '../extensions/duration_formatter.dart';
 import '../actions/detail_screen/count_selector_sheet.dart';
 import '../actions/detail_screen/time_selector_sheet.dart';
-import '../providers/uix_provider.dart';
 
 // TODO ERROR : düzenleme oluyor iki iptal tuşu var
 
@@ -277,7 +275,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                               ),
                                                                           border: Border.all(
                                                                             color: Colors.white
-                                                                                .withOpacity(
+                                                                                .withValues(alpha:
                                                                                   0.2,
                                                                                 ), // İnce ışık yansıması (kenarlık)
                                                                             width: 1.5,

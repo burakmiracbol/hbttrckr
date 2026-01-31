@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:hbttrckr/classes/habit.dart';
-import 'package:hbttrckr/main.dart';
 import 'package:hbttrckr/views/habit_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/views/stats_view.dart';
@@ -26,6 +25,7 @@ import '../providers/scheme_provider.dart';
 import '../actions/main_view/habit_add_sheet.dart';
 import '../actions/main_view/habits_summary_sheet.dart';
 import '../actions/main_view/main_settings_sheet.dart';
+import '../services/google_sign-in.dart';
 import 'habits_page.dart';
 
 // TODO's
