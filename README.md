@@ -28,6 +28,10 @@ Core ideas and features (from the current implementation):
 - Bottom‑sheet summaries and settings (mobile‑friendly)
 - Desktop window effects (mica/transparency)
 
+ideas and features that under development: 
+
+- Universalness in design : You can choose you app design style if you want some main design styles are the following ones : JOMC (our design style), Material 3, Cupertino, Fluent, Yaru (Ubuntu's style) and macOS
+
 ## Stack
 
 - **Language:** Dart
