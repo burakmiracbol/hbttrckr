@@ -1,21 +1,19 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as material;
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:macos_ui/macos_ui.dart' as macos;
 import 'package:provider/provider.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
-import 'package:yaru/widgets.dart'as yaru;
+import 'package:yaru/widgets.dart' as yaru;
 import 'package:flutter/widgets.dart';
 import 'package:hbttrckr/providers/style_provider.dart';
 
-enum AppDesignMode {
-  material,
-  cupertino,
-  liquid,
-  fluent,
-  macos,
-  yaru
-}
+import '../providers/scheme_provider.dart';
+import '../services/theme_color_service.dart';
+
+enum AppDesignMode { material, cupertino, liquid, fluent, macos, yaru }
 
 class UniversalScaffold extends StatelessWidget {
   final Widget body;
@@ -36,40 +34,48 @@ class UniversalScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (mode) {
-    // 1. FLUENT (Windows Stili - Yandan Menü)
+      // 1. FLUENT (Windows Stili - Yandan Menü)
       case AppDesignMode.fluent:
         return fluent.NavigationView(
           pane: fluent.NavigationPane(
             selected: currentIndex,
             onChanged: onIndexChanged,
             displayMode: fluent.PaneDisplayMode.auto,
-            items: destinations.map((d) => fluent.PaneItem(
-              icon: d.icon,
-              title: Text(d.label),
-              body: const SizedBox.shrink(),
-            )).toList(),
+            items: destinations
+                .map(
+                  (d) => fluent.PaneItem(
+                    icon: d.icon,
+                    title: Text(d.label),
+                    body: const SizedBox.shrink(),
+                  ),
+                )
+                .toList(),
           ),
           content: body,
         );
 
-    // 2. MACOS (macOS Stili - Sidebar)
+      // 2. MACOS (macOS Stili - Sidebar)
       case AppDesignMode.macos:
         return macos.MacosWindow(
           sidebar: macos.Sidebar(
             builder: (context, scrollController) => macos.SidebarItems(
               currentIndex: currentIndex,
               onChanged: onIndexChanged,
-              items: destinations.map((d) => macos.SidebarItem(
-                leading: d.icon,
-                label: Text(d.label),
-              )).toList(),
+              items: destinations
+                  .map(
+                    (d) => macos.SidebarItem(
+                      leading: d.icon,
+                      label: Text(d.label),
+                    ),
+                  )
+                  .toList(),
             ),
             minWidth: 200,
           ),
           child: body,
         );
 
-    // 3. YARU (Linux/Ubuntu Stili)
+      // 3. YARU (Linux/Ubuntu Stili)
       case AppDesignMode.yaru:
         return material.Scaffold(
           body: Row(
@@ -78,10 +84,14 @@ class UniversalScaffold extends StatelessWidget {
                 selectedIndex: currentIndex,
                 onDestinationSelected: onIndexChanged,
                 labelType: material.NavigationRailLabelType.all,
-                destinations: destinations.map((d) => material.NavigationRailDestination(
-                  icon: d.icon,
-                  label: Text(d.label),
-                )).toList(),
+                destinations: destinations
+                    .map(
+                      (d) => material.NavigationRailDestination(
+                        icon: d.icon,
+                        label: Text(d.label),
+                      ),
+                    )
+                    .toList(),
               ),
               const material.VerticalDivider(thickness: 1, width: 1),
               Expanded(child: body),
@@ -89,21 +99,26 @@ class UniversalScaffold extends StatelessWidget {
           ),
         );
 
-    // 4. CUPERTINO (iOS Stili - Alt Tab)
+      // 4. CUPERTINO (iOS Stili - Alt Tab)
       case AppDesignMode.cupertino:
         return cupertino.CupertinoTabScaffold(
           tabBar: cupertino.CupertinoTabBar(
             currentIndex: currentIndex,
             onTap: onIndexChanged,
-            items: destinations.map((d) => cupertino.BottomNavigationBarItem(
-              icon: d.icon,
-              label: d.label,
-            )).toList(),
+            items: destinations
+                .map(
+                  (d) => cupertino.BottomNavigationBarItem(
+                    icon: d.icon,
+                    label: d.label,
+                  ),
+                )
+                .toList(),
           ),
-          tabBuilder: (context, index) => cupertino.CupertinoPageScaffold(child: body),
+          tabBuilder: (context, index) =>
+              cupertino.CupertinoPageScaffold(child: body),
         );
 
-    // 5. LIQUID (Senin Özel Tasarımın - Stack & Floating)
+      // 5. LIQUID (Senin Özel Tasarımın - Stack & Floating)
       case AppDesignMode.liquid:
         return material.Scaffold(
           body: Stack(
@@ -116,7 +131,10 @@ class UniversalScaffold extends StatelessWidget {
                 child: LiquidGlass(
                   shape: LiquidRoundedRectangle(borderRadius: 25),
                   child: material.Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 20,
+                    ),
                     child: material.Row(
                       mainAxisAlignment: material.MainAxisAlignment.spaceAround,
                       children: destinations.asMap().entries.map((entry) {
@@ -125,7 +143,9 @@ class UniversalScaffold extends StatelessWidget {
                         bool isSelected = currentIndex == idx;
                         return material.IconButton(
                           icon: d.icon,
-                          color: isSelected ? material.Colors.blue : material.Colors.grey,
+                          color: isSelected
+                              ? material.Colors.blue
+                              : material.Colors.grey,
                           onPressed: () => onIndexChanged(idx),
                         );
                       }).toList(),
@@ -137,7 +157,7 @@ class UniversalScaffold extends StatelessWidget {
           ),
         );
 
-    // 6. MATERIAL (Standart Android Stili)
+      // 6. MATERIAL (Standart Android Stili)
       case AppDesignMode.material:
         return material.Scaffold(
           body: body,
@@ -151,27 +171,43 @@ class UniversalScaffold extends StatelessWidget {
   }
 }
 
-
 class PlatformButton extends StatelessWidget {
   final Widget child;
   final VoidCallback onPressed;
 
-  const PlatformButton({super.key, required this.child, required this.onPressed});
+  const PlatformButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
     switch (context.read<StyleProvider>().current) {
       case AppDesignMode.cupertino:
-        return cupertino.CupertinoButton.filled(onPressed: onPressed, child: child);
+        return cupertino.CupertinoButton.filled(
+          onPressed: onPressed,
+          child: child,
+        );
       case AppDesignMode.fluent:
         return fluent.FilledButton(onPressed: onPressed, child: child);
       case AppDesignMode.liquid:
-        return LiquidGlass(shape: LiquidRoundedRectangle(borderRadius: 160),
-        child: material.ElevatedButton(onPressed: onPressed, child: child));
+        return LiquidGlass(
+          shape: LiquidRoundedRectangle(borderRadius: 160),
+          child: material.ElevatedButton(
+              style: material.ElevatedButton.styleFrom(
+                backgroundColor: material.Colors.transparent
+              ),
+              onPressed: onPressed, child: child),
+        );
       case AppDesignMode.material:
         return material.ElevatedButton(onPressed: onPressed, child: child);
       case AppDesignMode.macos:
-        return macos.PushButton(onPressed: onPressed, controlSize: macos.ControlSize.regular, child: child);
+        return macos.PushButton(
+          onPressed: onPressed,
+          controlSize: macos.ControlSize.regular,
+          child: child,
+        );
       case AppDesignMode.yaru:
         return yaru.YaruOptionButton(onPressed: onPressed, child: child);
     }
@@ -182,27 +218,49 @@ class PlatformTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
 
-  const PlatformTextField({super.key, required this.controller, required this.hintText});
+  const PlatformTextField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+  });
 
   @override
   Widget build(BuildContext context) {
     final style = context.read<StyleProvider>().current;
     switch (style) {
       case AppDesignMode.cupertino:
-        return cupertino.CupertinoTextField(controller: controller, placeholder: hintText);
+        return cupertino.CupertinoTextField(
+          controller: controller,
+          placeholder: hintText,
+        );
       case AppDesignMode.fluent:
-        return fluent.TextBox(controller: controller, placeholder: hintText); // fluent_ui
+        return fluent.TextBox(
+          controller: controller,
+          placeholder: hintText,
+        ); // fluent_ui
       case AppDesignMode.liquid:
         return LiquidGlass(
           shape: LiquidRoundedRectangle(borderRadius: 12),
-          child: material.TextField(controller: controller, decoration: material.InputDecoration(hintText: hintText, border: material.InputBorder.none)),
+          child: material.TextField(
+            controller: controller,
+            decoration: material.InputDecoration(
+              hintText: hintText,
+              border: material.InputBorder.none,
+            ),
+          ),
         );
       case AppDesignMode.macos:
-        return macos.MacosTextField(controller: controller, placeholder: hintText);
+        return macos.MacosTextField(
+          controller: controller,
+          placeholder: hintText,
+        );
       case AppDesignMode.yaru:
         return yaru.YaruSearchField(controller: controller, hintText: hintText);
       case AppDesignMode.material:
-        return material.TextField(controller: controller, decoration: material.InputDecoration(hintText: hintText));
+        return material.TextField(
+          controller: controller,
+          decoration: material.InputDecoration(hintText: hintText),
+        );
     }
   }
 }
@@ -211,7 +269,11 @@ class PlatformSwitch extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
 
-  const PlatformSwitch({super.key, required this.value, required this.onChanged});
+  const PlatformSwitch({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -255,17 +317,15 @@ class PlatformCard extends StatelessWidget {
           child: child,
         );
       case AppDesignMode.fluent:
-        return fluent.Card( // fluent_ui Card
+        return fluent.Card(
+          // fluent_ui Card
           padding: EdgeInsets.all(padding),
           child: child,
         );
       case AppDesignMode.liquid:
         return LiquidGlass(
           shape: LiquidRoundedRectangle(borderRadius: 24),
-          child: Padding(
-            padding: EdgeInsets.all(padding),
-            child: child,
-          ),
+          child: Padding(padding: EdgeInsets.all(padding), child: child),
         );
       case AppDesignMode.macos:
         return material.Container(
@@ -273,25 +333,24 @@ class PlatformCard extends StatelessWidget {
           decoration: material.BoxDecoration(
             color: macos.MacosColors.controlBackgroundColor,
             borderRadius: material.BorderRadius.circular(8),
-            border: material.Border.all(color: macos.MacosColors.windowFrameColor.withOpacity(0.1)),
+            border: material.Border.all(
+              color: macos.MacosColors.windowFrameColor.withOpacity(0.1),
+            ),
           ),
           child: child,
         );
       case AppDesignMode.yaru:
-        return yaru.YaruSection( // yaru.dart ile gelen bölüm yapısı
-          child: Padding(
-            padding: EdgeInsets.all(padding),
-            child: child,
-          ),
+        return yaru.YaruSection(
+          // yaru.dart ile gelen bölüm yapısı
+          child: Padding(padding: EdgeInsets.all(padding), child: child),
         );
       case AppDesignMode.material:
         return material.Card(
           elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: EdgeInsets.all(padding),
-            child: child,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
+          child: Padding(padding: EdgeInsets.all(padding), child: child),
         );
     }
   }
@@ -325,7 +384,8 @@ class PlatformListTile extends StatelessWidget {
           onTap: onTap,
         );
       case AppDesignMode.fluent:
-        return fluent.ListTile( // fluent_ui ListTile
+        return fluent.ListTile(
+          // fluent_ui ListTile
           title: title,
           subtitle: subtitle,
           leading: leading,
@@ -407,14 +467,14 @@ class PlatformExpansionTile extends StatelessWidget {
         );
 
       case AppDesignMode.cupertino:
-      // iOS'ta ExpansionTile yoktur, genelde Section içine liste olarak dizilir
+        // iOS'ta ExpansionTile yoktur, genelde Section içine liste olarak dizilir
         return cupertino.CupertinoListSection.insetGrouped(
           header: title,
           children: children,
         );
 
       case AppDesignMode.yaru:
-      // Yaru'da genişleyen yapılar için YaruExpansionPanel veya standart kullanılır
+        // Yaru'da genişleyen yapılar için YaruExpansionPanel veya standart kullanılır
         return material.ExpansionTile(
           title: title,
           leading: leading,
@@ -428,9 +488,9 @@ class PlatformExpansionTile extends StatelessWidget {
           child: material.ExpansionTile(
             title: title,
             leading: leading,
-            children: children,
             backgroundColor: material.Colors.transparent,
             collapsedBackgroundColor: material.Colors.transparent,
+            children: children,
           ),
         );
 
@@ -444,4 +504,159 @@ class PlatformExpansionTile extends StatelessWidget {
   }
 }
 
+Future<T?> showPlatformModalSheet<T>({
+  required BuildContext context,
+  required Widget Function(BuildContext) builder, // builder'a geçtik
+  String? title,
+  bool isScrollControlled = false, // Boyut kontrolü
+  bool useSafeArea = true,
+  bool enableDrag = true,
+  bool isDismissible = true,
+  Color? backgroundColor,
+  double? elevation,
+  ShapeBorder? shape,
+}) {
+  final designMode = context.read<StyleProvider>().current;
+  final scheme = context.read<SchemeProvider>();
+  final themeMode = context.read<CurrentThemeMode>();
+  final isDark = themeMode.isDarkMode;
+  final m3 = colorSchemeFromMaterial(buildMaterialScheme(scheme, isDark));
 
+  // Yükseklik limitini isScrollControlled'a göre ayarlıyoruz
+  final screenHeight = MediaQuery.of(context).size.height;
+  final boxConstraints = BoxConstraints(
+    maxHeight: isScrollControlled ? screenHeight * 0.9 : screenHeight * 0.6,
+  );
+
+  switch (designMode) {
+    case AppDesignMode.macos:
+      return macos.showMacosSheet<T>(
+        context: context,
+        barrierDismissible: isDismissible,
+        builder: (context) => macos.MacosSheet(
+          child: material.Material(
+            color: backgroundColor ?? material.Colors.transparent,
+            child: SafeArea(
+              bottom: useSafeArea,
+              child: ConstrainedBox(
+                constraints: boxConstraints,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (title != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          title,
+                          style: macos.MacosTheme.of(
+                            context,
+                          ).typography.headline,
+                        ),
+                      ),
+                    Flexible(child: builder(context)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+    case AppDesignMode.fluent:
+      return fluent.showDialog<T>(
+        // fluent.showDialog olarak düzelttim
+        context: context,
+        barrierDismissible: isDismissible,
+        builder: (context) => fluent.ContentDialog(
+          constraints: boxConstraints.copyWith(maxWidth: 400),
+          title: title != null ? Text(title) : null,
+          content: builder(context),
+          actions: [
+            fluent.Button(
+              child: const Text('Kapat'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
+
+    case AppDesignMode.cupertino:
+      return cupertino.showCupertinoModalPopup<T>(
+        context: context,
+        barrierDismissible: isDismissible,
+        builder: (context) => SafeArea(
+          bottom: useSafeArea,
+          child: cupertino.CupertinoActionSheet(
+            title: title != null ? Text(title) : null,
+            message: ConstrainedBox(
+              constraints: boxConstraints,
+              child: material.Material(
+                color: material.Colors.transparent,
+                child: builder(context),
+              ),
+            ),
+            cancelButton: cupertino.CupertinoActionSheetAction(
+              child: const Text('Kapat'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+        ),
+      );
+
+    case AppDesignMode.liquid:
+      return material.showModalBottomSheet<T>(
+        context: context,
+        isScrollControlled: isScrollControlled,
+        backgroundColor: material.Colors.transparent,
+        enableDrag: enableDrag,
+        isDismissible: isDismissible,
+        useSafeArea: useSafeArea,
+        builder: (context) => ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(64),
+                ),
+                border: Border.all(
+                  color: material.Colors.white.withValues(alpha: 0.2),
+                  width: 1.5,
+                ),
+              ),
+              child: material.Container(
+                padding: const EdgeInsets.all(20),
+                decoration: material.BoxDecoration(
+                  color: backgroundColor ?? m3.surface.withValues(alpha: 0.4),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(30),
+                  ),
+                ),
+                child: builder(context),
+              ),
+            ),
+          ),
+        ),
+      );
+
+    default: // Material ve Yaru aynı sheeti kullanıcaklar şimdilik
+      return material.showModalBottomSheet<T>(
+        context: context,
+        isScrollControlled: isScrollControlled,
+        showDragHandle: enableDrag,
+        isDismissible: isDismissible,
+        useSafeArea: useSafeArea,
+        backgroundColor: backgroundColor ?? m3.surface,
+        elevation: elevation,
+        shape:
+            shape ??
+            const material.RoundedRectangleBorder(
+              borderRadius: material.BorderRadius.vertical(
+                top: material.Radius.circular(24),
+              ),
+            ),
+        builder: (context) => builder(context),
+      );
+  }
+}

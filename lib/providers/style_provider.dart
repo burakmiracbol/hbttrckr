@@ -15,13 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-
 import '../classes/all_widgets.dart';
 
 class StyleProvider with ChangeNotifier {
 
-  // if i need provider for something
-
-  AppDesignMode current = AppDesignMode.material;
+  AppDesignMode current = AppDesignMode.liquid;
 
 }
