@@ -21,7 +21,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in_all_platforms/google_sign_in_all_platforms.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../main.dart';
+import '../universal_variables.dart';
 
 class BackupService {
   static Future<Map<String, dynamic>> _buildBackupPayload() async {

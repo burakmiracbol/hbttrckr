@@ -24,6 +24,7 @@ import 'package:hbttrckr/main.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:provider/provider.dart';
 import '../../services/backup_service.dart';
+import '../../services/google_sign-in.dart';
 
 void showBackupSettingsSheet(BuildContext context) {
   showModalBottomSheet(
