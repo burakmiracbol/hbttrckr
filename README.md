@@ -30,7 +30,14 @@ Core ideas and features (from the current implementation):
 
 ideas and features that under development: 
 
-- Universalness in design : You can choose you app design style if you want some main design styles are the following ones : JOMC (our design style), Material 3, Cupertino, Fluent, Yaru (Ubuntu's style) and macOS
+- Universalness in design : You can choose you app design style if you want
+  - some main design styles are the following ones : JOMC (our design style), Material 3, Cupertino, Fluent, Yaru (Ubuntu's style) and macOS
+  - it's still under development but you can see how it works for now you can check by style_provider.dart and when you change please hot restart the application to see the result
+    (for now it only works for actions sheets like when you press settings icon on main page)
+  - what is under development with this feature is: Main app styles changing by settings (for example we are using material design for phones when you change that you can see app like fluent design and much more),
+  differencing the main app style and in app style, changing by settings (not only design but maybe view types also)
+  , opening screen for new users to choose their theme configurations
+  
 
 ## Stack
 
@@ -47,7 +54,7 @@ And currently this app developing in windows (for tablets and mobile phones othe
 
 ### For Windows 
 - Make sure that you are using this app with all release folder because this app needs some additional packages for native environment (don't just use with .exe )
-- Sometimes you can face with deadlock (just app is freeezing) so calm down there are much deadlocks we are trying to face with them
+- Sometimes you can face with deadlock (just app is freeezing) so calm down there are much deadlocks we are trying to face with them (sadly)
 
 ## Entry Points
 
