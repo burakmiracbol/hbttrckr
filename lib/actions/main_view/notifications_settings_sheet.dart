@@ -29,148 +29,145 @@ void showNotificationsSettingsSheet(BuildContext context) {
     isScrollControlled: true,
     context: context,
     builder: (sheetContext) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 8.0),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: PlatformTitle(
-                          fontSize: Theme.of(context,).textTheme.headlineSmall!.fontSize,
-                          title: 'Bildirim Ayarları',
-                          padding: EdgeInsets.fromLTRB(16,2,16,2)
-                      ),
+      return SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 8.0),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: PlatformTitle(
+                        fontSize: Theme.of(context,).textTheme.headlineSmall!.fontSize,
+                        title: 'Bildirim Ayarları',
+                        padding: EdgeInsets.fromLTRB(16,2,16,2)
                     ),
                   ),
                 ),
               ),
+            ),
 
-              // Bildirimleri Aç/Kapat
-              Consumer<NotificationSettings>(
-                builder: (ctx, notifSettings, child) {
-                  return PlatformListTile(
-                    leading: Icon(Icons.notifications_active),
-                    title: Text("Bildirimleri Etkinleştir"),
-                    trailing: PlatformSwitch(
-                      value: notifSettings.notificationsEnabled,
-                      onChanged: (value) async {
-                        await notifSettings.setNotificationsEnabled(value);
-                      },
-                    ),
-                    onTap: () {},
-                  );
-                },
-              ),
-              // Sesi Aç/Kapat
-              Consumer<NotificationSettings>(
-                builder: (ctx, notifSettings, child) {
-                  return PlatformListTile(
-                    leading: Icon(Icons.volume_up),
-                    title: Text("Ses"),
-                    trailing: PlatformSwitch(
-                      value: notifSettings.soundEnabled,
-                      onChanged: (value) async {
-                        await notifSettings.setSoundEnabled(value);
-                      },
-                    ),
-                    onTap: () {},
-                  );
-                },
-              ),
-              // Titreşimi Aç/Kapat
-              Consumer<NotificationSettings>(
-                builder: (ctx, notifSettings, child) {
-                  return PlatformListTile(
-                    leading: Icon(Icons.vibration),
-                    title: Text("Titreşim"),
-                    trailing: PlatformSwitch(
-                      value: notifSettings.vibrationEnabled,
-                      onChanged: (value) async {
-                        await notifSettings.setVibrationEnabled(value);
-                      },
-                    ),
-                    onTap: () {},
-                  );
-                },
-              ),
-              Divider(),
-              // Varsayılan Hatırlatma Saati
-              Consumer<NotificationSettings>(
-                builder: (ctx, notifSettings, child) {
-                  return PlatformListTile(
-                    leading: Icon(Icons.schedule),
-                    title: Text("Varsayılan Hatırlatma Saati"),
-                    subtitle: Text(
-                      notifSettings.defaultReminderTime.format(context),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                    trailing: Icon(Icons.edit),
-                    onTap: () async {
-                      final TimeOfDay? picked = await showTimePicker(
-                        context: context,
-                        initialTime: notifSettings.defaultReminderTime,
-                      );
-                      if (picked != null) {
-                        await notifSettings.setDefaultReminderTime(picked);
-                      }
+            // Bildirimleri Aç/Kapat
+            Consumer<NotificationSettings>(
+              builder: (ctx, notifSettings, child) {
+                return PlatformListTile(
+                  leading: Icon(Icons.notifications_active),
+                  title: Text("Bildirimleri Etkinleştir"),
+                  trailing: PlatformSwitch(
+                    value: notifSettings.notificationsEnabled,
+                    onChanged: (value) async {
+                      await notifSettings.setNotificationsEnabled(value);
                     },
-                  );
-                },
-              ),
-              // Test Bildirim Butonu
-              PlatformButton(
-                onPressed: () async {
-                  await NotificationService().showNotification(
-                    id: 999,
-                    title: '🔔 Test Bildirim',
-                    body: 'Bildirim sistemi çalışıyor!',
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Test bildirim gönderildi!'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-                child: IntrinsicWidth(
-                  child: Row(
-                    children: [Icon(Icons.send), Text('Test Bildirim Gönder')],
                   ),
+                  onTap: () {},
+                );
+              },
+            ),
+            // Sesi Aç/Kapat
+            Consumer<NotificationSettings>(
+              builder: (ctx, notifSettings, child) {
+                return PlatformListTile(
+                  leading: Icon(Icons.volume_up),
+                  title: Text("Ses"),
+                  trailing: PlatformSwitch(
+                    value: notifSettings.soundEnabled,
+                    onChanged: (value) async {
+                      await notifSettings.setSoundEnabled(value);
+                    },
+                  ),
+                  onTap: () {},
+                );
+              },
+            ),
+            // Titreşimi Aç/Kapat
+            Consumer<NotificationSettings>(
+              builder: (ctx, notifSettings, child) {
+                return PlatformListTile(
+                  leading: Icon(Icons.vibration),
+                  title: Text("Titreşim"),
+                  trailing: PlatformSwitch(
+                    value: notifSettings.vibrationEnabled,
+                    onChanged: (value) async {
+                      await notifSettings.setVibrationEnabled(value);
+                    },
+                  ),
+                  onTap: () {},
+                );
+              },
+            ),
+            Divider(),
+            // Varsayılan Hatırlatma Saati
+            Consumer<NotificationSettings>(
+              builder: (ctx, notifSettings, child) {
+                return PlatformListTile(
+                  leading: Icon(Icons.schedule),
+                  title: Text("Varsayılan Hatırlatma Saati"),
+                  subtitle: Text(
+                    notifSettings.defaultReminderTime.format(context),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                  trailing: Icon(Icons.edit),
+                  onTap: () async {
+                    final TimeOfDay? picked = await showTimePicker(
+                      context: context,
+                      initialTime: notifSettings.defaultReminderTime,
+                    );
+                    if (picked != null) {
+                      await notifSettings.setDefaultReminderTime(picked);
+                    }
+                  },
+                );
+              },
+            ),
+            // Test Bildirim Butonu
+            PlatformButton(
+              onPressed: () async {
+                await NotificationService().showNotification(
+                  id: 999,
+                  title: '🔔 Test Bildirim',
+                  body: 'Bildirim sistemi çalışıyor!',
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Test bildirim gönderildi!'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+              child: IntrinsicWidth(
+                child: Row(
+                  children: [Icon(Icons.send), Text('Test Bildirim Gönder')],
                 ),
               ),
-              // Planlı Bildirimleri Kontrol Et
-              PlatformButton(
-                onPressed: () async {
-                  await NotificationService().debugPendingNotifications();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Planlı bildirimler console\'da gösteriliyor',
-                      ),
-                      duration: Duration(seconds: 2),
+            ),
+            // Planlı Bildirimleri Kontrol Et
+            PlatformButton(
+              onPressed: () async {
+                await NotificationService().debugPendingNotifications();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Planlı bildirimler console\'da gösteriliyor',
                     ),
-                  );
-                },
-                child: IntrinsicWidth(
-                  child: Row(
-                    children: [
-                      Icon(Icons.list),
-                      Text('Planlı Bildirimleri Kontrol Et'),
-                    ],
+                    duration: Duration(seconds: 2),
                   ),
+                );
+              },
+              child: IntrinsicWidth(
+                child: Row(
+                  children: [
+                    Icon(Icons.list),
+                    Text('Planlı Bildirimleri Kontrol Et'),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     },

@@ -32,68 +32,65 @@ void showMainSettingsSheet(BuildContext context) {
     isScrollControlled: true,
     context: context,
     builder: (sheetContext) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 8.0),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: PlatformTitle(
-                        fontSize: Theme.of(context,).textTheme.headlineSmall!.fontSize,
-                        title: 'Ayarlar',
-                        padding: EdgeInsets.fromLTRB(16,2,16,2)
-                    ),
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 8.0),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: PlatformTitle(
+                      fontSize: Theme.of(context,).textTheme.headlineSmall!.fontSize,
+                      title: 'Ayarlar',
+                      padding: EdgeInsets.fromLTRB(16,2,16,2)
                   ),
                 ),
               ),
             ),
+          ),
 
-            PlatformListTile(
-              leading: CircleAvatar(child: Icon(Icons.account_circle_outlined)),
-              title: Text("Hesap Bilgileri"),
-              subtitle: Text("Hesap bilgilerinizi görüntüleyin"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () {
-                showAccountSettingsSheet(context);
-              },
-            ),
+          PlatformListTile(
+            leading: CircleAvatar(child: Icon(Icons.account_circle_outlined)),
+            title: Text("Hesap Bilgileri"),
+            subtitle: Text("Hesap bilgilerinizi görüntüleyin"),
+            trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              showAccountSettingsSheet(context);
+            },
+          ),
 
-            PlatformListTile(
-              leading: CircleAvatar(child: Icon(Icons.notifications_outlined)),
-              title: Text("Bildirimler"),
-              subtitle: Text("Bildirim ayarlarıını görüntüleyin"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () {
-                showNotificationsSettingsSheet(context);
-              },
-            ),
+          PlatformListTile(
+            leading: CircleAvatar(child: Icon(Icons.notifications_outlined)),
+            title: Text("Bildirimler"),
+            subtitle: Text("Bildirim ayarlarıını görüntüleyin"),
+            trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              showNotificationsSettingsSheet(context);
+            },
+          ),
 
-            PlatformListTile(
-              leading: CircleAvatar(child: Icon(Icons.tune)),
-              title: Text("Tercihler"),
-              subtitle: Text("Uygulamanın genel tercihlerini görüntüleyin"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () {
-                showGeneralPrefsSheet(context);
-              },
-            ),
+          PlatformListTile(
+            leading: CircleAvatar(child: Icon(Icons.tune)),
+            title: Text("Tercihler"),
+            subtitle: Text("Uygulamanın genel tercihlerini görüntüleyin"),
+            trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              showGeneralPrefsSheet(context);
+            },
+          ),
 
-            PlatformListTile(
-              leading: CircleAvatar(child: Icon(Icons.backup)),
-              title: Text("Yedekler"),
-              subtitle: Text("Yedekleri yönetin"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () {
-                showBackupSettingsSheet(context);
-              },
-            ),
-          ],
-        ),
+          PlatformListTile(
+            leading: CircleAvatar(child: Icon(Icons.backup)),
+            title: Text("Yedekler"),
+            subtitle: Text("Yedekleri yönetin"),
+            trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              showBackupSettingsSheet(context);
+            },
+          ),
+        ],
       );
     },
   );

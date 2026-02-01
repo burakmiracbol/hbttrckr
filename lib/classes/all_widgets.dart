@@ -851,7 +851,10 @@ Future<T?> showPlatformModalSheet<T>({
                   ),
                 ),
                 child: LiquidGlassLayer(
-                  child: GlassGlowLayer(child: builder(context)),
+                  child: GlassGlowLayer(child: Padding(
+                    padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 8),
+                    child: builder(context),
+                  )),
                 ),
               ),
             ),

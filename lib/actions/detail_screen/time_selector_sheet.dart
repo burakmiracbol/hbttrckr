@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
+import '../../classes/all_widgets.dart';
 import '../../extensions/duration_formatter.dart';
 import '../../classes/habit.dart';
 import '../../providers/habit_provider.dart';
@@ -33,220 +34,131 @@ void showTimeSelectorSheet(
   num currentMinutes = habit.getSecondsProgressForDate(selectedDate).minutes;
   num currentSeconds = habit.getSecondsProgressForDate(selectedDate).seconds;
 
-  showModalBottomSheet(
+  showPlatformModalSheet(
     context: context,
     isScrollControlled: false,
-    backgroundColor: Colors.transparent,
     useSafeArea: true,
     enableDrag: false,
     builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setStateSheet) => ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
-              border: Border.all(
-                color: Colors.white.withOpacity(
-                  0.2,
-                ), // İnce ışık yansıması (kenarlık)
-                width: 1.5,
-              ),
+      builder: (ctx, setStateSheet) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: PlatformTitle(
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+              title: 'Süre Seç',
+              color: Colors.white,
+              fontSize: 18,
             ),
-            child: LiquidGlassLayer(
-              child: GlassGlowLayer(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Üst bar
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(32, 30, 32, 32),
-                      child: IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            LiquidGlass(
-                              shape: LiquidRoundedRectangle(borderRadius: 64),
-                              child: GlassGlow(
-                                child: TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
-                                  child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      6,
-                                      0,
-                                      6,
-                                      0,
-                                    ),
-                                    child: const Text(
-                                      "İptal",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            LiquidGlass(
-                              shape: LiquidRoundedRectangle(borderRadius: 64),
-                              child: GlassGlow(
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16,
-                                    6,
-                                    16,
-                                    6,
-                                  ),
-                                  child: const Text(
-                                    "Süre Seç",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            LiquidGlass(
-                              shape: LiquidRoundedRectangle(borderRadius: 64),
-                              child: GlassGlow(
-                                child: TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
-                                  child: const Text(
-                                    "Tamam",
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+          ),
+
+          // WHEEL'LER
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // SAAT
+                Expanded(
+                  child: WheelSlider.number(
+                    perspective: 0.009,
+                    horizontal: false,
+                    totalCount: 24,
+                    initValue: currentHours,
+                    currentIndex: currentHours,
+                    onValueChanged: (val) {
+                      setStateSheet(() {
+                        currentHours = val;
+                      });
+                      final total =
+                          (currentHours * 3600) +
+                          (currentMinutes * 60) +
+                          currentSeconds;
+                      context.read<HabitProvider>().setSecondsForThatDate(
+                        habit.id,
+                        total.toInt(),
+                      );
+                    },
+                    selectedNumberStyle: const TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
                     ),
-
-                    // WHEEL'LER
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // SAAT
-                          Expanded(
-                            child: WheelSlider.number(
-                              perspective: 0.009,
-                              horizontal: false,
-                              totalCount: 24,
-                              initValue: currentHours,
-                              currentIndex: currentHours,
-                              onValueChanged: (val) {
-                                setStateSheet(() {
-                                  currentHours = val;
-                                });
-                                final total =
-                                    (currentHours * 3600) +
-                                    (currentMinutes * 60) +
-                                    currentSeconds;
-                                context
-                                    .read<HabitProvider>()
-                                    .setSecondsForThatDate(
-                                      habit.id,
-                                      total.toInt(),
-                                    );
-                              },
-                              selectedNumberStyle: const TextStyle(
-                                fontSize: 24,
-                                color: Colors.white,
-                              ),
-                              unSelectedNumberStyle: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.white54,
-                              ),
-                            ),
-                          ),
-                          // DAKİKA
-                          Expanded(
-                            child: WheelSlider.number(
-                              perspective: 0.009,
-                              horizontal: false,
-                              totalCount: 60,
-                              initValue: currentMinutes,
-                              currentIndex: currentMinutes,
-                              onValueChanged: (val) {
-                                setStateSheet(() {
-                                  currentMinutes = val;
-                                  // diğerleri için de minutes = val.toInt(); seconds = val.toInt();
-                                });
-
-                                // Tamam butonuna gerek yok, anında kaydet
-                                final total =
-                                    (currentHours * 3600) +
-                                    (currentMinutes * 60) +
-                                    currentSeconds;
-                                context
-                                    .read<HabitProvider>()
-                                    .setSecondsForThatDate(
-                                      habit.id,
-                                      total.toInt(),
-                                    );
-                              },
-                            ),
-                          ),
-                          // SANİYE
-                          Expanded(
-                            child: WheelSlider.number(
-                              perspective: 0.009,
-                              horizontal: false,
-                              totalCount: 60,
-                              initValue: currentSeconds,
-                              currentIndex: currentSeconds,
-                              onValueChanged: (val) {
-                                setStateSheet(() {
-                                  currentSeconds = val;
-                                  // diğerleri için de minutes = val.toInt(); seconds = val.toInt();
-                                });
-
-                                // Tamam butonuna gerek yok, anında kaydet
-                                final total =
-                                    (currentHours * 3600) +
-                                    (currentMinutes * 60) +
-                                    currentSeconds;
-                                context
-                                    .read<HabitProvider>()
-                                    .setSecondsForThatDate(
-                                      habit.id,
-                                      total.toInt(),
-                                    );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                    unSelectedNumberStyle: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.white54,
                     ),
+                  ),
+                ),
+                // DAKİKA
+                Expanded(
+                  child: WheelSlider.number(
+                    perspective: 0.009,
+                    horizontal: false,
+                    totalCount: 60,
+                    initValue: currentMinutes,
+                    currentIndex: currentMinutes,
+                    onValueChanged: (val) {
+                      setStateSheet(() {
+                        currentMinutes = val;
+                        // diğerleri için de minutes = val.toInt(); seconds = val.toInt();
+                      });
 
-                    // Toplam göster (isteğe bağlı)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0,6,0,12),
-                      child: LiquidGlass(
-                        shape: LiquidRoundedRectangle(borderRadius: 64),
-                        child: GlassGlow(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(16,6,16,6),
-                            child: Text(
-                              "${currentHours.toInt().toString().padLeft(2, '0')}:${currentMinutes.toInt().toString().padLeft(2, '0')}:${currentSeconds.toInt().toString().padLeft(2, '0')}",
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 24,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                      // Tamam butonuna gerek yok, anında kaydet
+                      final total =
+                          (currentHours * 3600) +
+                          (currentMinutes * 60) +
+                          currentSeconds;
+                      context.read<HabitProvider>().setSecondsForThatDate(
+                        habit.id,
+                        total.toInt(),
+                      );
+                    },
+                  ),
+                ),
+                // SANİYE
+                Expanded(
+                  child: WheelSlider.number(
+                    perspective: 0.009,
+                    horizontal: false,
+                    totalCount: 60,
+                    initValue: currentSeconds,
+                    currentIndex: currentSeconds,
+                    onValueChanged: (val) {
+                      setStateSheet(() {
+                        currentSeconds = val;
+                        // diğerleri için de minutes = val.toInt(); seconds = val.toInt();
+                      });
+
+                      // Tamam butonuna gerek yok, anında kaydet
+                      final total =
+                          (currentHours * 3600) +
+                          (currentMinutes * 60) +
+                          currentSeconds;
+                      context.read<HabitProvider>().setSecondsForThatDate(
+                        habit.id,
+                        total.toInt(),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Toplam göster (isteğe bağlı)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+            child: PlatformCard(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+                child: Text(
+                  "${currentHours.toInt().toString().padLeft(2, '0')}:${currentMinutes.toInt().toString().padLeft(2, '0')}:${currentSeconds.toInt().toString().padLeft(2, '0')}",
+                  style: const TextStyle(color: Colors.white70, fontSize: 24),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     ),
   );

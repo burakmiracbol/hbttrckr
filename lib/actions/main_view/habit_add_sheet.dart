@@ -33,38 +33,35 @@ void showAddHabitSheet(BuildContext parentContext) {
     context: parentContext,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (sheetContext) => Padding(
-      padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
-      child: AddHabitSheet(
-        onAdd:
-            ({
-              required String name,
-              String description = '',
-              String? group,
-              required Color color,
-              required HabitType type,
-              required IconData icon,
-              double? targetCount,
-              double? targetSeconds,
-              TimeOfDay? reminderTime,
-              Set<int>? reminderDays,
-            }) {
-              parentContext.read<HabitProvider>().addHabit(
-                name: name,
-                description: description,
-                group: group,
-                color: color,
-                type: type,
-                targetCount: targetCount,
-                targetSeconds: targetSeconds?.toDouble(),
-                reminderTime: reminderTime,
-                reminderDays: reminderDays,
-                icon: icon,
-              );
+    builder: (sheetContext) => AddHabitSheet(
+      onAdd:
+          ({
+            required String name,
+            String description = '',
+            String? group,
+            required Color color,
+            required HabitType type,
+            required IconData icon,
+            double? targetCount,
+            double? targetSeconds,
+            TimeOfDay? reminderTime,
+            Set<int>? reminderDays,
+          }) {
+            parentContext.read<HabitProvider>().addHabit(
+              name: name,
+              description: description,
+              group: group,
+              color: color,
+              type: type,
+              targetCount: targetCount,
+              targetSeconds: targetSeconds?.toDouble(),
+              reminderTime: reminderTime,
+              reminderDays: reminderDays,
+              icon: icon,
+            );
 
-              Navigator.pop(sheetContext);
-            },
-      ),
+            Navigator.pop(sheetContext);
+          },
     ),
   );
 }

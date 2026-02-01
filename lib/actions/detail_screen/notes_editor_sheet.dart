@@ -21,6 +21,24 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import '../../classes/all_widgets.dart';
+import '../../classes/habit.dart';
+
+
+Future<String?> showNotesEditorSheet(BuildContext context, Habit current ) async {
+  final result = await showPlatformModalSheet<String?>(
+    context:
+    context,
+    isScrollControlled:
+    true,
+    builder: (ctx) =>
+        HabitNotesEditorSheet(
+          initialDeltaJson:
+          current.notesDelta,
+        ),
+  );
+  return result;
+}
 
 /// Modal bottom sheet widget that edits Quill delta JSON and returns the
 /// resulting delta string when saved. Uses flutter_quill (Dart 3 compatible).

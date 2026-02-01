@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,8 +32,8 @@ void showDialogOfDeleteHabit(BuildContext context, Habit currentHabit) {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
             border: Border.all(
-              color: Colors.white.withOpacity(
-                0.2,
+              color: Colors.white.withValues(
+                alpha: 0.2,
               ), // İnce ışık yansıması (kenarlık)
               width: 1.5,
             ),
@@ -58,7 +57,7 @@ void showDialogOfDeleteHabit(BuildContext context, Habit currentHabit) {
 
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => MainAppView()),
-                        (route) => false,
+                    (route) => false,
                   );
                 },
                 child: Text('Sil', style: TextStyle(color: Colors.red)),

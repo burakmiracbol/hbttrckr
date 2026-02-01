@@ -18,416 +18,266 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
+import '../../classes/all_widgets.dart';
 import '../../classes/glass_card.dart';
 import '../../classes/habit.dart';
 import '../../extensions/duration_formatter.dart';
+import '../../providers/style_provider.dart';
 
 void showShareDetailSheet(
-    BuildContext context,
-    Habit currentHabit,
-    DateTime selectedDate,
-    ) {
+  BuildContext context,
+  Habit currentHabit,
+  DateTime selectedDate,
+) {
   ScreenshotController screenshotController = ScreenshotController();
   Map<String, Uint8List?> imageState = {'image': null};
-  showModalBottomSheet(
-    backgroundColor: Colors.transparent,
+  showPlatformModalSheet(
     enableDrag: true,
     useSafeArea: true,
-    isScrollControlled: false,
     context: context,
-    builder: (sheetContext) => ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
-            border: Border.all(
-              color: Colors.white.withOpacity(
-                0.2,
-              ), // İnce ışık yansıması (kenarlık)
-              width: 1.5,
+    isScrollControlled: true,
+    builder: (sheetContext) => StatefulBuilder(
+      builder: (ctx, setStateSheet) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Screenshot(
+                controller: screenshotController,
+                child: buildHabitCard(context, currentHabit, selectedDate),
+              ),
             ),
-          ),
-          child: StatefulBuilder(
-            builder: (ctx, setStateSheet) {
-              return Padding(
-                padding: EdgeInsets.all(8),
-                child: Center(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Screenshot(
-                          controller: screenshotController,
-                          child: IntrinsicWidth(
-                            child: Card(
-                              color: currentHabit.color.withValues(alpha: 0.3),
-                              child: IntrinsicWidth(
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.stretch,
-                                  children: [
-                                    IntrinsicHeight(
-                                      child: Row(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                              8.0,
-                                              4.0,
-                                              4.0,
-                                              4.0,
-                                            ),
-                                            child: glassContainer(
-                                              borderRadiusRect: 300.0,
-                                              context: context,
-                                              child: AspectRatio(
-                                                aspectRatio: 1,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    14.0,
-                                                  ),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: Icon(
-                                                      currentHabit.icon,
-                                                      size: null,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                              6.0,
-                                              4.0,
-                                              6.0,
-                                              4.0,
-                                            ),
-                                            child: Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                        6.0,
-                                                        2.0,
-                                                        4.0,
-                                                        2.0,
-                                                      ),
-                                                      child: glassContainer(
-                                                        context: context,
-                                                        child: Expanded(
-                                                          child: Padding(
-                                                            padding:
-                                                            const EdgeInsets.only(
-                                                              left: 8.0,
-                                                              right: 8.0,
-                                                              top: 4.0,
-                                                              bottom: 4.0,
-                                                            ),
-                                                            child: Text(
-                                                              currentHabit.name,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                        6.0,
-                                                        2.0,
-                                                        4.0,
-                                                        2.0,
-                                                      ),
-                                                      child: glassContainer(
-                                                        context: context,
-                                                        child: Expanded(
-                                                          child: Padding(
-                                                            padding:
-                                                            const EdgeInsets.only(
-                                                              left: 8.0,
-                                                              right: 8.0,
-                                                              top: 4.0,
-                                                              bottom: 4.0,
-                                                            ),
-                                                            child: Text(
-                                                              currentHabit
-                                                                  .description,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                              const EdgeInsets.fromLTRB(
-                                                6.0,
-                                                4.0,
-                                                8.0,
-                                                4.0,
-                                              ),
-                                              child: glassContainer(
-                                                context: context,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    8.0,
-                                                  ),
-                                                  child: Column(
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                        const EdgeInsets.all(
-                                                          4.0,
-                                                        ),
-                                                        child: Icon(
-                                                          Icons
-                                                              .health_and_safety,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        "Güç seviyesi : ${currentHabit.strengthLevel}",
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Wrap(
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                              6.0,
-                                              4.0,
-                                              6.0,
-                                              4.0,
-                                            ),
-                                            child: glassContainer(
-                                              context: context,
-                                              child: Card(
-                                                color: Colors.transparent,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    8.0,
-                                                  ),
-                                                  child: Column(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.whatshot_rounded,
-                                                      ),
-                                                      Text(
-                                                        "Streak : ${currentHabit.currentStreak} gün",
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                              6.0,
-                                              4.0,
-                                              6.0,
-                                              4.0,
-                                            ),
-                                            child: glassContainer(
-                                              context: context,
-                                              child: Card(
-                                                color: Colors.transparent,
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                      const EdgeInsets.all(
-                                                        8.0,
-                                                      ),
-                                                      child: Column(
-                                                        children: [
-                                                          Icon(
-                                                            Icons
-                                                                .keyboard_double_arrow_up,
-                                                          ),
-                                                          Text(
-                                                            "Güç : %${currentHabit.strength}",
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                              6.0,
-                                              4.0,
-                                              6.0,
-                                              4.0,
-                                            ),
-                                            child: glassContainer(
-                                              context: context,
-                                              child: Card(
-                                                color: Colors.transparent,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    8.0,
-                                                  ),
-                                                  child: Column(
-                                                    children: [
-                                                      Icon(
-                                                        currentHabit.type ==
-                                                            HabitType.task
-                                                            ? Icons.check
-                                                            : currentHabit
-                                                            .type ==
-                                                            HabitType
-                                                                .count
-                                                            ? Icons
-                                                            .add_box_rounded
-                                                            : currentHabit
-                                                            .type ==
-                                                            HabitType.time
-                                                            ? Icons.timer
-                                                            : Icons
-                                                            .question_mark,
-                                                      ),
-                                                      Text(
-                                                        "Tipi : ${currentHabit.type == HabitType.task
-                                                            ? "Görev"
-                                                            : currentHabit.type == HabitType.count
-                                                            ? "Sayılı"
-                                                            : currentHabit.type == HabitType.time
-                                                            ? "Süreli"
-                                                            : "Bilinmeyen"}",
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                              6.0,
-                                              4.0,
-                                              6.0,
-                                              4.0,
-                                            ),
-                                            child: glassContainer(
-                                              context: context,
-                                              child: Card(
-                                                color: Colors.transparent,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    8.0,
-                                                  ),
-                                                  child: Column(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.calendar_month,
-                                                      ),
-                                                      Text(
-                                                        currentHabit.type ==
-                                                            HabitType.task
-                                                            ? currentHabit.isCompletedOnDate(
-                                                          selectedDate,
-                                                        )
-                                                            ? "Tamamlandı"
-                                                            : "Tamamlanmadı"
-                                                            : currentHabit
-                                                            .type ==
-                                                            HabitType
-                                                                .count
-                                                            ? "${currentHabit.getCountProgressForDate(selectedDate)} / ${currentHabit.targetCount?.toInt()}"
-                                                            : currentHabit
-                                                            .type ==
-                                                            HabitType.time
-                                                            ? "${currentHabit.getSecondsProgressForDate(selectedDate).formattedHMS} / ${currentHabit.targetSeconds?.toInt().formattedHMS} "
-                                                            : "Bilinmeyen",
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: imageState['image'] != null
-                            ? ElevatedButton(
-                          onPressed: () {
-                            // Burada share işlemi yapılabilir
-                            debugPrint(
-                              "Screenshot paylaşıldı: ${imageState['image']!.length} bytes",
-                            );
-                          },
-                          child: Text("Paylaş"),
-                        )
-                            : ElevatedButton(
-                          onPressed: () async {
-                            final directory =
-                                (await getApplicationDocumentsDirectory())
-                                    .path; //from path_provide package
-                            String fileName =
-                                "${currentHabit.name} ${DateTime.now().microsecondsSinceEpoch.toString()}.png";
-                            var path = directory;
-                            screenshotController.captureAndSave(
-                              path,
-                              fileName: fileName,
-                            );
-                          },
-                          child: Text("Screenshot Al"),
-                        ),
-                      ),
-                    ],
-                  ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: imageState['image'] != null
+                  ? PlatformButton(
+                      onPressed: () {
+                        debugPrint(
+                          "Screenshot paylaşıldı: ${imageState['image']!.length} bytes",
+                        );
+                      },
+                      child: Text("Paylaş"),
+                    )
+                  : PlatformButton(
+                      onPressed: () async {
+                        final directory =
+                            (await getApplicationDocumentsDirectory()).path;
+                        String fileName =
+                            "${currentHabit.name} ${DateTime.now().microsecondsSinceEpoch.toString()}.png";
+                        var path = directory;
+                        screenshotController.captureAndSave(
+                          path,
+                          fileName: fileName,
+                        );
+                      },
+                      child: Text("Screenshot Al"),
+                    ),
+            ),
+          ],
+        );
+      },
+    ),
+  );
+}
+
+Widget buildHabitCard(
+  BuildContext context,
+  Habit currentHabit,
+  DateTime selectedDate,
+) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(28),
+      color: currentHabit.color.withValues(alpha: 0.12),
+      border: Border.all(
+        color: currentHabit.color.withValues(alpha: 0.25),
+        width: 1.5,
+      ),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              glassContainer(
+                context: context,
+                borderRadiusRect: 20,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Icon(
+                    currentHabit.icon,
+                    color: currentHabit.color,
+                    size: 36,
+                  ), // Dev İkon
                 ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      currentHabit.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      currentHabit.description,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // --- ALT BÖLÜM (İSTATİSTİK GRİDİ) ---
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              int crossAxisCount;
+              double aspectRatio;
+              bool isRowLayout;
+
+              // 663px MAX GENİŞLİĞE GÖRE HESAPLANMIŞ BREAKPOINT'LER
+              if (constraints.maxWidth >= 400) {
+                // MOD 1: YAN YANA 4 TANE (Senin istediğin 4x1)
+                crossAxisCount = 4;
+                aspectRatio = 0.95; // Kutuları biraz dikey yapıyoruz ki sığsın
+                isRowLayout = false; // İkon üstte, yazı altta
+              } else if (constraints.maxWidth >= 280) {
+                // MOD 2: 2x2 GRID
+                crossAxisCount = 2;
+                aspectRatio = 1.7; // Kutuları yatay dikdörtgen yapıyoruz
+                isRowLayout = false; // İkon üstte, yazı altta
+              } else {
+                // MOD 3: ÜST ÜSTE 4 SATIR (Senin tabirinle 1x4)
+                crossAxisCount = 1;
+                aspectRatio = 4.2; // İnce uzun şeritler
+                isRowLayout = true; // İkon solda, yazı sağda (Row)
+              }
+
+              return GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: crossAxisCount,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: aspectRatio,
+                children: [
+                  _buildResponsiveTile(context, Icons.whatshot_rounded, "${currentHabit.currentStreak}", "Gün Streak", Colors.orange, isRowLayout),
+                  _buildResponsiveTile(context, Icons.bolt_rounded, "%${currentHabit.strength}", "Güç", Colors.blue, isRowLayout),
+                  _buildResponsiveTile(context, _getTypeIcon(currentHabit.type), _getTypeName(currentHabit.type), "Hedef Tipi", Colors.purple, isRowLayout),
+                  _buildResponsiveTile(context, Icons.insights_rounded, _getProgressText(currentHabit, selectedDate), "İlerleme", Colors.green, isRowLayout),
+                ],
               );
             },
           ),
         ),
+      ],
+    ),
+  );
+}
+
+Widget _buildResponsiveTile(BuildContext context, IconData icon, String value, String label, Color accentColor, bool isRowLayout) {
+  return glassContainer(
+    context: context,
+    borderRadiusRect: 15,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: isRowLayout
+          ? Row( // Üst üste modunda (1 sütun) ikon solda
+        children: [
+          const SizedBox(width: 8),
+          Icon(icon, size: 24, color: accentColor),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FittedBox(fit: BoxFit.scaleDown, child: Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
+                Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[700])),
+              ],
+            ),
+          ),
+        ],
+      )
+          : Column( // 2x2 ve 4'lü modda ikon üstte
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 28, color: accentColor),
+          const SizedBox(height: 4),
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+              ),
+            ),
+          ),
+          Text(label, style: TextStyle(fontSize: 13, color: Colors.grey[700]), textAlign: TextAlign.center, maxLines: 1),
+        ],
       ),
     ),
   );
+}
+
+// --- Yardımcı Metodlar (Mantık aynı kaldı) ---
+
+IconData _getTypeIcon(HabitType type) {
+  switch (type) {
+    case HabitType.task:
+      return Icons.check;
+    case HabitType.count:
+      return Icons.add_box_rounded;
+    case HabitType.time:
+      return Icons.timer;
+    default:
+      return Icons.question_mark;
+  }
+}
+
+String _getTypeName(HabitType type) {
+  switch (type) {
+    case HabitType.task:
+      return "Görev";
+    case HabitType.count:
+      return "Sayılı";
+    case HabitType.time:
+      return "Süreli";
+    default:
+      return "Bilinmeyen";
+  }
+}
+
+String _getProgressText(Habit currentHabit, DateTime selectedDate) {
+  if (currentHabit.type == HabitType.task) {
+    return currentHabit.isCompletedOnDate(selectedDate)
+        ? "Tamamlandı"
+        : "Bekliyor";
+  } else if (currentHabit.type == HabitType.count) {
+    return "${currentHabit.getCountProgressForDate(selectedDate)}/${currentHabit.targetCount?.toInt()}";
+  } else {
+    return currentHabit.getSecondsProgressForDate(selectedDate).formattedHMS;
+  }
 }

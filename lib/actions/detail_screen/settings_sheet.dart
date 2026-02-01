@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:hbttrckr/actions/detail_screen/resign_sheet.dart';
 import 'package:hbttrckr/actions/detail_screen/share_sheet.dart';
 import 'package:provider/provider.dart';
+import '../../classes/all_widgets.dart';
 import '../../classes/habit.dart';
 import '../../providers/habit_provider.dart';
 import 'delete_dialog.dart';
@@ -28,135 +29,75 @@ void detailSettingsSheet(
   Habit currentHabit,
   DateTime selectedDate,
 ) {
-  showModalBottomSheet(
-    backgroundColor: Colors.transparent,
-    enableDrag: true,
-    useSafeArea: true,
-    isScrollControlled: false,
-    context: context,
-    builder: (sheetContext) => ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(64)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(64)),
-            border: Border.all(
-              color: Colors.white.withOpacity(
-                0.2,
-              ), // İnce ışık yansıması (kenarlık)
-              width: 1.5,
-            ),
-          ),
-          child: StatefulBuilder(
-            builder: (ctx, setStateSheet) => Padding(
-              padding: EdgeInsets.all(8),
-              child: Center(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Stack(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: IconButton(
-                                  icon: Icon(Icons.cancel_outlined),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "Actions",
-                                style: TextStyle(
-                                  fontStyle: Theme.of(
-                                    context,
-                                  ).textTheme.headlineMedium?.fontStyle,
-                                  fontSize: Theme.of(
-                                    context,
-                                  ).textTheme.headlineMedium?.fontSize,
-                                  decorationStyle: Theme.of(
-                                    context,
-                                  ).textTheme.displayMedium?.decorationStyle,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Card(
-                      child: ListTile(
-                        leading: Icon(Icons.double_arrow_rounded),
-                        title: Text("Bu Oturumu Atla"),
-                        subtitle: Text(
-                          "Bu oturum şu an ${currentHabit.isSkippedOnDate(selectedDate) ? "atlanmış" : "atlanmamış"}",
-                        ),
-                        onTap: () {
-                          context.read<HabitProvider>().changeSkipHabit(
-                            currentHabit.id,
-                          );
-                        },
-                      ),
-                    ),
-                    Card(
-                      child: ListTile(
-                        leading: Icon(Icons.edit),
-                        title: Text("Bu Alışkanlığı Düzenle"),
-                        subtitle: Text("Mesela renk değiştirmeye ne dersin"),
-                        onTap: () {
-                          showResignOfHabit(context, currentHabit);
-                        },
-                      ),
-                    ),
-                    Card(
-                      child: ListTile(
-                        leading: Icon(Icons.share),
-                        title: Text("Bu Alışkanlığı Paylaş"),
-                        subtitle: Text("Ve ya fotosunu kaydet sana kalmış"),
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("valla şu an bunu geliştirmedik"),
-                            ),
-                          );
-                          showShareDetailSheet(
-                            context,
-                            currentHabit,
-                            selectedDate,
-                          );
-                        },
-                      ),
-                    ),
-                    Card(
-                      child: ListTile(
-                        leading: Icon(Icons.delete),
-                        title: Text("Bu alışkanlığı Sil"),
-                        subtitle: Text("silmesen iyi olurdu ama ..."),
-                        onTap: () {
-                          showDialogOfDeleteHabit(context, currentHabit);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+  showPlatformModalSheet(
+      enableDrag: true,
+      useSafeArea: true,
+      context: context,
+      isScrollControlled: true,
+    builder: (sheetContext) => StatefulBuilder(
+      builder: (ctx, setStateSheet) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: PlatformTitle(
+                padding: const EdgeInsets.fromLTRB(16,4,16,4),
+                title: "Actions",
+                fontStyle: Theme.of(
+                  context,
+                ).textTheme.headlineMedium?.fontStyle,
+                fontSize: Theme.of(
+                  context,
+                ).textTheme.headlineMedium?.fontSize,
+                decorationStyle: Theme.of(
+                  context,
+                ).textTheme.displayMedium?.decorationStyle,
               ),
             ),
           ),
-        ),
+          PlatformListTile(
+            leading: Icon(Icons.double_arrow_rounded),
+            title: Text("Bu Oturumu Atla"),
+            subtitle: Text(
+              "Bu oturum şu an ${currentHabit.isSkippedOnDate(selectedDate) ? "atlanmış" : "atlanmamış"}",
+            ),
+            onTap: () {
+              context.read<HabitProvider>().changeSkipHabit(currentHabit.id);
+            },
+          ),
+
+          PlatformListTile(
+            leading: Icon(Icons.edit),
+            title: Text("Bu Alışkanlığı Düzenle"),
+            subtitle: Text("Mesela renk değiştirmeye ne dersin"),
+            onTap: () {
+              showResignOfHabit(context, currentHabit);
+            },
+          ),
+
+          PlatformListTile(
+            leading: Icon(Icons.share),
+            title: Text("Bu Alışkanlığı Paylaş"),
+            subtitle: Text("Ve ya fotosunu kaydet sana kalmış"),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("valla şu an bunu geliştirmedik")),
+              );
+              showShareDetailSheet(context, currentHabit, selectedDate);
+            },
+          ),
+
+          PlatformListTile(
+            leading: Icon(Icons.delete),
+            title: Text("Bu alışkanlığı Sil"),
+            subtitle: Text("silmesen iyi olurdu ama ..."),
+            onTap: () {
+              showDialogOfDeleteHabit(context, currentHabit);
+            },
+          ),
+        ],
       ),
     ),
   );
 }
-
-
-

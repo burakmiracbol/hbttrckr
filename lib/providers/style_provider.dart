@@ -19,6 +19,6 @@ import '../classes/all_widgets.dart';
 
 class StyleProvider with ChangeNotifier {
 
-  AppDesignMode current = AppDesignMode.liquid;
+  AppDesignMode current = AppDesignMode.material;
 
 }

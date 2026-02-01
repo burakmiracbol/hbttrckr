@@ -28,66 +28,63 @@ void showHabitsSummarySheet(BuildContext context) {
     context: context,
     builder: (sheetContext) => DraggableScrollableSheet(
       expand: false,
-      builder: (context, scrollController) => Padding(
-        padding: EdgeInsets.all(4),
-        child: SingleChildScrollView(
-          controller: scrollController,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 12.0),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: PlatformTitle(
-                      fontSize: Theme.of(
-                        context,
-                      ).textTheme.headlineSmall!.fontSize,
-                      title: 'Tüm Alışkanlıklar',
-                      padding: EdgeInsets.fromLTRB(16, 2, 16, 2),
-                    ),
+      builder: (context, scrollController) => SingleChildScrollView(
+        controller: scrollController,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 12.0),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: PlatformTitle(
+                    fontSize: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall!.fontSize,
+                    title: 'Tüm Alışkanlıklar',
+                    padding: EdgeInsets.fromLTRB(16, 2, 16, 2),
                   ),
                 ),
               ),
+            ),
 
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ...context.watch<HabitProvider>().habits.map(
-                    (h) => Padding(
-                      padding: const EdgeInsets.fromLTRB(6.0, 4.0, 6.0, 4.0),
-                      child: PlatformListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: context
-                              .read<HabitProvider>()
-                              .getMixedColor(h.id)
-                              .withValues(alpha: 0.8),
-                          child: Icon(h.icon),
-                        ),
-                        title: Text(h.name),
-                        subtitle: Text(
-                          "${h.currentStreak} gün streak • ${h.strength}% güç",
-                        ),
-                        trailing: h.currentStreak > 0
-                            ? Icon(
-                                Icons.local_fire_department,
-                                color: context
-                                    .read<HabitProvider>()
-                                    .getMixedColor(h.id),
-                              )
-                            : const Icon(
-                                Icons.local_fire_department_outlined,
-                                color: Colors.grey,
-                              ),
-                        onTap: () {},
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ...context.watch<HabitProvider>().habits.map(
+                  (h) => Padding(
+                    padding: const EdgeInsets.fromLTRB(6.0, 4.0, 6.0, 4.0),
+                    child: PlatformListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: context
+                            .read<HabitProvider>()
+                            .getMixedColor(h.id)
+                            .withValues(alpha: 0.8),
+                        child: Icon(h.icon),
                       ),
+                      title: Text(h.name),
+                      subtitle: Text(
+                        "${h.currentStreak} gün streak • ${h.strength}% güç",
+                      ),
+                      trailing: h.currentStreak > 0
+                          ? Icon(
+                              Icons.local_fire_department,
+                              color: context
+                                  .read<HabitProvider>()
+                                  .getMixedColor(h.id),
+                            )
+                          : const Icon(
+                              Icons.local_fire_department_outlined,
+                              color: Colors.grey,
+                            ),
+                      onTap: () {},
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     ),
