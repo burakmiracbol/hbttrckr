@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
-import 'package:hbttrckr/views/main_app_view.dart';
+import 'package:hbttrckr/views/mainviews/main_app_view.dart';
 import 'dart:async';
 
 import '../extensions/duration_formatter.dart';

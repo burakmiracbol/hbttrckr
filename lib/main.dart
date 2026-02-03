@@ -26,7 +26,7 @@ import 'package:hbttrckr/services/google_sign-in.dart';
 import 'package:hbttrckr/services/notification_service.dart';
 import 'package:hbttrckr/services/theme_color_service.dart';
 import 'package:provider/provider.dart';
-import 'package:hbttrckr/views/main_app_view.dart';
+import 'package:hbttrckr/views/mainviews/main_app_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -184,7 +184,7 @@ class MyApp extends StatelessWidget {
       scrollBehavior: const MaterialScrollBehavior().copyWith(
         overscroll: false,
       ),
-      home: MainAppView(),
+      home: MainAppViewForMaterial(),
     );
   }
 }

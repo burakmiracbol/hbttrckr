@@ -14,7 +14,7 @@ import 'package:hbttrckr/main.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/providers/notification_settings_provider.dart';
 import 'package:hbttrckr/providers/scheme_provider.dart';
-import 'package:hbttrckr/views/main_app_view.dart';
+import 'package:hbttrckr/views/mainviews/main_app_view.dart';
 import 'package:hbttrckr/classes/habit.dart';
 import 'package:hbttrckr/views/habit_detail_screen.dart';
 import 'package:hbttrckr/views/stats_view.dart';
@@ -49,7 +49,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.byType(MainAppView), findsOneWidget);
+    expect(find.byType(MainAppViewForMaterial), findsOneWidget);
   });
 
   testWidgets('Tapping a habit does not throw provider listen assertion',

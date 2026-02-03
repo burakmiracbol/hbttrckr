@@ -22,6 +22,7 @@ Core ideas and features (from the current implementation):
 - Statistics view and monthly calendar progress
 - Habit level, strength, and streak features
 - selectable color scheme styles with base color
+- Material Adaptive Design integrated (currently beta)
 - Material Design 3 following principle for now (in future every platform has their style and design so for example iOS -> LiquidGlass)
 - Notifications (beta) and notification testing
 - Rich‑text notes per habit

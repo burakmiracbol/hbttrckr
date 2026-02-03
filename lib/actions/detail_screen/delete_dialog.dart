@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../classes/habit.dart';
 import '../../providers/habit_provider.dart';
-import '../../views/main_app_view.dart';
+import '../../views/mainviews/main_app_view.dart';
 
 void showDialogOfDeleteHabit(BuildContext context, Habit currentHabit) {
   showDialog(
@@ -56,7 +56,7 @@ void showDialogOfDeleteHabit(BuildContext context, Habit currentHabit) {
                   );
 
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => MainAppView()),
+                    MaterialPageRoute(builder: (context) => MainAppViewForMaterial()),
                     (route) => false,
                   );
                 },

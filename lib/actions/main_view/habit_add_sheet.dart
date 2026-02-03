@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
-import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 import '../../classes/all_widgets.dart';
@@ -32,7 +31,6 @@ void showAddHabitSheet(BuildContext parentContext) {
   showPlatformModalSheet(
     context: parentContext,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
     builder: (sheetContext) => AddHabitSheet(
       onAdd:
           ({
