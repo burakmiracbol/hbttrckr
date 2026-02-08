@@ -198,7 +198,7 @@ class MainAppViewForMaterial extends StatefulWidget {
 
 class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
   int _selectedIndex = 0;
-
+  double _leftPanelWidth = 300.0; // Başlangıç genişliği sağ panel için
   List<Habit> habits = [];
 
   @override
@@ -289,22 +289,6 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
     );
   }
 
-  void _handleHabitTapped(Habit habit, bool isLargeScreen) {
-    if (isLargeScreen) {
-      // Zaten seçili olan habit'e tekrar basılırsa seçimi kaldırabiliriz (Opsiyonel)
-      setState(() {
-        if (_selectedHabitForDetail?.id == habit.id) {
-          _selectedHabitForDetail = null;
-        } else {
-          _selectedHabitForDetail = habit;
-        }
-      });
-    } else {
-      // Mobil: Seçili detayı temizle ki geri döndüğünde state karışmasın
-      _selectedHabitForDetail = null;
-      _navigateToDetail(context, habit);
-    }
-  }
 
   // --- WIDGET PARÇALARI ---
 
@@ -314,8 +298,8 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
     return Row(
       children: [
         // SOL TARAF: Liste Sayfası
-        Expanded(
-          flex: 3,
+        SizedBox(
+          width: _leftPanelWidth,
           child: Align(
             alignment: Alignment.topCenter,
             child: buildHabitsPage(
@@ -374,11 +358,34 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
           ),
         ),
 
-        // SAĞ TARAF: İşte senin o paylaştığın kod buraya giriyor!
         if (showDetailPanel) ...[
-          const VerticalDivider(width: 1, thickness: 1),
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onHorizontalDragUpdate: (details) {
+              setState(() {
+                // Sürükleme miktarı kadar genişliği artır/azalt
+                _leftPanelWidth += details.delta.dx;
+
+                // Sınır koyalım ki panel kaybolmasın veya çok büyümesin
+                if (_leftPanelWidth < 200) _leftPanelWidth = 200;
+                if (_leftPanelWidth > 600) _leftPanelWidth = 600;
+              });
+            },
+            child: MouseRegion(
+              cursor: SystemMouseCursors.resizeLeftRight, // Fare üzerine gelince ikon değişsin
+              child: Container(
+                width: 10, // Tıklama alanı (Görünmez ama geniş)
+                color: Colors.transparent,
+                child: Center(
+                  child: Container(
+                    width: 2,
+                    color: Colors.grey[300], // Ortadaki ince çizgi
+                  ),
+                ),
+              ),
+            ),
+          ),
           Expanded(
-            flex: 7,
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: _selectedHabitForDetail != null
