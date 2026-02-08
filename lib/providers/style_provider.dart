@@ -19,6 +19,8 @@ import '../classes/all_widgets.dart';
 
 class StyleProvider with ChangeNotifier {
 
-  AppDesignMode current = AppDesignMode.material;
+  AppDesignMode current = AppDesignMode.liquid;
+
+  ViewStyleForMultipleData viewStyle = ViewStyleForMultipleData.grid;
 
 }
