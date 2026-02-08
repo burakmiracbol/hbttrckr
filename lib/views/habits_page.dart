@@ -184,6 +184,32 @@ Widget buildHabitsPage({
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     spacing: 8,
+                    children: [
+                      FilterChip(
+                        label: Text("Grid"),
+                        selected: context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.grid ,
+                        onSelected: (bool value) {
+                          context.read<StyleProvider>().setVSFMD(ViewStyleForMultipleData.grid);
+                        },
+                      ),
+                      FilterChip(
+                        label: Text("List"),
+                        selected: context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.list ,
+                        onSelected: (bool value) {
+                          context.read<StyleProvider>().setVSFMD(ViewStyleForMultipleData.list);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    spacing: 8,
                     children:
                         context
                             .read<HabitProvider>()
@@ -246,7 +272,6 @@ Widget buildHabitsPage({
               Consumer<HabitProvider>(
                 builder: (context, provider, child) {
                   final selectedDate = provider.selectedDate ?? DateTime.now();
-                  final viewStyle = context.read<StyleProvider>().viewStyle;
                   final normalizedDate = DateTime(
                     selectedDate.year,
                     selectedDate.month,
@@ -298,7 +323,7 @@ Widget buildHabitsPage({
 
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: viewStyle == ViewStyleForMultipleData.list
+                    child: context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.list
                         ? Column(
                             children: [
                               ...visibleHabitsByGroup.map(
@@ -551,12 +576,14 @@ Widget buildHabitsPage({
                               ),
                             ],
                           )
-                        : GridView(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 300,
-                      childAspectRatio: 1.6
-                      ),
+                        : context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.grid ? GridView(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 300,
+                                  childAspectRatio: 1.6,
+                                ),
                             children: [
                               ...visibleHabitsByGroup.map(
                                 (habit) => GestureDetector(
@@ -723,13 +750,13 @@ Widget buildHabitsPage({
                                                                       IconButton(
                                                                         style: IconButton.styleFrom(
                                                                           foregroundColor:
-                                                                          Colors.grey,
+                                                                              Colors.grey,
                                                                         ),
                                                                         icon: Icon(
                                                                           Icons
                                                                               .remove,
                                                                           size:
-                                                                          25,
+                                                                              25,
                                                                         ),
                                                                         onPressed:
                                                                             () {},
@@ -754,44 +781,48 @@ Widget buildHabitsPage({
                                                               )
                                                             : habit.type ==
                                                                   HabitType.time
-                                                            ? glassContainer(context:context,
-                                                              child: IntrinsicWidth(
-                                                                child: Row(
-                                                                  children: [
-                                                                    IconButton(
+                                                            ? glassContainer(
+                                                                context:
+                                                                    context,
+                                                                child: IntrinsicWidth(
+                                                                  child: Row(
+                                                                    children: [
+                                                                      IconButton(
                                                                         style: IconButton.styleFrom(
                                                                           foregroundColor:
-                                                                              Colors
-                                                                                  .grey,
+                                                                              Colors.grey,
                                                                         ),
                                                                         icon: Icon(
                                                                           Icons
                                                                               .play_arrow,
-                                                                          size: 25,
+                                                                          size:
+                                                                              25,
                                                                         ),
                                                                         onPressed:
                                                                             () {},
                                                                       ),
-                                                                    IconButton(
-                                                                      style: IconButton.styleFrom(
-                                                                        foregroundColor:
-                                                                        Colors
-                                                                            .grey,
+                                                                      IconButton(
+                                                                        style: IconButton.styleFrom(
+                                                                          foregroundColor:
+                                                                              Colors.grey,
+                                                                        ),
+                                                                        icon: Icon(
+                                                                          Icons
+                                                                              .refresh,
+                                                                          size:
+                                                                              25,
+                                                                        ),
+                                                                        onPressed:
+                                                                            () {},
                                                                       ),
-                                                                      icon: Icon(
-                                                                        Icons
-                                                                            .refresh,
-                                                                        size: 25,
-                                                                      ),
-                                                                      onPressed:
-                                                                          () {},
-                                                                    ),
-                                                                  ],
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            )
-                                                            : glassContainer(context:context,
-                                                              child: IconButton(
+                                                              )
+                                                            : glassContainer(
+                                                                context:
+                                                                    context,
+                                                                child: IconButton(
                                                                   style: IconButton.styleFrom(
                                                                     foregroundColor:
                                                                         Colors
@@ -805,11 +836,12 @@ Widget buildHabitsPage({
                                                                   onPressed:
                                                                       () {},
                                                                 ),
-                                                            )
+                                                              )
                                                       : habit.type ==
                                                             HabitType.task
-                                                      ? glassContainer(context:context,
-                                                        child: IconButton(
+                                                      ? glassContainer(
+                                                          context: context,
+                                                          child: IconButton(
                                                             style: IconButton.styleFrom(
                                                               foregroundColor:
                                                                   habit.isCompletedOnDate(
@@ -838,27 +870,31 @@ Widget buildHabitsPage({
                                                                   );
                                                             },
                                                           ),
-                                                      )
+                                                        )
                                                       : habit.type ==
                                                             HabitType.count
-                                                      ? glassContainer(context:context,
-                                                        child: IntrinsicWidth(
-                                                          child: Row(
-                                                            children: [
-                                                              IconButton(
+                                                      ? glassContainer(
+                                                          context: context,
+                                                          child: IntrinsicWidth(
+                                                            child: Row(
+                                                              children: [
+                                                                IconButton(
                                                                   style: IconButton.styleFrom(
                                                                     foregroundColor:
                                                                         habit.isCompletedOnDate(
                                                                           selectedDate,
                                                                         )
-                                                                        ? Colors.green
-                                                                        : Colors.grey,
+                                                                        ? Colors
+                                                                              .green
+                                                                        : Colors
+                                                                              .grey,
                                                                   ),
                                                                   icon: Icon(
                                                                     habit.isCompletedOnDate(
                                                                           selectedDate,
                                                                         )
-                                                                        ? Icons.add
+                                                                        ? Icons
+                                                                              .add
                                                                         : Icons
                                                                               .add_outlined,
                                                                     size: 25,
@@ -869,46 +905,52 @@ Widget buildHabitsPage({
                                                                           HabitProvider
                                                                         >()
                                                                         .incrementCount(
-                                                                          habit.id,
+                                                                          habit
+                                                                              .id,
                                                                         );
                                                                   },
                                                                 ),
-                                                              IconButton(
-                                                                style: IconButton.styleFrom(
-                                                                  foregroundColor:
-                                                                  habit.isCompletedOnDate(
-                                                                    selectedDate,
-                                                                  )
-                                                                      ? Colors.green
-                                                                      : Colors.grey,
+                                                                IconButton(
+                                                                  style: IconButton.styleFrom(
+                                                                    foregroundColor:
+                                                                        habit.isCompletedOnDate(
+                                                                          selectedDate,
+                                                                        )
+                                                                        ? Colors
+                                                                              .green
+                                                                        : Colors
+                                                                              .grey,
+                                                                  ),
+                                                                  icon: Icon(
+                                                                    habit.isCompletedOnDate(
+                                                                          selectedDate,
+                                                                        )
+                                                                        ? Icons
+                                                                              .remove
+                                                                        : Icons
+                                                                              .remove,
+                                                                    size: 25,
+                                                                  ),
+                                                                  onPressed: () {
+                                                                    context
+                                                                        .read<
+                                                                          HabitProvider
+                                                                        >()
+                                                                        .decrementCount(
+                                                                          habit
+                                                                              .id,
+                                                                        );
+                                                                  },
                                                                 ),
-                                                                icon: Icon(
-                                                                  habit.isCompletedOnDate(
-                                                                    selectedDate,
-                                                                  )
-                                                                      ? Icons.remove
-                                                                      : Icons
-                                                                      .remove,
-                                                                  size: 25,
-                                                                ),
-                                                                onPressed: () {
-                                                                  context
-                                                                      .read<
-                                                                      HabitProvider
-                                                                  >()
-                                                                      .decrementCount(
-                                                                    habit.id,
-                                                                  );
-                                                                },
-                                                              ),
-                                                            ],
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                      )
+                                                        )
                                                       : habit.type ==
                                                             HabitType.time
-                                                      ? glassContainer(context:context,
-                                                        child: Consumer<HabitProvider>(
+                                                      ? glassContainer(
+                                                          context: context,
+                                                          child: Consumer<HabitProvider>(
                                                             builder:
                                                                 (
                                                                   context,
@@ -931,10 +973,8 @@ Widget buildHabitsPage({
                                                                                 habit.isCompletedOnDate(
                                                                                   selectedDate,
                                                                                 )
-                                                                                ? Colors
-                                                                                      .green
-                                                                                : Colors
-                                                                                      .grey,
+                                                                                ? Colors.green
+                                                                                : Colors.grey,
                                                                           ),
                                                                           onPressed: () {
                                                                             provider.toggleTimer(
@@ -946,26 +986,22 @@ Widget buildHabitsPage({
                                                                             isRunning &&
                                                                                     provider.extraDate ==
                                                                                         selectedDate
-                                                                                ? Icons
-                                                                                      .pause
-                                                                                : Icons
-                                                                                      .play_arrow,
-                                                                            size: 25,
+                                                                                ? Icons.pause
+                                                                                : Icons.play_arrow,
+                                                                            size:
+                                                                                25,
                                                                           ),
                                                                         ),
                                                                         IconButton(
                                                                           style: IconButton.styleFrom(
                                                                             foregroundColor:
-                                                                            habit.isCompletedOnDate(
-                                                                              selectedDate,
-                                                                            )
-                                                                                ? Colors
-                                                                                .green
-                                                                                : Colors
-                                                                                .grey,
+                                                                                habit.isCompletedOnDate(
+                                                                                  selectedDate,
+                                                                                )
+                                                                                ? Colors.green
+                                                                                : Colors.grey,
                                                                           ),
                                                                           onPressed: () {
-
                                                                             provider.resetTimer(
                                                                               habit.id,
                                                                             );
@@ -977,9 +1013,9 @@ Widget buildHabitsPage({
                                                                             }
                                                                           },
                                                                           icon: Icon(
-                                                                             Icons
-                                                                                .refresh,
-                                                                            size: 25,
+                                                                            Icons.refresh,
+                                                                            size:
+                                                                                25,
                                                                           ),
                                                                         ),
                                                                       ],
@@ -987,7 +1023,7 @@ Widget buildHabitsPage({
                                                                   );
                                                                 },
                                                           ),
-                                                      )
+                                                        )
                                                       : IconButton(
                                                           style: IconButton.styleFrom(
                                                             foregroundColor:
@@ -1020,7 +1056,7 @@ Widget buildHabitsPage({
                                 ),
                               ),
                             ],
-                          ),
+                          ) : Placeholder()
                   );
                 },
               ),

@@ -23,4 +23,12 @@ class StyleProvider with ChangeNotifier {
 
   ViewStyleForMultipleData viewStyle = ViewStyleForMultipleData.grid;
 
+  void setVSFMD (ViewStyleForMultipleData wantedViewStyle) {
+    viewStyle = wantedViewStyle;
+    notifyListeners();
+  }
+  getVSFMD(){
+    return viewStyle;
+  }
+
 }
