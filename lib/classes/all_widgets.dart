@@ -15,6 +15,8 @@ import '../services/theme_color_service.dart';
 
 enum AppDesignMode { material, cupertino, liquid, fluent, macos, yaru }
 
+enum ViewStyleForMultipleData { list, grid, wrapCard }
+
 class UniversalScaffold extends StatelessWidget {
   final Widget body;
   final int currentIndex;
@@ -263,10 +265,7 @@ class PlatformTextField extends StatelessWidget {
       case AppDesignMode.fluent:
         return Padding(
           padding: const EdgeInsets.all(6.0),
-          child: fluent.TextBox(
-            controller: controller,
-            placeholder: hintText,
-          ),
+          child: fluent.TextBox(controller: controller, placeholder: hintText),
         ); // fluent_ui
       case AppDesignMode.liquid:
         return Padding(
@@ -298,7 +297,10 @@ class PlatformTextField extends StatelessWidget {
       case AppDesignMode.yaru:
         return Padding(
           padding: const EdgeInsets.all(6.0),
-          child: yaru.YaruSearchField(controller: controller, hintText: hintText),
+          child: yaru.YaruSearchField(
+            controller: controller,
+            hintText: hintText,
+          ),
         );
       case AppDesignMode.material:
         return Padding(
@@ -482,10 +484,10 @@ class PlatformTitle extends StatelessWidget {
           child: material.Text(title, style: commonStyle),
         );
       case AppDesignMode.yaru:
-      return Padding(
-        padding: padding,
-        child: material.Text(title, style: commonStyle),
-      );
+        return Padding(
+          padding: padding,
+          child: material.Text(title, style: commonStyle),
+        );
       case AppDesignMode.material:
         return Padding(
           padding: padding,
@@ -851,10 +853,17 @@ Future<T?> showPlatformModalSheet<T>({
                   ),
                 ),
                 child: LiquidGlassLayer(
-                  child: GlassGlowLayer(child: Padding(
-                    padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 8),
-                    child: builder(context),
-                  )),
+                  child: GlassGlowLayer(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 0,
+                        left: 8,
+                        right: 8,
+                        bottom: 8,
+                      ),
+                      child: builder(context),
+                    ),
+                  ),
                 ),
               ),
             ),
