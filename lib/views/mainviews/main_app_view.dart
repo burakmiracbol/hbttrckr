@@ -27,6 +27,7 @@ import 'package:hbttrckr/actions/main_view/habits_summary_sheet.dart';
 import 'package:hbttrckr/actions/main_view/main_settings_sheet.dart';
 import 'package:hbttrckr/services/google_sign-in.dart';
 import 'package:hbttrckr/views/habits_page.dart';
+import 'package:multi_split_view/multi_split_view.dart';
 
 // TODO's
 //
@@ -289,18 +290,17 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
     );
   }
 
-
   // --- WIDGET PARÇALARI ---
 
   Widget _buildMainContent(BuildContext context, bool showDetailPanel) {
     var habits = context.watch<HabitProvider>().habits;
 
-    return Row(
-      children: [
+    return MultiSplitView(
+
+      initialAreas: [
         // SOL TARAF: Liste Sayfası
-        SizedBox(
-          width: _leftPanelWidth,
-          child: Align(
+        Area(min: 200,
+          builder: (context, area) => Align(
             alignment: Alignment.topCenter,
             child: buildHabitsPage(
               habits: habits,
@@ -359,58 +359,37 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
         ),
 
         if (showDetailPanel) ...[
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onHorizontalDragUpdate: (details) {
-              setState(() {
-                // Sürükleme miktarı kadar genişliği artır/azalt
-                _leftPanelWidth += details.delta.dx;
+          Area(
+            min: 400,
+            builder: (context, area) => Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: _selectedHabitForDetail != null
+                    ? HabitDetailScreen(
+                        key: ValueKey(_selectedHabitForDetail!.id),
+                        habitId: _selectedHabitForDetail!.id,
+                        selectedDate:
+                            context.read<HabitProvider>().selectedDate ??
+                            DateTime.now(),
+                        isPanel: true, // Sağ panelde olduğu için true
 
-                // Sınır koyalım ki panel kaybolmasın veya çok büyümesin
-                if (_leftPanelWidth < 200) _leftPanelWidth = 200;
-                if (_leftPanelWidth > 600) _leftPanelWidth = 600;
-              });
-            },
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeLeftRight, // Fare üzerine gelince ikon değişsin
-              child: Container(
-                width: 10, // Tıklama alanı (Görünmez ama geniş)
-                color: Colors.transparent,
-                child: Center(
-                  child: Container(
-                    width: 2,
-                    color: Colors.grey[300], // Ortadaki ince çizgi
-                  ),
-                ),
+                        onHabitUpdated: (updatedHabit) {
+                          // Önce provider'ı güncelle
+                          context.read<HabitProvider>().updateHabit(
+                            updatedHabit,
+                          );
+                          // Sonra yerel referansı güncelle ki sağ panel yeni veriyi bassın
+                          setState(() {
+                            _selectedHabitForDetail = updatedHabit;
+                          });
+                        },
+                        onHabitDeleted: (id) {
+                          context.read<HabitProvider>().deleteHabit(id);
+                          setState(() => _selectedHabitForDetail = null);
+                        },
+                      )
+                    : _buildEmptyState(),
               ),
-            ),
-          ),
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: _selectedHabitForDetail != null
-                  ? HabitDetailScreen(
-                      key: ValueKey(_selectedHabitForDetail!.id),
-                      habitId: _selectedHabitForDetail!.id,
-                      selectedDate:
-                          context.read<HabitProvider>().selectedDate ??
-                          DateTime.now(),
-                      isPanel: true, // Sağ panelde olduğu için true
-
-                      onHabitUpdated: (updatedHabit) {
-                        // Önce provider'ı güncelle
-                        context.read<HabitProvider>().updateHabit(updatedHabit);
-                        // Sonra yerel referansı güncelle ki sağ panel yeni veriyi bassın
-                        setState(() {
-                          _selectedHabitForDetail = updatedHabit;
-                        });
-                      },
-                      onHabitDeleted: (id) {
-                        context.read<HabitProvider>().deleteHabit(id);
-                        setState(() => _selectedHabitForDetail = null);
-                      },
-                    )
-                  : _buildEmptyState(),
             ),
           ),
         ],
