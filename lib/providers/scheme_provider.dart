@@ -23,9 +23,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ve temanın base color'unu değiştirebilmesini sağlar.
 
 class CurrentThemeMode with ChangeNotifier {
-  bool isDarkMode = true;
+  bool isDarkMode = ThemeMode.system == ThemeMode.dark;
   ThemeMode currentMode = ThemeMode.system;
-
   bool isMica = true;
 
   void changeThemeMode() {
