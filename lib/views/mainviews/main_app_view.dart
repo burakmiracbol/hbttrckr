@@ -88,12 +88,11 @@ import 'package:hbttrckr/views/habits_page.dart';
 //
 //  açılış ekranı ilk kullananlar için
 //
-//  shared_preferences ile daha fazla ayar cihaza kaydedilmeli esela en son şeffaf bıraktım niye bir sonrakinde şeffaf değil için
+//  shared_preferences ile daha fazla ayar cihaza kaydedilmeli mesela en son şeffaf bıraktım niye bir sonrakinde şeffaf değil için
 //
 //  windowsta farklı bir arayüz tasarımı seçeneği
 //    kullanıcıya başta windows önerilen mi yoksa mobil önerilen mi diye sorulacak
 //
-//  detailscreende rate of doing
 //  alarmın haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
 //  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
 //
@@ -112,8 +111,6 @@ import 'package:hbttrckr/views/habits_page.dart';
 //  detail screen şeffaflık desteği glow ve liquidler bozulmadan (tahminimce bozulmaz)
 //  tüm sheetlerin tasarımı düzeltilecek ve main settings sheet gibi olacak
 //  rate of doing atlananlar boyaması ??
-//  habit paylaşma da overflowlar var düzeltilmesi gereken ve ayrıca o widgetı daha güzel yap
-//  statsview gridview overflow düzeltilmeli
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //
 //  detail screende appbar şeffaf yapalım

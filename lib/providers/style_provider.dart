@@ -21,13 +21,23 @@ class StyleProvider with ChangeNotifier {
 
   AppDesignMode current = AppDesignMode.liquid;
 
+  bool isFulscreenNow = false ;
+
   ViewStyleForMultipleData viewStyle = ViewStyleForMultipleData.grid;
+
+  void setFulscreenForNow (bool wanted){
+    isFulscreenNow = wanted;
+    notifyListeners();
+  }
+  bool getFulscreenForNow (){
+    return isFulscreenNow;
+  }
 
   void setVSFMD (ViewStyleForMultipleData wantedViewStyle) {
     viewStyle = wantedViewStyle;
     notifyListeners();
   }
-  getVSFMD(){
+  ViewStyleForMultipleData getVSFMD(){
     return viewStyle;
   }
 
