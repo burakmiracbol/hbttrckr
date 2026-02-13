@@ -16,6 +16,7 @@
 
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:hbttrckr/actions/main_view/backup_settings_sheet.dart';
@@ -32,6 +33,7 @@ void showMainSettingsSheet(BuildContext context) {
     isScrollControlled: true,
     context: context,
     builder: (sheetContext) {
+      final firebaseUser = FirebaseAuth.instance.currentUser;
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -42,9 +44,11 @@ void showMainSettingsSheet(BuildContext context) {
                 child: Padding(
                   padding: const EdgeInsets.all(6.0),
                   child: PlatformTitle(
-                      fontSize: Theme.of(context,).textTheme.headlineSmall!.fontSize,
-                      title: 'Ayarlar',
-                      padding: EdgeInsets.fromLTRB(16,2,16,2)
+                    fontSize: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall!.fontSize,
+                    title: 'Ayarlar',
+                    padding: EdgeInsets.fromLTRB(16, 2, 16, 2),
                   ),
                 ),
               ),
@@ -52,7 +56,9 @@ void showMainSettingsSheet(BuildContext context) {
           ),
 
           PlatformListTile(
-            leading: CircleAvatar(child: Icon(Icons.account_circle_outlined)),
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(firebaseUser!.photoURL!),
+            ),
             title: Text("Hesap Bilgileri"),
             subtitle: Text("Hesap bilgilerinizi görüntüleyin"),
             trailing: Icon(Icons.chevron_right),

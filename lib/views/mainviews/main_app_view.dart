@@ -94,7 +94,6 @@ import 'package:hbttrckr/views/habits_page.dart';
 //    kullanıcıya başta windows önerilen mi yoksa mobil önerilen mi diye sorulacak
 //
 //  alarmın haftanın hangi günleri olduğunu ayarlama mevzusu halledilmeli
-//  habitleri sadece isim logo ve action buttonları ile tam ekran gösterme yapmalı
 //
 //  ayarlarda tercihler bölümüne tonla ayar gelicek
 //    arkaplanı image yapma
@@ -103,13 +102,11 @@ import 'package:hbttrckr/views/habits_page.dart';
 //    tasarımlar kişiselleştirilebilecek
 //      detail screen page olarak mı görüntülenecek ya da sheet olarak mı
 //      veya habits page de görünüm nasıl olacak ikili coolumn mu üçlü mü tekli mi
-//      veya settings logosu yerine kullanıcı fotosu mu gelmeli
 //      time ve count selector sheetlerde slider lar yatay mı olacak
 //    deneyimler için ayarlar değişitrilebilecek
 //      haftanın hangi gününden başladığı eklenmeli
 //
 //  detail screen şeffaflık desteği glow ve liquidler bozulmadan (tahminimce bozulmaz)
-//  tüm sheetlerin tasarımı düzeltilecek ve main settings sheet gibi olacak
 //  rate of doing atlananlar boyaması ??
 //  windowsta uygulamanın o en yukardakı küçültme tam ekran yapma ve kapatma tuşunun olduğu bar transparan düğmesiyle etkileşime girildiğinde bozuluyor
 //
@@ -306,7 +303,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
                 if (showDetailPanel) {
                   setState(
                     () => _selectedHabitForDetail =
-                        _selectedHabitForDetail == null ? habit : null,
+                        _selectedHabitForDetail == habit ? null : habit,
                   );
                 } else {
                   _navigateToDetail(context, habit); // Mobilde tam sayfa git
