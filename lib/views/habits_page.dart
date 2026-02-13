@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hbttrckr/classes/all_widgets.dart';
 import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:hbttrckr/providers/style_provider.dart';
@@ -576,14 +577,10 @@ Widget buildHabitsPage({
                               ),
                             ],
                           )
-                        : context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.grid ? GridView(
+                        : context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.grid ? MasonryGridView(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: 300,
-                                  childAspectRatio: 1.6,
-                                ),
+                            physics: NeverScrollableScrollPhysics(), 
+                            gridDelegate: SliverSimpleGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 600),
                             children: [
                               ...visibleHabitsByGroup.map(
                                 (habit) => GestureDetector(
@@ -659,7 +656,20 @@ Widget buildHabitsPage({
                                                 ),
                                               ],
                                             ),
-                                            Container(),
+                                            Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: IntrinsicHeight(
+                                                child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children:[
+                                                    Text("Güç: ${habit.strength.roundToDouble().toInt()}"),
+                                                    Text("Aktif Streak: ${habit.currentStreak}"),
+                                                    Text(habit.notesDelta?.substring(12, 24) ?? "Not yok"),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+
                                             IntrinsicHeight(
                                               child: Row(
                                                 crossAxisAlignment:
