@@ -100,9 +100,7 @@ import 'package:hbttrckr/views/habits_page.dart';
 //    şefffalıkla ilgili nerenin şeffaflığı nerede naslı olacak
 //      mesela habit detail screen hep mi şeffaf olsun yoksa sadece şeffaf modu açıldığında mı
 //    tasarımlar kişiselleştirilebilecek
-//      detail screen page olarak mı görüntülenecek ya da sheet olarak mı
-//      veya habits page de görünüm nasıl olacak ikili coolumn mu üçlü mü tekli mi
-//      time ve count selector sheetlerde slider lar yatay mı olacak
+//
 //    deneyimler için ayarlar değişitrilebilecek
 //      haftanın hangi gününden başladığı eklenmeli
 //

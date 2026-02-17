@@ -13,9 +13,6 @@ import 'package:hbttrckr/providers/style_provider.dart';
 import '../providers/scheme_provider.dart';
 import '../services/theme_color_service.dart';
 
-enum AppDesignMode { material, cupertino, liquid, fluent, macos, yaru }
-
-enum ViewStyleForMultipleData { list, grid, wrapCard }
 
 class UniversalScaffold extends StatelessWidget {
   final Widget body;

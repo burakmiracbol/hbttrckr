@@ -23,6 +23,7 @@ import '../../classes/all_widgets.dart';
 import '../../extensions/duration_formatter.dart';
 import '../../classes/habit.dart';
 import '../../providers/habit_provider.dart';
+import '../../providers/style_provider.dart';
 
 void showTimeSelectorSheet(
   BuildContext context,
@@ -33,7 +34,7 @@ void showTimeSelectorSheet(
   num currentHours = habit.getSecondsProgressForDate(selectedDate).hours;
   num currentMinutes = habit.getSecondsProgressForDate(selectedDate).minutes;
   num currentSeconds = habit.getSecondsProgressForDate(selectedDate).seconds;
-
+  Selectors selector = Selectors.time;
   showPlatformModalSheet(
     context: context,
     isScrollControlled: false,
@@ -62,7 +63,9 @@ void showTimeSelectorSheet(
                 Expanded(
                   child: WheelSlider.number(
                     perspective: 0.009,
-                    horizontal: false,
+                    horizontal: context
+                        .read<StyleProvider>()
+                        .getOrientationForSelectors(selector),
                     totalCount: 24,
                     initValue: currentHours,
                     currentIndex: currentHours,
@@ -93,7 +96,9 @@ void showTimeSelectorSheet(
                 Expanded(
                   child: WheelSlider.number(
                     perspective: 0.009,
-                    horizontal: false,
+                    horizontal: context
+                        .read<StyleProvider>()
+                        .getOrientationForSelectors(selector),
                     totalCount: 60,
                     initValue: currentMinutes,
                     currentIndex: currentMinutes,
@@ -119,7 +124,9 @@ void showTimeSelectorSheet(
                 Expanded(
                   child: WheelSlider.number(
                     perspective: 0.009,
-                    horizontal: false,
+                    horizontal: context
+                        .read<StyleProvider>()
+                        .getOrientationForSelectors(selector),
                     totalCount: 60,
                     initValue: currentSeconds,
                     currentIndex: currentSeconds,

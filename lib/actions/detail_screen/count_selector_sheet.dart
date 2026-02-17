@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:hbttrckr/providers/style_provider.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
@@ -29,10 +30,10 @@ void showCountSelectorSheet(
   required Habit habit,
 }) {
   num? nCurrentValue;
+  Selectors selector = Selectors.count;
   showPlatformModalSheet(
     context: context,
-    isScrollControlled: false,
-    useSafeArea: true,
+    isScrollControlled: true,
     enableDrag: true,
     builder: (ctx) => Column(
       mainAxisSize: MainAxisSize.min,
@@ -49,12 +50,13 @@ void showCountSelectorSheet(
 
         // BURAYA SEN TASARIM YAPACAKSI
         WheelSlider.number(
-          horizontal: true,
+          horizontal: context.read<StyleProvider>().getOrientationForSelectors(
+            selector,
+          ),
           isInfinite: true,
           pointerColor: Colors.white,
           showPointer: false,
           perspective: 0.01,
-          verticalListHeight: double.infinity,
           totalCount: 999,
           initValue: habit.dailyProgress[selectedDate] ?? 0,
           selectedNumberStyle: TextStyle(fontSize: 13.0, color: Colors.white),

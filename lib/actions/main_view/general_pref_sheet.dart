@@ -16,6 +16,7 @@
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:hbttrckr/actions/main_view/private_pref_sheet.dart';
 import 'package:hbttrckr/actions/main_view/scheme_prefs_sheet.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
@@ -39,9 +40,11 @@ void showGeneralPrefsSheet(BuildContext context) {
                 child: Padding(
                   padding: const EdgeInsets.all(6.0),
                   child: PlatformTitle(
-                      fontSize: Theme.of(context,).textTheme.headlineSmall!.fontSize,
-                      title: 'Genel Tercihler',
-                      padding: EdgeInsets.fromLTRB(16,2,16,2)
+                    fontSize: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall!.fontSize,
+                    title: 'Genel Tercihler',
+                    padding: EdgeInsets.fromLTRB(16, 2, 16, 2),
                   ),
                 ),
               ),
@@ -92,6 +95,15 @@ void showGeneralPrefsSheet(BuildContext context) {
             ),
             onTap: () async {
               await context.read<CurrentThemeMode>().toggleMica();
+            },
+          ),
+
+          PlatformListTile(
+            leading: Icon(Icons.private_connectivity_rounded),
+            title: Text("Özel Seçenekleri Değiştirin"),
+            subtitle: Text("Yalnızca işini bilenlere"),
+            onTap: () {
+              showPrivatePrefsSheet(context);
             },
           ),
         ],
