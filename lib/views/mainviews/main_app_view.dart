@@ -82,6 +82,8 @@ import 'package:hbttrckr/views/habits_page.dart';
 //
 //  TODO: Universallness in design
 //
+//  TODO: habit düzenlemede süreyi felan değiştirme yok ??
+//
 //  Linux için google sign-in (firebase auth gerekli google sign-inde sıkıntı yok)
 //
 //  mobilde transparanlık araştırılacak
