@@ -34,10 +34,43 @@ class LiquidWrapper extends StatelessWidget {
     return WidgetWrapper(
       wrapper: (child) => statement
           ? LiquidGlass(
-        shape: shape,
-        child: GlassGlow(child: child),
-      )
+              shape: shape,
+              child: GlassGlow(child: child),
+            )
           : child,
+      child: child,
+    );
+  }
+}
+
+class CardLiquidWrapper extends StatelessWidget {
+  final Widget child;
+  final bool statement;
+  final LiquidShape shape;
+  final double borderRadius;
+  const CardLiquidWrapper({
+    required this.child,
+    required this.statement,
+    required this.shape,
+    required this.borderRadius,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return WidgetWrapper(
+      wrapper: (child) => statement
+          ? LiquidGlass(
+              shape: shape,
+              child: GlassGlow(child: child),
+            )
+          : Card(
+        color: Theme.of(context).cardColor.withValues(alpha: 0.2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius),
+              ),
+              child: child,
+            ),
       child: child,
     );
   }

@@ -82,11 +82,17 @@ import 'package:hbttrckr/views/habits_page.dart';
 //
 //  TODO: Universallness in design
 //
-//  TODO: habit düzenlemede süreyi felan değiştirme yok ??
+//  TODO: habit düzenlemede hedef süreyi felan değiştirme yok ??
 //
-//  TODO: habit skip /unskip etme providera taşınmalı
+//  TODO: habit skip / unskip etme providera taşınmalı
 //
-//  TODO: detail screende GELECEKTE habit yapılma oranı değiştirilebiliyor ??
+//  TODO: detail screen liquid wrapper geçişi lazım
+//
+//  TODO: navigation rail ile mobil scaffold geçişi düzeltilmeli
+//
+//  gridview düzeltmesi habitspage
+//
+//  eski tarihlerde eski tarihlerin istatistikleri gösterilsin mesela bugüne kadar 5 streak ar ise dünü açınca 4 gözüksün
 //
 //  Linux için google sign-in (firebase auth gerekli google sign-inde sıkıntı yok)
 //
@@ -370,14 +376,14 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
               });
             },
             child: MouseRegion(
-              cursor: SystemMouseCursors.resizeLeftRight, // Fare üzerine gelince ikon değişsin
+              cursor: SystemMouseCursors.resizeLeftRight, // Fare üzerine gelince ikon değişecek
               child: Container(
-                width: 10, // Tıklama alanı (Görünmez ama geniş)
+                width: 10, // Tıklama alanı
                 color: Colors.transparent,
                 child: Center(
                   child: Container(
                     width: 2,
-                    color: Colors.grey[300], // Ortadaki ince çizgi
+                    color: Colors.grey[300], // Ortadaki ince slider
                   ),
                 ),
               ),
@@ -388,6 +394,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
               duration: const Duration(milliseconds: 300),
               child: _selectedHabitForDetail != null
                   ? HabitDetailScreen(
+                isLiquid: false,
                       key: ValueKey(_selectedHabitForDetail!.id),
                       habitId: _selectedHabitForDetail!.id,
                       selectedDate:
@@ -421,14 +428,12 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Hafif şeffaf bir ikon
           Icon(
-            Icons.add_circle_outline, // Veya 'touch_app' / 'select_all'
+            Icons.add_circle_outline,
             size: 80,
             color: Colors.white.withValues(alpha: 0.2),
           ),
           const SizedBox(height: 16),
-          // Senin o meşhur glassContainer yapın varsa içine alabilirsin
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
@@ -460,16 +465,17 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       context,
       MaterialPageRoute(
         builder: (context) => HabitDetailScreen(
+          isLiquid: true,
           habitId: habit.id,
           selectedDate:
               context.read<HabitProvider>().selectedDate ?? DateTime.now(),
-          // Mobilde açıldığı için panel dostu modunu KAPATIYORUZ
+          // Mobilde açıldığı için panel dostu modunu kapatıyoruz
           isPanel: isExpanded,
-          // Callback'leri buraya da eklemeyi unutma (Update/Delete için)
+          // Callbackler
           onHabitUpdated: (updatedHabit) {
-            // Önce provider'ı güncelle
+            // Önce provider güncellemesi
             context.read<HabitProvider>().updateHabit(updatedHabit);
-            // Sonra yerel referansı güncelle ki sağ panel yeni veriyi bassın
+            // Sonra yerel referans güncellemesi
             setState(() {
               _selectedHabitForDetail = updatedHabit;
             });
@@ -485,20 +491,19 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
 
   Widget _buildNavigationRail(BuildContext context, bool isLargeScreen) {
     return Container(
-      // Yan menüyü de cam yapalım mı? Evet!
       child: glassContainer(
-        borderRadiusRect: 0, // Sol kenara sıfırla
+        borderRadiusRect: 0,
         context: context,
         child: IntrinsicWidth(
           child: NavigationRail(
             extended: isLargeScreen,
             backgroundColor:
-                Colors.transparent, // Glass üstünde sırıtmaması için
+                Colors.transparent,
             selectedIndex: _selectedIndex,
             onDestinationSelected: (i) => setState(() => _selectedIndex = i),
             leading: _buildFab(
               context,
-            ), // Desktop'ta artı butonu yukarıda şık durur
+            ),
             destinations: _destinations
                 .map(
                   (d) => NavigationRailDestination(
@@ -557,69 +562,6 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
     );
   }
 
-  // Mevcut Alışkanlık Listesi Mantığın (Kırpılmış hali)
-  // Widget _buildHabitsList(BuildContext context, List<Habit> habits) {
-  //   return buildHabitsPage(
-  //     onDateSelected: (date) {
-  //       context.read<HabitProvider>().setSelectedDate(date);
-  //     },
-  //     habits: habits,
-  //     onHabitTapped: (habit) {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => HabitDetailScreen(
-  //             habitId: habit.id,
-  //             selectedDate:
-  //                 context.read<HabitProvider>().selectedDate ?? DateTime.now(),
-  //             onHabitUpdated: (updatedHabit) {
-  //               // Önce provider'ı güncelle
-  //               context.read<HabitProvider>().updateHabit(updatedHabit);
-  //               // Sonra yerel referansı güncelle ki sağ panel yeni veriyi bassın
-  //               setState(() {
-  //                 _selectedHabitForDetail = updatedHabit;
-  //               });
-  //             },
-  //             onHabitDeleted: (id) {
-  //               context.read<HabitProvider>().deleteHabit(id);
-  //               setState(() => _selectedHabitForDetail = null);
-  //             },
-  //           ),
-  //         ),
-  //       );
-  //       context.read<HabitProvider>().setGroupToView(null);
-  //     },
-  //     onHabitUpdated: (updatedHabit) {
-  //       // bu satır aslında gerekmiyor çünkü Navigator içinden çağırılıyor
-  //       // ama tutarlılık için bırakabilirsin
-  //     },
-  //     onHabitDeleted: (String id) {
-  //       // 1. Önce sil
-  //       setState(() {
-  //         habits.removeWhere((h) => h.id == id);
-  //       });
-  //
-  //       // 2. Sonra tekrar ekle (eğer edit yapıyorsan)
-  //       final habit = habits.firstWhere(
-  //         (h) => h.id == id,
-  //       ); // habit burada tanımlı!
-  //
-  //       context.read<HabitProvider>().addHabit(
-  //         name: habit.name,
-  //         description: habit.description,
-  //         color: habit.color,
-  //         type: habit.type,
-  //         targetCount: habit.targetCount,
-  //         targetSeconds: habit.targetSeconds,
-  //         reminderTime: habit.reminderTime,
-  //         reminderDays: habit.reminderDays,
-  //         icon: habit.icon,
-  //       );
-  //     },
-  //   );
-  // }
-
-  // AppBar Metodu (Senin mevcut AppBar kodun buraya gelecek)
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       title: Center(
@@ -690,217 +632,4 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       ],
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   var habits = context.watch<HabitProvider>().habits;
-  //   return Scaffold(
-  //     backgroundColor: context.watch<CurrentThemeMode>().isMica
-  //         ? Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 1)
-  //         : Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.3),
-  //     floatingActionButton: glassContainer(
-  //       shape: BoxShape.circle,
-  //       context: context,
-  //       child: FloatingActionButton(
-  //         foregroundColor: context.watch<CurrentThemeMode>().isMica
-  //             ? Theme.of(context).floatingActionButtonTheme.foregroundColor
-  //             : Theme.of(context).floatingActionButtonTheme.foregroundColor
-  //                   ?.withValues(alpha: 0.7),
-  //         backgroundColor: context.watch<CurrentThemeMode>().isMica
-  //             ? Theme.of(context).floatingActionButtonTheme.backgroundColor
-  //             : Theme.of(context).floatingActionButtonTheme.backgroundColor
-  //                   ?.withValues(alpha: 0.7),
-  //         onPressed: () {},
-  //         shape: StadiumBorder(),
-  //         child: IconButton(
-  //           onPressed: () => showAddHabitSheet(context),
-  //           icon: Icon(Icons.add),
-  //         ),
-  //       ),
-  //     ),
-  //     floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-  //
-  //     appBar: AppBar(
-  //       title: Center(
-  //         child: glassContainer(
-  //           context: context,
-  //           child: Padding(
-  //             padding: const EdgeInsets.only(
-  //               top: 4.0,
-  //               bottom: 4.0,
-  //               left: 2.0,
-  //               right: 11.0,
-  //             ),
-  //             child: Text(
-  //               '  ${_selectedIndex == 0 ? _titleForSelectedDate(context) : "İstatistikler"}',
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //
-  //       backgroundColor: context.watch<CurrentThemeMode>().isMica
-  //           ? Theme.of(
-  //               context,
-  //             ).appBarTheme.backgroundColor?.withValues(alpha: 1)
-  //           : Theme.of(
-  //               context,
-  //             ).appBarTheme.backgroundColor?.withValues(alpha: 0.2),
-  //
-  //       elevation: 10,
-  //       leading: Builder(
-  //         builder: (BuildContext context) {
-  //           return Consumer<HabitProvider>(
-  //             builder: (ctx, habitProvider, child) {
-  //               final combinedColor = habitProvider.getCombinedMixedColor();
-  //               return Padding(
-  //                 padding: EdgeInsets.fromLTRB(8,4,4,4),
-  //                 child: glassContainer(
-  //                   shape: BoxShape.circle,
-  //                   context: context,
-  //                   child: IconButton(
-  //                     style: IconButton.styleFrom(padding: EdgeInsets.all(4)),
-  //                     icon: Icon(
-  //                       Icons.format_list_bulleted,
-  //                       color: combinedColor,
-  //                     ),
-  //                     onPressed: () {
-  //                       showHabitsSummarySheet(context);
-  //                     },
-  //                   ),
-  //                 ),
-  //               );
-  //             },
-  //           );
-  //         },
-  //       ),
-  //
-  //       actions: [
-  //         Padding(
-  //           padding: const EdgeInsets.only(right: 8.0),
-  //           child: glassContainer(
-  //             shape: BoxShape.circle,
-  //             context: context,
-  //             child: IconButton(
-  //               onPressed: () {
-  //                 showMainSettingsSheet(
-  //                   context,
-  //                 );
-  //               },
-  //               icon: Icon(Icons.settings),
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //     body: _selectedIndex == 0
-  //         ? buildHabitsPage(
-  //             onDateSelected: (date) {
-  //               context.read<HabitProvider>().setSelectedDate(date);
-  //             },
-  //             habits: habits,
-  //             onHabitTapped: (habit) {
-  //               Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                   builder: (context) => HabitDetailScreen(
-  //                     habitId: habit.id,
-  //                     selectedDate:
-  //                         context.read<HabitProvider>().selectedDate ??
-  //                         DateTime.now(),
-  //                     onHabitUpdated: (updatedHabit) {
-  //                       setState(() {
-  //                         // habits listesi unmodifiable olduğu için yeni liste oluştur
-  //                         final index = habits.indexWhere(
-  //                           (h) => h.id == updatedHabit.id,
-  //                         );
-  //                         if (index != -1) {
-  //                           habits = [
-  //                             ...habits.sublist(0, index),
-  //                             updatedHabit,
-  //                             ...habits.sublist(index + 1),
-  //                           ];
-  //                         }
-  //                       });
-  //
-  //                       // HabitProvider'ı güncelle - bu bildirimleri yeniden planlar
-  //                       context.read<HabitProvider>().updateHabit(updatedHabit);
-  //                     },
-  //                     onHabitDeleted: (String id) {
-  //                       setState(() {
-  //                         habits = habits.where((h) => h.id != id).toList();
-  //                       });
-  //                       // HabitProvider'dan da sil (bildirimler iptal edilecek)
-  //                       context.read<HabitProvider>().deleteHabit(id);
-  //                     },
-  //                   ),
-  //                 ),
-  //               );
-  //               context.read<HabitProvider>().setGroupToView(null);
-  //             },
-  //             onHabitUpdated: (updatedHabit) {
-  //               // bu satır aslında gerekmiyor çünkü Navigator içinden çağırılıyor
-  //               // ama tutarlılık için bırakabilirsin
-  //             },
-  //             onHabitDeleted: (String id) {
-  //               // 1. Önce sil
-  //               setState(() {
-  //                 habits.removeWhere((h) => h.id == id);
-  //               });
-  //
-  //               // 2. Sonra tekrar ekle (eğer edit yapıyorsan)
-  //               final habit = habits.firstWhere(
-  //                 (h) => h.id == id,
-  //               ); // habit burada tanımlı!
-  //
-  //               context.read<HabitProvider>().addHabit(
-  //                 name: habit.name,
-  //                 description: habit.description,
-  //                 color: habit.color,
-  //                 type: habit.type,
-  //                 targetCount: habit.targetCount,
-  //                 targetSeconds: habit.targetSeconds,
-  //                 reminderTime: habit.reminderTime,
-  //                 reminderDays: habit.reminderDays,
-  //                 icon: habit.icon,
-  //               );
-  //             },
-  //           ) // 1. sayfa: alışkanlıklar
-  //         : StatisticsScreen(), // 2. sayfa: istatistikler
-  //
-  //     bottomNavigationBar: BottomAppBar(
-  //       color: context.watch<CurrentThemeMode>().isMica
-  //           ? Theme.of(context).bottomAppBarTheme.color?.withValues(alpha: 1)
-  //           : Theme.of(context).bottomAppBarTheme.color?.withValues(alpha: 0.2),
-  //       elevation: 10,
-  //       shape: CircularNotchedRectangle(),
-  //       clipBehavior: Clip.hardEdge,
-  //       notchMargin: 15.0,
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //         children: [
-  //           IconButton(
-  //             style: IconButton.styleFrom(
-  //               shape: StadiumBorder(),
-  //               foregroundColor: _selectedIndex == 0
-  //                   ? Theme.of(context).colorScheme.secondary
-  //                   : Colors.grey,
-  //             ),
-  //             icon: Icon(Icons.checklist),
-  //             onPressed: () => onItemTapped(0),
-  //           ),
-  //           IconButton(
-  //             style: IconButton.styleFrom(
-  //               shape: StadiumBorder(),
-  //               foregroundColor: _selectedIndex == 1
-  //                   ? Theme.of(context).colorScheme.secondary
-  //                   : Colors.grey,
-  //             ),
-  //             icon: Icon(Icons.bar_chart),
-  //             onPressed: () => onItemTapped(1),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }

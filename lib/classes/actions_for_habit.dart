@@ -43,7 +43,8 @@ class ActionsForHabit extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: IntrinsicHeight(
         child: IntrinsicWidth(
-          child: LiquidWrapper(
+          child: CardLiquidWrapper(
+            borderRadius: 160,
             statement: isLiquidBackground,
             shape: LiquidRoundedRectangle(borderRadius: 160),
             child: Padding(
