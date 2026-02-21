@@ -24,7 +24,11 @@ enum OrientationForPrivate { horizontal, vertical }
 
 enum Selectors { time, count }
 
+enum Liquidness { ordinary, liquid }
+
 class StyleProvider with ChangeNotifier {
+  bool isDetailLiquid = true;
+
   AppDesignMode current = AppDesignMode.liquid;
 
   OrientationForPrivate timeSelectorOrientation =
@@ -36,6 +40,19 @@ class StyleProvider with ChangeNotifier {
   bool isFulscreenNow = false;
 
   ViewStyleForMultipleData viewStyle = ViewStyleForMultipleData.grid;
+
+  void setDetailLiquid(bool wanted) {
+    isDetailLiquid = wanted;
+    notifyListeners();
+  }
+
+  Liquidness getDetailLiquid() {
+    return isDetailLiquid == true ? Liquidness.liquid : Liquidness.ordinary;
+  }
+
+  bool getDetailLiquidBoolean() {
+    return isDetailLiquid;
+  }
 
   void setFulscreenForNow(bool wanted) {
     isFulscreenNow = wanted;

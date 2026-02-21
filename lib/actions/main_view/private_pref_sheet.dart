@@ -30,12 +30,6 @@ void showPrivatePrefsSheet(BuildContext context) {
     isScrollControlled: true,
     context: context,
     builder: (sheetContext) {
-      OrientationForPrivate orientTime = context
-          .read<StyleProvider>()
-          .timeSelectorOrientation;
-      OrientationForPrivate orientCount = context
-          .read<StyleProvider>()
-          .countSelectorOrientation;
       return StatefulBuilder(
         builder: (context, setStateSheet) {
           return Column(
@@ -75,7 +69,7 @@ void showPrivatePrefsSheet(BuildContext context) {
                 trailing: DropdownButton<OrientationForPrivate>(
                   style: TextStyle(color: Colors.white),
                   dropdownColor: Colors.grey[900],
-                  value: orientTime,
+                  value: context.read<StyleProvider>().timeSelectorOrientation,
                   items: OrientationForPrivate.values
                       .map(
                         (e) => DropdownMenuItem(
@@ -86,7 +80,11 @@ void showPrivatePrefsSheet(BuildContext context) {
                       .toList(),
                   onChanged: (v) {
                     if (v != null) {
-                      setStateSheet(() =>  context.read<StyleProvider>().setOrientationForSelectors(Selectors.time, v));
+                      setStateSheet(
+                        () => context
+                            .read<StyleProvider>()
+                            .setOrientationForSelectors(Selectors.time, v),
+                      );
                     }
                   },
                 ),
@@ -108,7 +106,7 @@ void showPrivatePrefsSheet(BuildContext context) {
                 trailing: DropdownButton<OrientationForPrivate>(
                   style: TextStyle(color: Colors.white),
                   dropdownColor: Colors.grey[900],
-                  value: orientCount,
+                  value: context.read<StyleProvider>().countSelectorOrientation,
                   items: OrientationForPrivate.values
                       .map(
                         (e) => DropdownMenuItem(
@@ -119,7 +117,79 @@ void showPrivatePrefsSheet(BuildContext context) {
                       .toList(),
                   onChanged: (v) {
                     if (v != null) {
-                      setStateSheet(() =>  context.read<StyleProvider>().setOrientationForSelectors(Selectors.count, v));
+                      setStateSheet(
+                        () => context
+                            .read<StyleProvider>()
+                            .setOrientationForSelectors(Selectors.count, v),
+                      );
+                    }
+                  },
+                ),
+              ),
+
+              PlatformListTile(
+                onTap: () {},
+                leading: Icon(
+                  context.watch<StyleProvider>().getVSFMD() ==
+                          ViewStyleForMultipleData.grid
+                      ? Icons.grid_view_rounded
+                      : context.watch<StyleProvider>().getVSFMD() ==
+                            ViewStyleForMultipleData.list
+                      ? Icons.list
+                      : Icons.credit_card_rounded,
+                ),
+                title: Text("Change Layout in Habits Page"),
+                subtitle: Text(
+                  "For now it is ${context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.grid
+                      ? "Grid"
+                      : context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.list
+                      ? "List"
+                      : "Wrap Card"}",
+                ),
+                trailing: DropdownButton<ViewStyleForMultipleData>(
+                  style: TextStyle(color: Colors.white),
+                  dropdownColor: Colors.grey[900],
+                  value: context.watch<StyleProvider>().getVSFMD(),
+                  items: ViewStyleForMultipleData.values
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.toString().split('.').last),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (v) {
+                    if (v != null) {
+                      setStateSheet(
+                        () => context.read<StyleProvider>().setVSFMD(v),
+                      );
+                    }
+                  },
+                ),
+              ),
+
+              PlatformListTile(
+                onTap: () {},
+                leading: Icon(context.watch<StyleProvider>().getDetailLiquidBoolean() ? Icons.water_drop : Icons.waves),
+                title: Text("Change Detail Screens Liquidness"),
+                subtitle: Text("For now it is ${context.watch<StyleProvider>().getDetailLiquidBoolean() ? "Liquid" : "Ordinary"}"),
+                trailing: DropdownButton<Liquidness>(
+                  style: TextStyle(color: Colors.white),
+                  dropdownColor: Colors.grey[900],
+                  value: context.watch<StyleProvider>().getDetailLiquid(),
+                  items: Liquidness.values
+                      .map(
+                        (e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(e.toString().split('.').last),
+                    ),
+                  )
+                      .toList(),
+                  onChanged: (v) {
+                    if (v != null) {
+                      setStateSheet(
+                            () => context.read<StyleProvider>().setDetailLiquid(v == Liquidness.liquid),
+                      );
                     }
                   },
                 ),

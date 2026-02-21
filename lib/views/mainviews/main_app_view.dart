@@ -28,6 +28,8 @@ import 'package:hbttrckr/actions/main_view/main_settings_sheet.dart';
 import 'package:hbttrckr/services/google_sign-in.dart';
 import 'package:hbttrckr/views/habits_page.dart';
 
+import '../../providers/style_provider.dart';
+
 // TODO's
 //
 //  doğa modu
@@ -394,7 +396,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
               duration: const Duration(milliseconds: 300),
               child: _selectedHabitForDetail != null
                   ? HabitDetailScreen(
-                isLiquid: false,
+                isLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean(),
                       key: ValueKey(_selectedHabitForDetail!.id),
                       habitId: _selectedHabitForDetail!.id,
                       selectedDate:
@@ -465,7 +467,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       context,
       MaterialPageRoute(
         builder: (context) => HabitDetailScreen(
-          isLiquid: true,
+          isLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean(),
           habitId: habit.id,
           selectedDate:
               context.read<HabitProvider>().selectedDate ?? DateTime.now(),
