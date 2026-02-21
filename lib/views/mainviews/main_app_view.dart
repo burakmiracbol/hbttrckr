@@ -262,7 +262,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       // Mica/Glass Arkaplan Mantığın
       backgroundColor: context.watch<CurrentThemeMode>().isMica
           ? Theme.of(context).scaffoldBackgroundColor
-          : Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.3),
+          : Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0),
 
       // Sadece Mobilde FAB göster
       floatingActionButton: isMobile ? _buildFab(context) : null,
@@ -493,8 +493,10 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
 
   Widget _buildNavigationRail(BuildContext context, bool isLargeScreen) {
     return Container(
+      color: Colors.transparent,
       child: glassContainer(
-        borderRadiusRect: 0,
+        shape: BoxShape.rectangle,
+        borderRadiusRect: 80,
         context: context,
         child: IntrinsicWidth(
           child: NavigationRail(
@@ -552,10 +554,11 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
   }
 
   Widget _buildFab(BuildContext context) {
-    return glassContainer(
+    return glassContainer(borderRadiusRect: 160,
       shape: BoxShape.circle,
       context: context,
       child: FloatingActionButton(
+        shape: CircleBorder(),
         elevation: 0, // Glass arkasında gölge karmaşası olmasın
         backgroundColor: Colors.transparent,
         onPressed: () => showAddHabitSheet(context),
@@ -568,6 +571,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
     return AppBar(
       title: Center(
         child: glassContainer(
+          borderRadiusRect: 160,
           context: context,
           child: Padding(
             padding: const EdgeInsets.only(
