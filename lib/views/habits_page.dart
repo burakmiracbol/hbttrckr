@@ -188,16 +188,24 @@ Widget buildHabitsPage({
                     children: [
                       FilterChip(
                         label: Text("Grid"),
-                        selected: context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.grid ,
+                        selected:
+                            context.watch<StyleProvider>().getVSFMD() ==
+                            ViewStyleForMultipleData.grid,
                         onSelected: (bool value) {
-                          context.read<StyleProvider>().setVSFMD(ViewStyleForMultipleData.grid);
+                          context.read<StyleProvider>().setVSFMD(
+                            ViewStyleForMultipleData.grid,
+                          );
                         },
                       ),
                       FilterChip(
                         label: Text("List"),
-                        selected: context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.list ,
+                        selected:
+                            context.watch<StyleProvider>().getVSFMD() ==
+                            ViewStyleForMultipleData.list,
                         onSelected: (bool value) {
-                          context.read<StyleProvider>().setVSFMD(ViewStyleForMultipleData.list);
+                          context.read<StyleProvider>().setVSFMD(
+                            ViewStyleForMultipleData.list,
+                          );
                         },
                       ),
                     ],
@@ -324,7 +332,9 @@ Widget buildHabitsPage({
 
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.list
+                    child:
+                        context.watch<StyleProvider>().getVSFMD() ==
+                            ViewStyleForMultipleData.list
                         ? Column(
                             children: [
                               ...visibleHabitsByGroup.map(
@@ -577,10 +587,15 @@ Widget buildHabitsPage({
                               ),
                             ],
                           )
-                        : context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.grid ? MasonryGridView(
+                        : context.watch<StyleProvider>().getVSFMD() ==
+                              ViewStyleForMultipleData.grid
+                        ? MasonryGridView(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(), 
-                            gridDelegate: SliverSimpleGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 600),
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverSimpleGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 600,
+                                ),
                             children: [
                               ...visibleHabitsByGroup.map(
                                 (habit) => GestureDetector(
@@ -660,11 +675,23 @@ Widget buildHabitsPage({
                                               alignment: Alignment.centerLeft,
                                               child: IntrinsicHeight(
                                                 child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children:[
-                                                    Text("Güç: ${habit.strength.roundToDouble().toInt()}"),
-                                                    Text("Aktif Streak: ${habit.currentStreak}"),
-                                                    Text(habit.notesDelta?.substring(12, 24) ?? "Not yok"),
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Güç: ${habit.strength.roundToDouble().toInt()}",
+                                                    ),
+                                                    Text(
+                                                      "Aktif Streak: ${habit.currentStreak}",
+                                                    ),
+                                                    Text(
+                                                      habit.notesDelta
+                                                              ?.substring(
+                                                                12,
+                                                                24,
+                                                              ) ??
+                                                          "Not yok",
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -1014,13 +1041,8 @@ Widget buildHabitsPage({
                                                                           onPressed: () {
                                                                             provider.resetTimer(
                                                                               habit.id,
+                                                                              selectedDate,
                                                                             );
-                                                                            if (isRunning) {
-                                                                              provider.toggleTimer(
-                                                                                habit.id,
-                                                                                selectedDate,
-                                                                              );
-                                                                            }
                                                                           },
                                                                           icon: Icon(
                                                                             Icons.refresh,
@@ -1066,7 +1088,8 @@ Widget buildHabitsPage({
                                 ),
                               ),
                             ],
-                          ) : Placeholder()
+                          )
+                        : Placeholder(),
                   );
                 },
               ),
