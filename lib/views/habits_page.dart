@@ -178,39 +178,6 @@ Widget buildHabitsPage({
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      FilterChip(
-                        label: Text("Grid"),
-                        selected:
-                            context.watch<StyleProvider>().getVSFMD() ==
-                            ViewStyleForMultipleData.grid,
-                        onSelected: (bool value) {
-                          context.read<StyleProvider>().setVSFMD(
-                            ViewStyleForMultipleData.grid,
-                          );
-                        },
-                      ),
-                      FilterChip(
-                        label: Text("List"),
-                        selected:
-                            context.watch<StyleProvider>().getVSFMD() ==
-                            ViewStyleForMultipleData.list,
-                        onSelected: (bool value) {
-                          context.read<StyleProvider>().setVSFMD(
-                            ViewStyleForMultipleData.list,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
 
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
