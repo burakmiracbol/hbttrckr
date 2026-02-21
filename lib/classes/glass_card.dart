@@ -17,10 +17,17 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-Widget glassContainer({required Widget child, double borderRadiusRect = 24.0, BoxShape shape = BoxShape.rectangle, required BuildContext context }) {
+Widget glassContainer({
+  required Widget child,
+  double borderRadiusRect = 24.0,
+  BoxShape shape = BoxShape.rectangle,
+  required BuildContext context,
+}) {
   final theme = Theme.of(context);
   final colorScheme = theme.colorScheme;
-  final borderRadius = shape == BoxShape.circle ? null :BorderRadius.circular(24);
+  final borderRadius = shape == BoxShape.circle
+      ? null
+      : BorderRadius.circular(borderRadiusRect);
   final isDark = theme.brightness == Brightness.dark;
 
   return ClipRRect(
@@ -30,12 +37,12 @@ Widget glassContainer({required Widget child, double borderRadiusRect = 24.0, Bo
       child: Container(
         padding: const EdgeInsets.all(0),
         decoration: BoxDecoration(
-// Uses surface with low opacity to allow background through
+          // Uses surface with low opacity to allow background through
           color: colorScheme.surface.withValues(alpha: isDark ? 0.15 : 0.4),
           shape: shape,
           borderRadius: borderRadius,
           border: Border.all(
-// Provides the "glass edge" highlight
+            // Provides the "glass edge" highlight
             color: colorScheme.onSurface.withValues(alpha: isDark ? 0.1 : 0.2),
             width: 1.5,
           ),
