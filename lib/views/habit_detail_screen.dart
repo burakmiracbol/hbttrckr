@@ -534,7 +534,12 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                   4.0,
                                                                 ),
                                                             child: IconButton(
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                currentHabit.unSkipOnDate(
+                                                                  selectedDate ??
+                                                                      DateTime.now(),
+                                                                );
+                                                              },
                                                               icon: Icon(
                                                                 Icons.skip_next,
                                                               ),
@@ -553,14 +558,30 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                 4.0,
                                                               ),
                                                           child: IconButton(
-                                                            onPressed: () => context
-                                                                .read<
-                                                                  HabitProvider
-                                                                >()
-                                                                .toggleTaskCompletion(
-                                                                  currentHabit
-                                                                      .id,
-                                                                ),
+                                                            onPressed: () {
+                                                              selectedDate?.compareTo(
+                                                                        DateTime.now(),
+                                                                      ) ==
+                                                                      1
+                                                                  ? ScaffoldMessenger.of(
+                                                                      context,
+                                                                    ).showSnackBar(
+                                                                      SnackBar(
+                                                                        content:
+                                                                            Text(
+                                                                              "gelecekte olacak şeyleri ancak şimdiki eylemlerinle değiştirebilirsin",
+                                                                            ),
+                                                                      ),
+                                                                    )
+                                                                  : context
+                                                                        .read<
+                                                                          HabitProvider
+                                                                        >()
+                                                                        .toggleTaskCompletion(
+                                                                          currentHabit
+                                                                              .id,
+                                                                        );
+                                                            },
                                                             icon:
                                                                 currentHabit.isCompletedOnDate(
                                                                   selectedDate ??
@@ -653,13 +674,26 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                             ),
                                                                       ),
                                                                       onPressed: () {
-                                                                        context
-                                                                            .read<
-                                                                              HabitProvider
-                                                                            >()
-                                                                            .incrementCount(
-                                                                              currentHabit.id,
-                                                                            );
+                                                                        selectedDate?.compareTo(
+                                                                                  DateTime.now(),
+                                                                                ) ==
+                                                                                1
+                                                                            ? ScaffoldMessenger.of(
+                                                                                context,
+                                                                              ).showSnackBar(
+                                                                                SnackBar(
+                                                                                  content: Text(
+                                                                                    "gelecekte olacak şeyleri ancak şimdiki eylemlerinle değiştirebilirsin",
+                                                                                  ),
+                                                                                ),
+                                                                              )
+                                                                            : context
+                                                                                  .read<
+                                                                                    HabitProvider
+                                                                                  >()
+                                                                                  .incrementCount(
+                                                                                    currentHabit.id,
+                                                                                  );
                                                                       },
                                                                       icon: Icon(
                                                                         Icons
@@ -704,14 +738,28 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                           MaterialTapTargetSize
                                                                               .shrinkWrap, // Tıklama alanını sıkıştırır
                                                                     ),
-                                                                    onPressed: () => showCountSelectorSheet(
-                                                                      selectedDate ??
-                                                                          DateTime.now(),
-                                                                      context,
-                                                                      currentHabit,
-                                                                      habit:
-                                                                          currentHabit,
-                                                                    ),
+                                                                    onPressed: () {
+                                                                      selectedDate?.compareTo(
+                                                                                DateTime.now(),
+                                                                              ) ==
+                                                                              1
+                                                                          ? ScaffoldMessenger.of(
+                                                                              context,
+                                                                            ).showSnackBar(
+                                                                              SnackBar(
+                                                                                content: Text(
+                                                                                  "gelecekte olacak şeyleri ancak şimdiki eylemlerinle değiştirebilirsin",
+                                                                                ),
+                                                                              ),
+                                                                            )
+                                                                          : showCountSelectorSheet(
+                                                                              selectedDate ??
+                                                                                  DateTime.now(),
+                                                                              context,
+                                                                              currentHabit,
+                                                                              habit: currentHabit,
+                                                                            );
+                                                                    },
                                                                     child: Text(
                                                                       "${currentHabit.getCountProgressForDate(selectedDate ?? DateTime.now())}",
                                                                     ),
@@ -739,13 +787,26 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                             ),
                                                                       ),
                                                                       onPressed: () {
-                                                                        context
-                                                                            .read<
-                                                                              HabitProvider
-                                                                            >()
-                                                                            .decrementCount(
-                                                                              currentHabit.id,
-                                                                            );
+                                                                        selectedDate?.compareTo(
+                                                                                  DateTime.now(),
+                                                                                ) ==
+                                                                                1
+                                                                            ? ScaffoldMessenger.of(
+                                                                                context,
+                                                                              ).showSnackBar(
+                                                                                SnackBar(
+                                                                                  content: Text(
+                                                                                    "gelecekte olacak şeyleri ancak şimdiki eylemlerinle değiştirebilirsin",
+                                                                                  ),
+                                                                                ),
+                                                                              )
+                                                                            : context
+                                                                                  .read<
+                                                                                    HabitProvider
+                                                                                  >()
+                                                                                  .decrementCount(
+                                                                                    currentHabit.id,
+                                                                                  );
                                                                       },
                                                                       icon: Icon(
                                                                         Icons
@@ -815,26 +876,29 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                               provider,
                                                                               child,
                                                                             ) {
-                                                                              final bool
-                                                                              isRunning =
-                                                                                  (provider.runningTimers[currentHabit.id]) ??
-                                                                                  false;
-
                                                                               return IconButton(
                                                                                 style: IconButton.styleFrom(
                                                                                   foregroundColor: Colors.grey,
                                                                                 ),
                                                                                 onPressed: () {
-                                                                                  provider.resetTimer(
-                                                                                    currentHabit.id,
-                                                                                  ); // sıfırla
-                                                                                  if (isRunning) {
-                                                                                    provider.toggleTimer(
-                                                                                      currentHabit.id,
-                                                                                      selectedDate ??
-                                                                                          DateTime.now(),
-                                                                                    ); // timer'ı da durdur
-                                                                                  }
+                                                                                  selectedDate?.compareTo(
+                                                                                            DateTime.now(),
+                                                                                          ) ==
+                                                                                          1
+                                                                                      ? ScaffoldMessenger.of(
+                                                                                          context,
+                                                                                        ).showSnackBar(
+                                                                                          SnackBar(
+                                                                                            content: Text(
+                                                                                              "gelecekte olacak şeyleri ancak şimdiki eylemlerinle değiştirebilirsin",
+                                                                                            ),
+                                                                                          ),
+                                                                                        )
+                                                                                      : provider.resetTimer(
+                                                                                          currentHabit.id,
+                                                                                          selectedDate ??
+                                                                                              DateTime.now(),
+                                                                                        ); // sıfırla
                                                                                 },
                                                                                 icon: const Icon(
                                                                                   Icons.refresh,
@@ -871,12 +935,27 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                           MaterialTapTargetSize
                                                                               .shrinkWrap, // Tıklama alanını sıkıştırır
                                                                     ),
-                                                                    onPressed: () => showTimeSelectorSheet(
-                                                                      context,
-                                                                      currentHabit,
-                                                                      selectedDate ??
-                                                                          DateTime.now(),
-                                                                    ),
+                                                                    onPressed: () {
+                                                                      selectedDate?.compareTo(
+                                                                                DateTime.now(),
+                                                                              ) ==
+                                                                              1
+                                                                          ? ScaffoldMessenger.of(
+                                                                              context,
+                                                                            ).showSnackBar(
+                                                                              SnackBar(
+                                                                                content: Text(
+                                                                                  "gelecekte olacak şeyleri ancak şimdiki eylemlerinle değiştirebilirsin",
+                                                                                ),
+                                                                              ),
+                                                                            )
+                                                                          : showTimeSelectorSheet(
+                                                                              context,
+                                                                              currentHabit,
+                                                                              selectedDate ??
+                                                                                  DateTime.now(),
+                                                                            );
+                                                                    },
                                                                     child: Text(
                                                                       currentHabit
                                                                           .getSecondsProgressForDate(
@@ -917,12 +996,25 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                                   foregroundColor: Colors.grey,
                                                                                 ),
                                                                                 onPressed: () {
-                                                                                  provider.toggleTimer(
-                                                                                    currentHabit.id,
+                                                                                  selectedDate?.compareTo(
+                                                                                            DateTime.now(),
+                                                                                          ) ==
+                                                                                          1
+                                                                                      ? ScaffoldMessenger.of(
+                                                                                          context,
+                                                                                        ).showSnackBar(
+                                                                                          SnackBar(
+                                                                                            content: Text(
+                                                                                              "gelecekte olacak şeyleri ancak şimdiki eylemlerinle değiştirebilirsin",
+                                                                                            ),
+                                                                                          ),
+                                                                                        )
+                                                                                      : provider.toggleTimer(
+                                                                                          currentHabit.id,
 
-                                                                                    selectedDate ??
-                                                                                        DateTime.now(),
-                                                                                  );
+                                                                                          selectedDate ??
+                                                                                              DateTime.now(),
+                                                                                        );
                                                                                 },
                                                                                 icon: Icon(
                                                                                   isRunning
@@ -1584,19 +1676,19 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                     .read<
                                                                       HabitProvider
                                                                     >();
-                                                            final current =
-                                                                provider
-                                                                    .getHabitById(
-                                                                      currentHabit
-                                                                          .id,
-                                                                    );
+                                                            final current = provider
+                                                                .getHabitById(
+                                                                  currentHabit
+                                                                      .id,
+                                                                );
                                                             final result =
                                                                 await showNotesEditorSheet(
                                                                   context,
                                                                   current,
                                                                 );
 
-                                                            if (result != null) {
+                                                            if (result !=
+                                                                null) {
                                                               final updated =
                                                                   current.copyWith(
                                                                     notesDelta:
@@ -1608,7 +1700,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                   );
                                                               widget
                                                                   .onHabitUpdated
-                                                                  .call(updated);
+                                                                  .call(
+                                                                    updated,
+                                                                  );
                                                             }
                                                           },
                                                         ),
@@ -1628,7 +1722,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                       currentHabit.name,
                                                       style: TextStyle(
                                                         fontSize: 32,
-                                                        color: Colors.transparent,
+                                                        color:
+                                                            Colors.transparent,
                                                       ),
                                                     ),
                                                   ),
@@ -1710,7 +1805,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                             Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: LiquidGlass(
-                                shape: LiquidRoundedRectangle(borderRadius: 320),
+                                shape: LiquidRoundedRectangle(
+                                  borderRadius: 320,
+                                ),
                                 child: GlassGlow(
                                   child: Padding(
                                     padding: const EdgeInsets.fromLTRB(
@@ -1737,9 +1834,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                 style: TextStyle(
                                                   fontStyle: FontStyle.italic,
                                                   fontSize: 18,
-                                                  color: Colors.white.withValues(
-                                                    alpha: 0.9,
-                                                  ),
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.9),
                                                 ),
                                               ),
                                             ),
@@ -1794,134 +1890,88 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                             // TASK
                                             if (currentHabit.type ==
                                                 HabitType.task)
-                                              currentHabit.isSkippedOnDate(
-                                                    selectedDate ??
-                                                        DateTime.now(),
-                                                  )
-                                                  ? Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            8.0,
-                                                          ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                              4.0,
-                                                            ),
-                                                        child: IconButton(
-                                                          onPressed: () {},
-                                                          icon: Icon(
-                                                            Icons.skip_next,
-                                                          ),
-                                                          style: IconButton.styleFrom(
-                                                            padding:
-                                                                const EdgeInsets.all(
-                                                                  10,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            4.0,
-                                                          ),
-                                                      child: IconButton(
-                                                        onPressed: () => context
-                                                            .read<HabitProvider>()
-                                                            .toggleTaskCompletion(
-                                                              currentHabit.id,
-                                                            ),
-                                                        icon:
-                                                            currentHabit
-                                                                .isCompletedOnDate(
-                                                                  selectedDate ??
-                                                                      DateTime.now(),
-                                                                )
-                                                            ? const Icon(
-                                                                Icons.done,
-                                                                color:
-                                                                    Colors.green,
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                  4.0,
+                                                ),
+                                                child: IconButton(
+                                                  onPressed: () {
+                                                    currentHabit.isSkippedOnDate(
+                                                          selectedDate ??
+                                                              DateTime.now(),
+                                                        )
+                                                        ? currentHabit
+                                                              .unSkipOnDate(
+                                                                selectedDate ??
+                                                                    DateTime.now(),
                                                               )
-                                                            : const Icon(
-                                                                Icons
-                                                                    .circle_outlined,
-                                                              ),
-                                                        style: IconButton.styleFrom(
-                                                          padding:
-                                                              const EdgeInsets.all(
-                                                                10,
-                                                              ),
+                                                        : context
+                                                              .read<
+                                                                HabitProvider
+                                                              >()
+                                                              .toggleTaskCompletion(
+                                                                currentHabit.id,
+                                                              );
+                                                  },
+                                                  icon:
+                                                      currentHabit
+                                                          .isSkippedOnDate(
+                                                            selectedDate ??
+                                                                DateTime.now(),
+                                                          )
+                                                      ? Icon(Icons.skip_next)
+                                                      : currentHabit
+                                                            .isCompletedOnDate(
+                                                              selectedDate ??
+                                                                  DateTime.now(),
+                                                            )
+                                                      ? const Icon(
+                                                          Icons.done,
+                                                          color: Colors.green,
+                                                        )
+                                                      : const Icon(
+                                                          Icons.circle_outlined,
                                                         ),
-                                                      ),
-                                                    )
+                                                  style: IconButton.styleFrom(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          10,
+                                                        ),
+                                                  ),
+                                                ),
+                                              )
                                             // COUNT
                                             else if (currentHabit.type ==
                                                 HabitType.count)
-                                              currentHabit.isSkippedOnDate(
-                                                    selectedDate ??
-                                                        DateTime.now(),
-                                                  )
-                                                  ? Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            8.0,
-                                                          ),
-                                                      child: LiquidGlass(
-                                                        shape:
-                                                            LiquidRoundedRectangle(
-                                                              borderRadius: 16,
-                                                            ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets.all(
-                                                                4.0,
-                                                              ),
-                                                          child: ElevatedButton(
-                                                            style: ElevatedButton.styleFrom(
-                                                              backgroundColor:
-                                                                  currentHabit
-                                                                      .color
-                                                                      .withValues(
-                                                                        alpha:
-                                                                            0.2,
-                                                                      ),
-                                                              shape:
-                                                                  const StadiumBorder(),
-                                                            ),
-                                                            onPressed: () {},
-                                                            child: Text(
-                                                              "Atlandı",
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : IntrinsicHeight(
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .stretch,
-                                                        children: [
-                                                          Padding(
+                                              IntrinsicHeight(
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    currentHabit.isSkippedOnDate(
+                                                          selectedDate ??
+                                                              DateTime.now(),
+                                                        )
+                                                        ? Container()
+                                                        : Padding(
                                                             padding:
                                                                 const EdgeInsets.all(
                                                                   4.0,
                                                                 ),
                                                             child: LiquidGlass(
-                                                              shape: LiquidOval(),
+                                                              shape:
+                                                                  LiquidOval(),
                                                               child: AspectRatio(
                                                                 aspectRatio: 1,
                                                                 child: IconButton(
                                                                   style: IconButton.styleFrom(
-                                                                    backgroundColor:
-                                                                        currentHabit
-                                                                            .color
-                                                                            .withValues(
-                                                                              alpha:
-                                                                                  0.2,
-                                                                            ),
+                                                                    backgroundColor: currentHabit
+                                                                        .color
+                                                                        .withValues(
+                                                                          alpha:
+                                                                              0.2,
+                                                                        ),
                                                                   ),
                                                                   onPressed: () {
                                                                     context
@@ -1941,73 +1991,93 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                             ),
                                                           ),
 
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets.only(
-                                                                  top: 2.0,
-                                                                  bottom: 2.0,
-                                                                  left: 8.0,
-                                                                  right: 8.0,
-                                                                ),
-                                                            child: LiquidGlass(
-                                                              shape:
-                                                                  LiquidRoundedRectangle(
-                                                                    borderRadius:
-                                                                        160,
-                                                                  ),
-                                                              child: ElevatedButton(
-                                                                style: ElevatedButton.styleFrom(
-                                                                  backgroundColor:
-                                                                      currentHabit
-                                                                          .color
-                                                                          .withValues(
-                                                                            alpha:
-                                                                                0.1,
-                                                                          ),
-                                                                  shadowColor: Colors
-                                                                      .transparent, // Arka plan transparent ise gölgeyi de kaldırabilirsin
-                                                                  shape:
-                                                                      const StadiumBorder(),
-                                                                  minimumSize: Size
-                                                                      .zero, // Boyut sınırlamasını kaldırır
-                                                                  tapTargetSize:
-                                                                      MaterialTapTargetSize
-                                                                          .shrinkWrap, // Tıklama alanını sıkıştırır
-                                                                ),
-                                                                onPressed: () =>
-                                                                    showCountSelectorSheet(
-                                                                      selectedDate ??
-                                                                          DateTime.now(),
-                                                                      context,
-                                                                      currentHabit,
-                                                                      habit:
-                                                                          currentHabit,
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 2.0,
+                                                            bottom: 2.0,
+                                                            left: 8.0,
+                                                            right: 8.0,
+                                                          ),
+                                                      child: LiquidGlass(
+                                                        shape:
+                                                            LiquidRoundedRectangle(
+                                                              borderRadius: 160,
+                                                            ),
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                currentHabit
+                                                                    .color
+                                                                    .withValues(
+                                                                      alpha:
+                                                                          0.1,
                                                                     ),
-                                                                child: Text(
+                                                            shadowColor: Colors
+                                                                .transparent, // Arka plan transparent ise gölgeyi de kaldırabilirsin
+                                                            shape:
+                                                                const StadiumBorder(),
+                                                            minimumSize: Size
+                                                                .zero, // Boyut sınırlamasını kaldırır
+                                                            tapTargetSize:
+                                                                MaterialTapTargetSize
+                                                                    .shrinkWrap, // Tıklama alanını sıkıştırır
+                                                          ),
+                                                          onPressed: () {
+                                                            currentHabit.isSkippedOnDate(
+                                                                  selectedDate ??
+                                                                      DateTime.now(),
+                                                                )
+                                                                ? currentHabit.unSkipOnDate(
+                                                                    selectedDate ??
+                                                                        DateTime.now(),
+                                                                  )
+                                                                : showCountSelectorSheet(
+                                                                    selectedDate ??
+                                                                        DateTime.now(),
+                                                                    context,
+                                                                    currentHabit,
+                                                                    habit:
+                                                                        currentHabit,
+                                                                  );
+                                                          },
+                                                          child:
+                                                              currentHabit
+                                                                  .isSkippedOnDate(
+                                                                    selectedDate ??
+                                                                        DateTime.now(),
+                                                                  )
+                                                              ? Text("Atlandı")
+                                                              : Text(
                                                                   "${currentHabit.getCountProgressForDate(selectedDate ?? DateTime.now())}",
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
 
-                                                          Padding(
+                                                    currentHabit.isSkippedOnDate(
+                                                          selectedDate ??
+                                                              DateTime.now(),
+                                                        )
+                                                        ? Container()
+                                                        : Padding(
                                                             padding:
                                                                 const EdgeInsets.all(
                                                                   4.0,
                                                                 ),
                                                             child: LiquidGlass(
-                                                              shape: LiquidOval(),
+                                                              shape:
+                                                                  LiquidOval(),
                                                               child: AspectRatio(
                                                                 aspectRatio: 1,
                                                                 child: IconButton(
                                                                   style: IconButton.styleFrom(
-                                                                    backgroundColor:
-                                                                        currentHabit
-                                                                            .color
-                                                                            .withValues(
-                                                                              alpha:
-                                                                                  0.2,
-                                                                            ),
+                                                                    backgroundColor: currentHabit
+                                                                        .color
+                                                                        .withValues(
+                                                                          alpha:
+                                                                              0.2,
+                                                                        ),
                                                                   ),
                                                                   onPressed: () {
                                                                     context
@@ -2020,101 +2090,69 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                         );
                                                                   },
                                                                   icon: Icon(
-                                                                    Icons.remove,
+                                                                    Icons
+                                                                        .remove,
                                                                   ),
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                    )
+                                                  ],
+                                                ),
+                                              )
                                             // TIME
                                             else if (currentHabit.type ==
                                                 HabitType.time)
-                                              currentHabit.isSkippedOnDate(
-                                                    selectedDate ??
-                                                        DateTime.now(),
-                                                  )
-                                                  ? Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            8.0,
-                                                          ),
-                                                      child: LiquidGlass(
-                                                        shape:
-                                                            LiquidRoundedRectangle(
-                                                              borderRadius: 16,
-                                                            ),
-                                                        child: ElevatedButton(
-                                                          style: ElevatedButton.styleFrom(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            shape:
-                                                                const StadiumBorder(),
-                                                          ),
-                                                          onPressed: () {},
-                                                          child: Text("Atlandı"),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : IntrinsicHeight(
+                                              IntrinsicHeight(
                                                       child: Row(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
                                                                 .stretch,
                                                         children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets.all(
-                                                                  8.0,
+                                                          currentHabit.isSkippedOnDate(
+                                                                selectedDate ??
+                                                                    DateTime.now(),
+                                                              )
+                                                              ? Container()
+                                                              : Padding(
+                                                                  padding:
+                                                                      const EdgeInsets.all(
+                                                                        8.0,
+                                                                      ),
+                                                                  child: LiquidGlass(
+                                                                    shape:
+                                                                        LiquidOval(),
+                                                                    child:
+                                                                        Consumer<
+                                                                          HabitProvider
+                                                                        >(
+                                                                          builder:
+                                                                              (
+                                                                                context,
+                                                                                provider,
+                                                                                child,
+                                                                              ) {
+                                                                                return IconButton(
+                                                                                  style: IconButton.styleFrom(
+                                                                                    foregroundColor: Colors.grey,
+                                                                                  ),
+                                                                                  onPressed: () {
+                                                                                    provider.resetTimer(
+                                                                                      currentHabit.id,
+                                                                                      selectedDate ??
+                                                                                          DateTime.now(),
+                                                                                    ); // sıfırla
+                                                                                  },
+                                                                                  icon: const Icon(
+                                                                                    Icons.refresh,
+                                                                                    size: 25,
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                        ),
+                                                                  ),
                                                                 ),
-                                                            child: LiquidGlass(
-                                                              shape: LiquidOval(),
-                                                              child: Consumer<HabitProvider>(
-                                                                builder:
-                                                                    (
-                                                                      context,
-                                                                      provider,
-                                                                      child,
-                                                                    ) {
-                                                                      final bool
-                                                                      isRunning =
-                                                                          (provider
-                                                                              .runningTimers[currentHabit
-                                                                              .id]) ??
-                                                                          false;
 
-                                                                      return IconButton(
-                                                                        style: IconButton.styleFrom(
-                                                                          foregroundColor:
-                                                                              Colors.grey,
-                                                                        ),
-                                                                        onPressed: () {
-                                                                          provider.resetTimer(
-                                                                            currentHabit
-                                                                                .id,
-                                                                          ); // sıfırla
-                                                                          if (isRunning) {
-                                                                            provider.toggleTimer(
-                                                                              currentHabit.id,
-                                                                              selectedDate ??
-                                                                                  DateTime.now(),
-                                                                            ); // timer'ı da durdur
-                                                                          }
-                                                                        },
-                                                                        icon: const Icon(
-                                                                          Icons
-                                                                              .refresh,
-                                                                          size:
-                                                                              25,
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                              ),
-                                                            ),
-                                                          ),
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets.all(
@@ -2131,8 +2169,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                   backgroundColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  shadowColor: Colors
-                                                                      .transparent, // Arka plan transparent ise gölgeyi de kaldırabilirsin
+                                                                  shadowColor:
+                                                                      Colors
+                                                                          .transparent, // Arka plan transparent ise gölgeyi de kaldırabilirsin
                                                                   shape:
                                                                       const StadiumBorder(),
                                                                   minimumSize: Size
@@ -2141,72 +2180,93 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                       MaterialTapTargetSize
                                                                           .shrinkWrap, // Tıklama alanını sıkıştırır
                                                                 ),
-                                                                onPressed: () =>
-                                                                    showTimeSelectorSheet(
-                                                                      context,
-                                                                      currentHabit,
-                                                                      selectedDate ??
-                                                                          DateTime.now(),
-                                                                    ),
-                                                                child: Text(
-                                                                  currentHabit
-                                                                      .getSecondsProgressForDate(
+                                                                onPressed: () {
+                                                                  currentHabit.isSkippedOnDate(
                                                                         selectedDate ??
                                                                             DateTime.now(),
                                                                       )
-                                                                      .toInt()
-                                                                      .formattedHMS,
-                                                                ),
+                                                                      ? currentHabit.unSkipOnDate(
+                                                                          selectedDate ??
+                                                                              DateTime.now(),
+                                                                        )
+                                                                      : showTimeSelectorSheet(
+                                                                          context,
+                                                                          currentHabit,
+                                                                          selectedDate ??
+                                                                              DateTime.now(),
+                                                                        );
+                                                                },
+                                                                child:
+                                                                    currentHabit.isSkippedOnDate(
+                                                                      selectedDate ??
+                                                                          DateTime.now(),
+                                                                    )
+                                                                    ? Text(
+                                                                        "Atlandı",
+                                                                      )
+                                                                    : Text(
+                                                                        currentHabit
+                                                                            .getSecondsProgressForDate(
+                                                                              selectedDate ??
+                                                                                  DateTime.now(),
+                                                                            )
+                                                                            .toInt()
+                                                                            .formattedHMS,
+                                                                      ),
                                                               ),
                                                             ),
                                                           ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets.all(
-                                                                  8.0,
+                                                          currentHabit.isSkippedOnDate(
+                                                                selectedDate ??
+                                                                    DateTime.now(),
+                                                              )
+                                                              ? Container()
+                                                              : Padding(
+                                                                  padding:
+                                                                      const EdgeInsets.all(
+                                                                        8.0,
+                                                                      ),
+                                                                  child: LiquidGlass(
+                                                                    shape:
+                                                                        LiquidOval(),
+                                                                    child:
+                                                                        Consumer<
+                                                                          HabitProvider
+                                                                        >(
+                                                                          builder:
+                                                                              (
+                                                                                context,
+                                                                                provider,
+                                                                                child,
+                                                                              ) {
+                                                                                final bool
+                                                                                isRunning =
+                                                                                    provider.runningTimers[currentHabit.id] ??
+                                                                                    false;
+
+                                                                                return IconButton(
+                                                                                  style: IconButton.styleFrom(
+                                                                                    foregroundColor: Colors.grey,
+                                                                                  ),
+                                                                                  onPressed: () {
+                                                                                    provider.toggleTimer(
+                                                                                      currentHabit.id,
+
+                                                                                      selectedDate ??
+                                                                                          DateTime.now(),
+                                                                                    );
+                                                                                  },
+                                                                                  icon: Icon(
+                                                                                    isRunning
+                                                                                        ? Icons.pause
+                                                                                        : Icons.play_arrow,
+                                                                                    size: 25,
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                        ),
+                                                                  ),
                                                                 ),
-                                                            child: LiquidGlass(
-                                                              shape: LiquidOval(),
-                                                              child: Consumer<HabitProvider>(
-                                                                builder:
-                                                                    (
-                                                                      context,
-                                                                      provider,
-                                                                      child,
-                                                                    ) {
-                                                                      final bool
-                                                                      isRunning =
-                                                                          provider
-                                                                              .runningTimers[currentHabit
-                                                                              .id] ??
-                                                                          false;
-
-                                                                      return IconButton(
-                                                                        style: IconButton.styleFrom(
-                                                                          foregroundColor:
-                                                                              Colors.grey,
-                                                                        ),
-                                                                        onPressed: () {
-                                                                          provider.toggleTimer(
-                                                                            currentHabit
-                                                                                .id,
-
-                                                                            selectedDate ??
-                                                                                DateTime.now(),
-                                                                          );
-                                                                        },
-                                                                        icon: Icon(
-                                                                          isRunning
-                                                                              ? Icons.pause
-                                                                              : Icons.play_arrow,
-                                                                          size:
-                                                                              25,
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                              ),
-                                                            ),
-                                                          ),
                                                         ],
                                                       ),
                                                     )
