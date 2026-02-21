@@ -84,6 +84,10 @@ import 'package:hbttrckr/views/habits_page.dart';
 //
 //  TODO: habit düzenlemede süreyi felan değiştirme yok ??
 //
+//  TODO: habit skip /unskip etme providera taşınmalı
+//
+//  TODO: detail screende GELECEKTE habit yapılma oranı değiştirilebiliyor ??
+//
 //  Linux için google sign-in (firebase auth gerekli google sign-inde sıkıntı yok)
 //
 //  mobilde transparanlık araştırılacak
