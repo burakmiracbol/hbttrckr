@@ -34,38 +34,59 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+
   shared_preferences: ^2.5.4
+
   timezone: ^0.10.1
+
   flutter_colorpicker: ^1.1.0
+
   provider: ^6.1.5+1
+
   custom_adaptive_scaffold: ^2.0.2
   fluent_ui: ^4.13.0
+
   fl_chart: ^1.1.1
+
   numberpicker: ^2.1.2
+
   wheel_slider: ^1.2.2
+
   lottie: ^3.3.2
   intl: ^0.20.2
+
   flutter_neat_and_clean_calendar: ^0.4.16
+  conditional_wrap: ^3.0.0
   table_calendar: ^3.2.0
   flutter_pickers: ^2.2.0
   time_range_selector_widget: ^2.0.2
   file_picker: ^10.3.10
   flutter_inset_box_shadow: ^1.0.8
   liquid_glass_renderer: ^0.2.0-dev.4
+
   bitsdojo_window: ^0.1.6
+
   flutter_acrylic: ^1.1.4
+
   desktop_multi_window: ^0.3.0
+
+
   fleather: ^1.26.0
   flutter_quill: ^11.5.0
   zefyrka_new: ^1.0.1
   flutter_quill_extensions: ^11.0.0
+
   image_picker: ^1.2.1
+
   flutter_local_notifications: ^20.0.0
   flutter_timezone: ^5.0.1
+
   icon_picker: ^2.1.0
   flutter_iconpicker: ^4.0.3
+
   screenshot: ^3.0.0
   path_provider: ^2.1.5
+
   flutter_staggered_grid_view: ^0.7.0
   multi_split_view: ^3.6.1
   macos_ui: ^2.2.2
