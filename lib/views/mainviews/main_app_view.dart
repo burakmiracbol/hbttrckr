@@ -88,6 +88,8 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: habit skip / unskip etme providera taşınmalı
 //
+//  TODO: ekleene her tasarım değişkeni aynı zamanda shared preferences ile kaydedilmeli
+//
 //  TODO: navigation rail ile mobil scaffold geçişi düzeltilmeli
 //
 //  gridview düzeltmesi habitspage
@@ -560,7 +562,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
         elevation: 0, // Glass arkasında gölge karmaşası olmasın
         backgroundColor: Colors.transparent,
         onPressed: () => showAddHabitSheet(context),
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add, color: context.watch<CurrentThemeMode>().isDarkMode? Colors.white: Colors.black),
       ),
     );
   }
