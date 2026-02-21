@@ -110,7 +110,7 @@ class HabitProvider with ChangeNotifier {
     );
   }
 
-  void resetTimer(String habitId) {
+  void resetTimer(String habitId, DateTime thatDate) {
     final index = _habits.indexWhere((h) => h.id == habitId);
     if (index == -1) return;
 
@@ -122,6 +122,8 @@ class HabitProvider with ChangeNotifier {
       selectedDate!.month,
       selectedDate!.day,
     );
+
+    toggleTimer(habitId, thatDate);
 
     final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
     newProgress[targetDate] = 0; // bugünki süreyi sıfırla
