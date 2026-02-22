@@ -43,6 +43,7 @@ class EachHabitTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(320)),
         color: habit.color.withValues(alpha: 0.2),
         child: ListTile(
+
           onTap: () => onHabitTapped(habit),
 
           onLongPress: () {
@@ -69,14 +70,17 @@ class EachHabitTile extends StatelessWidget {
               ),
             );
           },
+
           leading: CircleAvatar(
             backgroundColor: habit.color,
             child: Icon(habit.icon),
           ),
+
           title: Text(
             habit.name,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
+
           subtitle: Text(
             isFuture || isTooLate
                 ? " "
@@ -98,6 +102,7 @@ class EachHabitTile extends StatelessWidget {
                 ? 'Tamamlandı'
                 : 'Yapılmadı',
           ),
+
           trailing: isFuture || isTooLate
               ? habit.type == HabitType.task
                     ? IconButton(

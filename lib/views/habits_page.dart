@@ -20,8 +20,6 @@ import 'package:hbttrckr/classes/each_habit_grid_tile.dart';
 import 'package:hbttrckr/classes/each_habit_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/classes/habit.dart';
-import '../extensions/duration_formatter.dart';
-import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:hbttrckr/providers/style_provider.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
