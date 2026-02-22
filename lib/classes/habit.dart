@@ -111,7 +111,7 @@ class Habit {
     return false;
   }
 
-  // === STRENGTH HESAPLAMASI (getter) ===
+  // === Strength Hesaplaması ===
   /// Alışkanlığın genel gücü (0.0 - 100.0)
   /// Formül:
   ///   - %50 → son 30 gün tamamlanma oranı
@@ -206,46 +206,15 @@ class Habit {
 
       status.add(doneRateOfThatDay);
     }
-
     // status[0] = 30 gün önce, status[29] = bugün
     // bugün en sonda olsun diye reversed yapıyoruz
     return status.reversed.toList();
   }
 
-  // === DİĞER GETTER'LAR ===
-
-  // Gün skip edildi mi?
   bool isSkippedOnDate(DateTime date) {
     final normalized = DateTime(date.year, date.month, date.day);
     final value = dailyProgress[normalized];
     return value == "skipped";
-  }
-
-  // Gün skip et
-  Habit skipOnDate(DateTime date) {
-    final normalized = DateTime(date.year, date.month, date.day);
-    final newProgress = Map<DateTime, dynamic>.from(dailyProgress);
-    newProgress[normalized] = "skipped"; // skip işaretle
-
-    return copyWith(dailyProgress: newProgress);
-  }
-
-  // Skip’i geri al (normal hale getir, progress 0 olsun)
-  Habit unSkipOnDate(DateTime date) {
-    final normalized = DateTime(date.year, date.month, date.day);
-    if (!isSkippedOnDate(date)) return this;
-
-    final newProgress = Map<DateTime, dynamic>.from(dailyProgress);
-
-    if (type == HabitType.task) {
-      newProgress[normalized] = false;
-
-      return copyWith(dailyProgress: newProgress);
-    } else {
-      // For count/time habits, set progress to 0
-      newProgress[normalized] = 0;
-      return copyWith(dailyProgress: newProgress);
-    }
   }
 
   Habit copyWith({

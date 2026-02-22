@@ -88,7 +88,7 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: habitspage de action butonları atlandığı zaman skip next olmalı ve basınca unskip olmalı
 //
-//  TODO: ekleene her tasarım değişkeni aynı zamanda shared preferences ile kaydedilmeli
+//  TODO: eklenen her tasarım değişkeni aynı zamanda shared preferences ile kaydedilmeli
 //
 //  TODO: navigation rail ile mobil scaffold geçişi düzeltilmeli
 //
