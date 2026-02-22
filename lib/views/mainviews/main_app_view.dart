@@ -94,6 +94,12 @@ import '../../providers/style_provider.dart';
 //
 //  gridview düzeltmesi habitspage
 //
+//  habitspage calendar d istersek hafta stili istersek ay stili görüntüleme felan
+//
+//  detail screende calendarda istersen month istersen week olarak görüntüleme
+//
+//  """""""""" aynısı statsview de lazım yukarı bak
+//
 //  eski tarihlerde eski tarihlerin istatistikleri gösterilsin mesela bugüne kadar 5 streak ar ise dünü açınca 4 gözüksün
 //
 //  Linux için google sign-in (firebase auth gerekli google sign-inde sıkıntı yok)

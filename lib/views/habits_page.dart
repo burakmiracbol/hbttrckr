@@ -14,22 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:hbttrckr/classes/glass_card.dart';
-import 'package:hbttrckr/providers/style_provider.dart';
-import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
+import 'package:hbttrckr/classes/each_habit_tile.dart';
 import 'package:provider/provider.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:hbttrckr/classes/habit.dart';
+import '../extensions/duration_formatter.dart';
+import 'package:hbttrckr/classes/glass_card.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:hbttrckr/providers/style_provider.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/views/mainviews/main_app_view.dart';
-import 'dart:async';
-
-import '../extensions/duration_formatter.dart';
-
-// TODO : calendarda task türünden yapılanları işaretliyor diğer türleri değil
-// TODO : calendar habitlerin hangi günde olduğunu biliyor ama hangi günde ne kadar bittiğini bilmiyor
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 Widget buildHabitsPage({
   required List<Habit> habits,
@@ -54,6 +51,7 @@ Widget buildHabitsPage({
         child: SingleChildScrollView(
           child: Column(
             children: [
+              // Calender (week style but we wanna add to change to month or so if yo want)
               Container(
                 margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                 decoration: BoxDecoration(
@@ -178,7 +176,7 @@ Widget buildHabitsPage({
                 ),
               ),
 
-
+              // Grup filter chipleri
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: SingleChildScrollView(
@@ -244,6 +242,7 @@ Widget buildHabitsPage({
                 ),
               ),
 
+              // Habitler
               Consumer<HabitProvider>(
                 builder: (context, provider, child) {
                   final selectedDate = provider.selectedDate ?? DateTime.now();
@@ -304,251 +303,12 @@ Widget buildHabitsPage({
                         ? Column(
                             children: [
                               ...visibleHabitsByGroup.map(
-                                (habit) => Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    8.0,
-                                    2.0,
-                                    8.0,
-                                    2.0,
-                                  ),
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(320),
-                                    ),
-                                    color: habit.color.withValues(alpha: 0.2),
-                                    child: ListTile(
-                                      onTap: () => onHabitTapped(habit),
-
-                                      onLongPress: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (ctx) => AlertDialog(
-                                            title: Text('Silinsin mi?'),
-                                            content: Text(
-                                              '${habit.name} alışkanlığını silmek istediğinden emin misin?',
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(ctx),
-                                                child: Text('İptal'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  context
-                                                      .read<HabitProvider>()
-                                                      .deleteHabit(habit.id);
-                                                  Navigator.pop(ctx);
-                                                },
-                                                child: Text(
-                                                  'Sil',
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                      leading: CircleAvatar(
-                                        backgroundColor: habit.color,
-                                        child: Icon(habit.icon),
-                                      ),
-                                      title: Text(
-                                        habit.name,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        isFuture || isTooLate
-                                            ? " "
-                                            : habit.type == HabitType.task
-                                            ? habit.isSkippedOnDate(
-                                                    selectedDate,
-                                                  )
-                                                  ? "Atlandı"
-                                                  : (habit.isCompletedOnDate(
-                                                          selectedDate,
-                                                        )
-                                                        ? 'Tamamlandı'
-                                                        : 'Yapılmadı')
-                                            : habit.type == HabitType.count
-                                            ? habit.isSkippedOnDate(
-                                                    selectedDate,
-                                                  )
-                                                  ? "Atlandı"
-                                                  : '${habit.getCountProgressForDate(selectedDate)} / ${habit.targetCount?.toInt() ?? '?'}'
-                                            : habit.type == HabitType.time
-                                            ? habit.isSkippedOnDate(
-                                                    selectedDate,
-                                                  )
-                                                  ? "Atlandı"
-                                                  : '${habit.getSecondsProgressForDate(selectedDate).formattedHMS} / ${habit.targetSeconds?.toInt().formattedHMS} '
-                                            : habit.isCompletedOnDate(
-                                                selectedDate,
-                                              )
-                                            ? 'Tamamlandı'
-                                            : 'Yapılmadı',
-                                      ),
-                                      trailing: isFuture || isTooLate
-                                          ? habit.type == HabitType.task
-                                                ? IconButton(
-                                                    style: IconButton.styleFrom(
-                                                      foregroundColor:
-                                                          Colors.grey,
-                                                    ),
-                                                    icon: Icon(
-                                                      Icons
-                                                          .radio_button_unchecked,
-                                                      size: 25,
-                                                    ),
-                                                    onPressed: () {},
-                                                  )
-                                                : habit.type == HabitType.count
-                                                ? IconButton(
-                                                    style: IconButton.styleFrom(
-                                                      foregroundColor:
-                                                          Colors.grey,
-                                                    ),
-                                                    icon: Icon(
-                                                      Icons.add_outlined,
-                                                      size: 25,
-                                                    ),
-                                                    onPressed: () {},
-                                                  )
-                                                : habit.type == HabitType.time
-                                                ? IconButton(
-                                                    style: IconButton.styleFrom(
-                                                      foregroundColor:
-                                                          Colors.grey,
-                                                    ),
-                                                    icon: Icon(
-                                                      Icons.play_arrow,
-                                                      size: 25,
-                                                    ),
-                                                    onPressed: () {},
-                                                  )
-                                                : IconButton(
-                                                    style: IconButton.styleFrom(
-                                                      foregroundColor:
-                                                          Colors.grey,
-                                                    ),
-                                                    icon: Icon(
-                                                      Icons
-                                                          .radio_button_unchecked,
-                                                      size: 25,
-                                                    ),
-                                                    onPressed: () {},
-                                                  )
-                                          : habit.type == HabitType.task
-                                          ? IconButton(
-                                              style: IconButton.styleFrom(
-                                                foregroundColor:
-                                                    habit.isCompletedOnDate(
-                                                      selectedDate,
-                                                    )
-                                                    ? Colors.green
-                                                    : Colors.grey,
-                                              ),
-                                              icon: Icon(
-                                                habit.isCompletedOnDate(
-                                                      selectedDate,
-                                                    )
-                                                    ? Icons.check_circle
-                                                    : Icons
-                                                          .radio_button_unchecked,
-                                                size: 25,
-                                              ),
-                                              onPressed: () {
-                                                context
-                                                    .read<HabitProvider>()
-                                                    .toggleTaskCompletion(
-                                                      habit.id,
-                                                    );
-                                              },
-                                            )
-                                          : habit.type == HabitType.count
-                                          ? IconButton(
-                                              style: IconButton.styleFrom(
-                                                foregroundColor:
-                                                    habit.isCompletedOnDate(
-                                                      selectedDate,
-                                                    )
-                                                    ? Colors.green
-                                                    : Colors.grey,
-                                              ),
-                                              icon: Icon(
-                                                habit.isCompletedOnDate(
-                                                      selectedDate,
-                                                    )
-                                                    ? Icons.add
-                                                    : Icons.add_outlined,
-                                                size: 25,
-                                              ),
-                                              onPressed: () {
-                                                context
-                                                    .read<HabitProvider>()
-                                                    .incrementCount(habit.id);
-                                              },
-                                            )
-                                          : habit.type == HabitType.time
-                                          ? Consumer<HabitProvider>(
-                                              builder: (context, provider, child) {
-                                                final bool isRunning =
-                                                    provider.runningTimers[habit
-                                                        .id] ??
-                                                    false;
-
-                                                return IconButton(
-                                                  style: IconButton.styleFrom(
-                                                    foregroundColor:
-                                                        habit.isCompletedOnDate(
-                                                          selectedDate,
-                                                        )
-                                                        ? Colors.green
-                                                        : Colors.grey,
-                                                  ),
-                                                  onPressed: () {
-                                                    provider.toggleTimer(
-                                                      habit.id,
-                                                      selectedDate,
-                                                    );
-                                                  },
-                                                  icon: Icon(
-                                                    isRunning &&
-                                                            provider.extraDate ==
-                                                                selectedDate
-                                                        ? Icons.pause
-                                                        : Icons.play_arrow,
-                                                    size: 25,
-                                                  ),
-                                                );
-                                              },
-                                            )
-                                          : IconButton(
-                                              style: IconButton.styleFrom(
-                                                foregroundColor:
-                                                    habit.isCompletedOnDate(
-                                                      selectedDate,
-                                                    )
-                                                    ? Colors.green
-                                                    : Colors.grey,
-                                              ),
-                                              icon: Icon(
-                                                habit.isCompletedOnDate(
-                                                      selectedDate,
-                                                    )
-                                                    ? Icons.check_circle
-                                                    : Icons
-                                                          .radio_button_unchecked,
-                                                size: 25,
-                                              ),
-                                              onPressed: () {},
-                                            ),
-                                    ),
-                                  ),
+                                (habit) => EachHabitTile(
+                                  isFuture: isFuture,
+                                  isTooLate: isTooLate,
+                                  selectedDate: selectedDate,
+                                  onHabitTapped: onHabitTapped,
+                                  habit: habit,
                                 ),
                               ),
                             ],
