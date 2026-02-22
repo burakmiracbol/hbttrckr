@@ -174,6 +174,53 @@ class HabitProvider with ChangeNotifier {
     _saveHabits();
   }
 
+  void changeSkipOnDate(String habitId, {DateTime? extraDate}){
+    final index = _habits.indexWhere((h) => h.id == habitId);
+    if (index == -1) return;
+
+    final habit = _habits[index];
+
+    if (extraDate != null) {
+      final extraDateX = DateTime(
+        extraDate.year,
+        extraDate.month,
+        extraDate.day,
+      );
+
+      if(habit.dailyProgress[extraDateX] == "skipped"){
+        final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
+        newProgress[extraDateX] = null;
+        _habits[index] = habit.copyWith(dailyProgress: newProgress);
+      } else{
+        final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
+        newProgress[extraDateX] = "skipped";
+        _habits[index] = habit.copyWith(dailyProgress: newProgress);
+      }
+
+    } else {
+
+      final targetDate = DateTime(
+        selectedDate!.year,
+        selectedDate!.month,
+        selectedDate!.day,
+      );
+
+      if(habit.dailyProgress[targetDate] == "skipped"){
+        final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
+        newProgress[targetDate] = null;
+        _habits[index] = habit.copyWith(dailyProgress: newProgress);
+      } else{
+        final newProgress = Map<DateTime, dynamic>.from(habit.dailyProgress);
+        newProgress[targetDate] = "skipped";
+        _habits[index] = habit.copyWith(dailyProgress: newProgress);
+      }
+
+    }
+
+    notifyListeners();
+    _saveHabits();
+  }
+
   void toggleTimer(String habitId, DateTime thatDate) {
 
     if (runningTimers[habitId] == true) {

@@ -24,7 +24,6 @@ import '../actions/detail_screen/time_selector_sheet.dart';
 import '../extensions/duration_formatter.dart';
 import 'liquid_wrapper.dart';
 
-
 class ActionsForHabit extends StatelessWidget {
   final bool isLiquidBackground;
   final String habitId;
@@ -58,24 +57,18 @@ class ActionsForHabit extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: IconButton(
                         onPressed: () {
-                          currentHabit.isSkippedOnDate(
-                                selectedDate,
-                              )
-                              ? currentHabit.unSkipOnDate(
-                                  selectedDate,
+                          currentHabit.isSkippedOnDate(selectedDate)
+                              ? context.read<HabitProvider>().changeSkipOnDate(
+                                  currentHabit.id,
+                                  extraDate: selectedDate,
                                 )
                               : context
                                     .read<HabitProvider>()
                                     .toggleTaskCompletion(currentHabit.id);
                         },
-                        icon:
-                            currentHabit.isSkippedOnDate(
-                              selectedDate,
-                            )
+                        icon: currentHabit.isSkippedOnDate(selectedDate)
                             ? Icon(Icons.skip_next)
-                            : currentHabit.isCompletedOnDate(
-                                selectedDate,
-                              )
+                            : currentHabit.isCompletedOnDate(selectedDate)
                             ? const Icon(Icons.done, color: Colors.green)
                             : const Icon(Icons.circle_outlined),
                         style: IconButton.styleFrom(
@@ -89,29 +82,26 @@ class ActionsForHabit extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          currentHabit.isSkippedOnDate(
-                                selectedDate,
-                              )
+                          currentHabit.isSkippedOnDate(selectedDate)
                               ? Container()
                               : Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: LiquidWrapper(
                                     statement: isLiquidBackground,
-                                    shape: LiquidRoundedRectangle(borderRadius: 160),
+                                    shape: LiquidRoundedRectangle(
+                                      borderRadius: 160,
+                                    ),
                                     child: AspectRatio(
                                       aspectRatio: 1,
                                       child: IconButton(
                                         style: IconButton.styleFrom(
-                                          backgroundColor: currentHabit
-                                              .color
+                                          backgroundColor: currentHabit.color
                                               .withValues(alpha: 0.2),
                                         ),
                                         onPressed: () {
                                           context
                                               .read<HabitProvider>()
-                                              .incrementCount(
-                                                currentHabit.id,
-                                              );
+                                              .incrementCount(currentHabit.id);
                                         },
                                         icon: Icon(Icons.add),
                                       ),
@@ -136,18 +126,17 @@ class ActionsForHabit extends StatelessWidget {
                                   shadowColor: Colors
                                       .transparent, // Arka plan transparent ise gölgeyi de kaldırabilirsin
                                   shape: const StadiumBorder(),
-                                  minimumSize: Size
-                                      .zero, // Boyut sınırlamasını kaldırır
+                                  minimumSize:
+                                      Size.zero, // Boyut sınırlamasını kaldırır
                                   tapTargetSize: MaterialTapTargetSize
                                       .shrinkWrap, // Tıklama alanını sıkıştırır
                                 ),
                                 onPressed: () {
-                                  currentHabit.isSkippedOnDate(
-                                        selectedDate,
-                                      )
-                                      ? currentHabit.unSkipOnDate(
-                                          selectedDate,
-                                        )
+                                  currentHabit.isSkippedOnDate(selectedDate)
+                                      ? context.read<HabitProvider>().changeSkipOnDate(
+                                    currentHabit.id,
+                                    extraDate: selectedDate,
+                                  )
                                       : showCountSelectorSheet(
                                           selectedDate,
                                           context,
@@ -156,9 +145,7 @@ class ActionsForHabit extends StatelessWidget {
                                         );
                                 },
                                 child:
-                                    currentHabit.isSkippedOnDate(
-                                      selectedDate,
-                                    )
+                                    currentHabit.isSkippedOnDate(selectedDate)
                                     ? Text("Atlandı")
                                     : Text(
                                         "${currentHabit.getCountProgressForDate(selectedDate)}",
@@ -167,29 +154,26 @@ class ActionsForHabit extends StatelessWidget {
                             ),
                           ),
 
-                          currentHabit.isSkippedOnDate(
-                                selectedDate,
-                              )
+                          currentHabit.isSkippedOnDate(selectedDate)
                               ? Container()
                               : Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: LiquidWrapper(
                                     statement: isLiquidBackground,
-                                    shape: LiquidRoundedRectangle(borderRadius: 160),
+                                    shape: LiquidRoundedRectangle(
+                                      borderRadius: 160,
+                                    ),
                                     child: AspectRatio(
                                       aspectRatio: 1,
                                       child: IconButton(
                                         style: IconButton.styleFrom(
-                                          backgroundColor: currentHabit
-                                              .color
+                                          backgroundColor: currentHabit.color
                                               .withValues(alpha: 0.2),
                                         ),
                                         onPressed: () {
                                           context
                                               .read<HabitProvider>()
-                                              .decrementCount(
-                                                currentHabit.id,
-                                              );
+                                              .decrementCount(currentHabit.id);
                                         },
                                         icon: Icon(Icons.remove),
                                       ),
@@ -205,15 +189,15 @@ class ActionsForHabit extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          currentHabit.isSkippedOnDate(
-                                selectedDate,
-                              )
+                          currentHabit.isSkippedOnDate(selectedDate)
                               ? Container()
                               : Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: LiquidWrapper(
                                     statement: isLiquidBackground,
-                                    shape: LiquidRoundedRectangle(borderRadius: 160),
+                                    shape: LiquidRoundedRectangle(
+                                      borderRadius: 160,
+                                    ),
                                     child: Consumer<HabitProvider>(
                                       builder: (context, provider, child) {
                                         return IconButton(
@@ -223,7 +207,7 @@ class ActionsForHabit extends StatelessWidget {
                                           onPressed: () {
                                             provider.resetTimer(
                                               currentHabit.id,
-                                              selectedDate ,
+                                              selectedDate,
                                             ); // sıfırla
                                           },
                                           icon: const Icon(
@@ -247,18 +231,17 @@ class ActionsForHabit extends StatelessWidget {
                                   shadowColor: Colors
                                       .transparent, // Arka plan transparent ise gölgeyi de kaldırabilirsin
                                   shape: const StadiumBorder(),
-                                  minimumSize: Size
-                                      .zero, // Boyut sınırlamasını kaldırır
+                                  minimumSize:
+                                      Size.zero, // Boyut sınırlamasını kaldırır
                                   tapTargetSize: MaterialTapTargetSize
                                       .shrinkWrap, // Tıklama alanını sıkıştırır
                                 ),
                                 onPressed: () {
-                                  currentHabit.isSkippedOnDate(
-                                        selectedDate,
-                                      )
-                                      ? currentHabit.unSkipOnDate(
-                                          selectedDate,
-                                        )
+                                  currentHabit.isSkippedOnDate(selectedDate)
+                                      ? context.read<HabitProvider>().changeSkipOnDate(
+                                    currentHabit.id,
+                                    extraDate: selectedDate,
+                                  )
                                       : showTimeSelectorSheet(
                                           context,
                                           currentHabit,
@@ -266,14 +249,12 @@ class ActionsForHabit extends StatelessWidget {
                                         );
                                 },
                                 child:
-                                    currentHabit.isSkippedOnDate(
-                                      selectedDate,
-                                    )
+                                    currentHabit.isSkippedOnDate(selectedDate)
                                     ? Text("Atlandı")
                                     : Text(
                                         currentHabit
                                             .getSecondsProgressForDate(
-                                              selectedDate ,
+                                              selectedDate,
                                             )
                                             .toInt()
                                             .formattedHMS,
@@ -281,20 +262,19 @@ class ActionsForHabit extends StatelessWidget {
                               ),
                             ),
                           ),
-                          currentHabit.isSkippedOnDate(
-                                selectedDate,
-                              )
+                          currentHabit.isSkippedOnDate(selectedDate)
                               ? Container()
                               : Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: LiquidWrapper(
                                     statement: isLiquidBackground,
-                                    shape: LiquidRoundedRectangle(borderRadius: 160),
+                                    shape: LiquidRoundedRectangle(
+                                      borderRadius: 160,
+                                    ),
                                     child: Consumer<HabitProvider>(
                                       builder: (context, provider, child) {
                                         final bool isRunning =
-                                            provider
-                                                .runningTimers[currentHabit
+                                            provider.runningTimers[currentHabit
                                                 .id] ??
                                             false;
 
@@ -306,7 +286,7 @@ class ActionsForHabit extends StatelessWidget {
                                             provider.toggleTimer(
                                               currentHabit.id,
 
-                                              selectedDate ,
+                                              selectedDate,
                                             );
                                           },
                                           icon: Icon(

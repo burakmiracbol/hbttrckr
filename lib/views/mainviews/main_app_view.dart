@@ -86,7 +86,7 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: habit düzenlemede hedef süreyi felan değiştirme yok ??
 //
-//  TODO: habit skip / unskip etme providera taşınmalı
+//  TODO: habitspage de action butonları atlandığı zaman skip next olmalı ve basınca unskip olmalı
 //
 //  TODO: ekleene her tasarım değişkeni aynı zamanda shared preferences ile kaydedilmeli
 //

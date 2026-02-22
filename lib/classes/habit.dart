@@ -248,7 +248,6 @@ class Habit {
     }
   }
 
-  // === COPYWITH (TÜM ALANLAR) ===
   Habit copyWith({
     String? id,
     String? name,

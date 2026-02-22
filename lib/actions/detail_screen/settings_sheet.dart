@@ -14,14 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/actions/detail_screen/resign_sheet.dart';
 import 'package:hbttrckr/actions/detail_screen/share_sheet.dart';
 import 'package:provider/provider.dart';
-import '../../classes/all_widgets.dart';
-import '../../classes/habit.dart';
-import '../../providers/habit_provider.dart';
+import 'package:hbttrckr/classes/all_widgets.dart';
+import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/providers/habit_provider.dart';
 import 'delete_dialog.dart';
 
 void detailSettingsSheet(
@@ -63,7 +62,10 @@ void detailSettingsSheet(
               "Bu oturum şu an ${currentHabit.isSkippedOnDate(selectedDate) ? "atlanmış" : "atlanmamış"}",
             ),
             onTap: () {
-              context.read<HabitProvider>().changeSkipHabit(currentHabit.id);
+              context.read<HabitProvider>().changeSkipOnDate(
+                currentHabit.id,
+                extraDate: selectedDate,
+              );
             },
           ),
 
