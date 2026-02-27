@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';

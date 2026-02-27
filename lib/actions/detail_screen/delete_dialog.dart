@@ -17,7 +17,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../classes/habit.dart';
+
+import 'package:hbttrckr/data_types/habit.dart';
 import '../../providers/habit_provider.dart';
 import '../../views/mainviews/main_app_view.dart';
 

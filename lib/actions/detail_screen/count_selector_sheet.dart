@@ -16,10 +16,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/providers/style_provider.dart';
-import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
-import '../../classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 import '../../providers/habit_provider.dart';
 import '../../classes/all_widgets.dart';
 

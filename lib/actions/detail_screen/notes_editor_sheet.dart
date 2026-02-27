@@ -22,7 +22,7 @@ import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import '../../classes/all_widgets.dart';
-import '../../classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 
 
 Future<String?> showNotesEditorSheet(BuildContext context, Habit current ) async {

@@ -19,7 +19,7 @@ import 'package:hbttrckr/actions/detail_screen/resign_sheet.dart';
 import 'package:hbttrckr/actions/detail_screen/share_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/classes/all_widgets.dart';
-import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'delete_dialog.dart';
 

@@ -17,6 +17,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
+import '../providers/habit_provider.dart';
+
 enum HabitType {
   task, // Sadece yapmalı
   count, // Sayılı (5 push-up)
@@ -25,19 +27,19 @@ enum HabitType {
 
 class Habit {
   final String id;
-  final String name;
-  final String description;
-  final Color color;
+  final String name; // tamam
+  final String description; // tamam
+  final Color color; // tamam
   final DateTime createdAt;
   final TimeOfDay? reminderTime;
   final Set<int>? reminderDays;
   final HabitType type;
-  final String? group;
-  final IconData icon;
+  final String? group; // tamam
+  final IconData icon; // tamam
   final double? targetCount;
   final double? targetSeconds;
-  final Map<DateTime, dynamic> dailyProgress;
-  final String? notesDelta;
+  final Map<DateTime, dynamic> dailyProgress; // tamam
+  final String? notesDelta; // tamam
 
   Habit({
     required this.id,
@@ -55,18 +57,6 @@ class Habit {
     Map<DateTime, dynamic>? dailyProgress,
     this.notesDelta,
   }) : dailyProgress = dailyProgress ?? {};
-
-  @Deprecated("tarihe göre alıma geçilmesi önerilir eğer bugünün değerini görmek istiyorsanız basitçe tarih olarak bugünü yollayın")
-  int get todayCountProgress => getCountProgressForDate(DateTime.now());
-
-  @Deprecated("tarihe göre alıma geçilmesi önerilir eğer bugünün değerini görmek istiyorsanız basitçe tarih olarak bugünü yollayın")
-  int get todaySecondsProgress => getSecondsProgressForDate(DateTime.now());
-
-  @Deprecated("tarihe göre alıma geçilmesi önerilir eğer bugünün değerini görmek istiyorsanız basitçe tarih olarak bugünü yollayın")
-  bool get isDoneToday => isCompletedOnDate(DateTime.now());
-
-  @Deprecated("tarihe göre alıma geçilmesi önerilir eğer bugünün değerini görmek istiyorsanız basitçe tarih olarak bugünü yollayın")
-  bool isCompletedToday() => isCompletedOnDate(DateTime.now());
 
   // Seçilen tarihe göre count progress (bugün yerine)
   int getCountProgressForDate(DateTime date) {
@@ -121,7 +111,9 @@ class Habit {
   double get strength {
     // 1. Son 30 gün tamamlanma oranı (%50 ağırlık)
     final last30 = last30DaysStatus;
-    double completionRate30 = last30.fold(0.0, (previousValue, element) => previousValue + element,) / 30;
+    double completionRate30 =
+        last30.fold(0.0, (previousValue, element) => previousValue + element) /
+        30;
     double score = completionRate30 * 50;
 
     // 2. Mevcut streak (%30 ağırlık, max 30 gün)
@@ -132,22 +124,31 @@ class Habit {
     double totalCompletedDays = 0.0;
 
     if (type == HabitType.task) {
-      totalCompletedDays = dailyProgress.keys.where((date) {
-        final value = dailyProgress[date];
-        return value == true;
-      }).length.toDouble();
+      totalCompletedDays = dailyProgress.keys
+          .where((date) {
+            final value = dailyProgress[date];
+            return value == true;
+          })
+          .length
+          .toDouble();
     } else if (type == HabitType.count) {
-      totalCompletedDays = dailyProgress.values.map((v) {
-        final achieved = (v is num) ? v.toDouble() : 0.0;
-        final t = targetCount ?? 1.0;
-        return (achieved >= t) ? 1.0 : (achieved / t);
-      }).fold(0.0, (previousValue, element) => previousValue + element);
+      totalCompletedDays = dailyProgress.values
+          .map((v) {
+            final achieved = (v is num) ? v.toDouble() : 0.0;
+            final t = targetCount ?? 1.0;
+            return (achieved >= t) ? 1.0 : (achieved / t);
+          })
+          .fold(0.0, (previousValue, element) => previousValue + element);
     } else if (type == HabitType.time) {
-      totalCompletedDays = dailyProgress.values.map((v) {
-        final achievedSecs = (v is num) ? v.toDouble() : 0.0;
-        final targetSecs = targetSeconds ?? 60.0;
-        return (achievedSecs >= targetSecs) ? 1.0 : (achievedSecs / targetSecs);
-      }).fold(0.0, (previousValue, element) => previousValue + element);
+      totalCompletedDays = dailyProgress.values
+          .map((v) {
+            final achievedSecs = (v is num) ? v.toDouble() : 0.0;
+            final targetSecs = targetSeconds ?? 60.0;
+            return (achievedSecs >= targetSecs)
+                ? 1.0
+                : (achievedSecs / targetSecs);
+          })
+          .fold(0.0, (previousValue, element) => previousValue + element);
     }
 
     final longevityScore = (totalCompletedDays / 200.0).clamp(0.0, 1.0) * 20.0;
@@ -192,16 +193,20 @@ class Habit {
 
       if (type == HabitType.task) {
         final val = dailyProgress[day];
-        doneRateOfThatDay = val == true ? 1 : 0 ;
+        doneRateOfThatDay = val == true ? 1 : 0;
       } else if (type == HabitType.count) {
         final value = dailyProgress[day];
         final double achieved = (value is num) ? value.toDouble() : 0;
-        doneRateOfThatDay = achieved >= (targetCount ?? 1) ? 1 : achieved / (targetCount ?? 1) ;
+        doneRateOfThatDay = achieved >= (targetCount ?? 1)
+            ? 1
+            : achieved / (targetCount ?? 1);
       } else if (type == HabitType.time) {
         final value = dailyProgress[day];
         final double achievedSecs = (value is num) ? value.toDouble() : 0;
         final double targetSecs = targetSeconds ?? 60; // default 1 dakika
-        doneRateOfThatDay = achievedSecs >= targetSecs ? 1 : achievedSecs / targetSecs ;
+        doneRateOfThatDay = achievedSecs >= targetSecs
+            ? 1
+            : achievedSecs / targetSecs;
       }
 
       status.add(doneRateOfThatDay);
@@ -233,6 +238,60 @@ class Habit {
     Map<DateTime, dynamic>? dailyProgress,
     String? notesDelta,
   }) {
+    // 1. Gelen yeni değerleri veya mevcut değerleri belirle
+    final HabitType newType = type ?? this.type;
+    final double newTargetCount = targetCount ?? this.targetCount ?? 1;
+    final double newTargetSeconds = targetSeconds ?? this.targetSeconds ?? 1;
+
+    // 2. Map kopyasını oluştur (Original veriyi bozmamak için şart)
+    Map<DateTime, dynamic> updatedProgress = dailyProgress != null
+        ? Map.from(dailyProgress)
+        : Map.from(this.dailyProgress);
+
+    // 3. Tip gerçekten değiştiyse senin mantığını işlet
+    if (type != null && this.type != type) {
+      for (final date in updatedProgress.keys.toList()) {
+        final dynamic currentValue = updatedProgress[date];
+
+        if (newType == HabitType.task) {
+          // COUNT veya TIME -> TASK dönüşümü
+          bool isDone = false;
+          if (this.type == HabitType.count) {
+            isDone = (currentValue as num? ?? 0) >= (this.targetCount ?? 1);
+          } else if (this.type == HabitType.time) {
+            isDone = (currentValue as num? ?? 0) >= (this.targetSeconds ?? 1);
+          }
+          updatedProgress[date] = isDone;
+
+        } else if (newType == HabitType.count) {
+          // TASK veya TIME -> COUNT dönüşümü
+          double countVal = 0;
+          if (this.type == HabitType.task) {
+            countVal = (currentValue == true) ? newTargetCount : 0;
+          } else if (this.type == HabitType.time) {
+            // Time'dan Count'a geçerken eski saniye hedefiyle kıyasla
+            countVal = (currentValue as num? ?? 0) >= (this.targetSeconds ?? 1)
+                ? newTargetCount
+                : 0;
+          }
+          updatedProgress[date] = countVal;
+
+        } else if (newType == HabitType.time) {
+          // TASK veya COUNT -> TIME dönüşümü
+          double timeVal = 0;
+          if (this.type == HabitType.task) {
+            timeVal = (currentValue == true) ? newTargetSeconds : 0;
+          } else if (this.type == HabitType.count) {
+            // Count'tan Time'a geçerken eski adet hedefiyle kıyasla
+            timeVal = (currentValue as num? ?? 0) >= (this.targetCount ?? 1)
+                ? newTargetSeconds
+                : 0;
+          }
+          updatedProgress[date] = timeVal;
+        }
+      }
+    }
+
     return Habit(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -241,12 +300,12 @@ class Habit {
       createdAt: createdAt ?? this.createdAt,
       reminderTime: reminderTime ?? this.reminderTime,
       reminderDays: reminderDays ?? this.reminderDays,
-      type: type ?? this.type,
-      group: group,
+      type: newType,
+      group: group, // Null gelirse eskisini koru
       icon: icon ?? this.icon,
-      targetCount: targetCount ?? this.targetCount,
-      targetSeconds: targetSeconds ?? this.targetSeconds,
-      dailyProgress: dailyProgress ?? this.dailyProgress,
+      targetCount: newTargetCount,
+      targetSeconds: newTargetSeconds,
+      dailyProgress: updatedProgress,
       notesDelta: notesDelta ?? this.notesDelta,
     );
   }
@@ -285,9 +344,12 @@ class Habit {
       time = TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
     }
 
-    final parsedDaily = (json['dailyProgress'] as Map<String, dynamic>?)?.map(
-      (k, v) => MapEntry(DateTime.fromMillisecondsSinceEpoch(int.parse(k)), v),
-    ) ?? {};
+    final parsedDaily =
+        (json['dailyProgress'] as Map<String, dynamic>?)?.map(
+          (k, v) =>
+              MapEntry(DateTime.fromMillisecondsSinceEpoch(int.parse(k)), v),
+        ) ??
+        {};
 
     String? parsedNotes;
     final rawNotes = json['notesDelta'];

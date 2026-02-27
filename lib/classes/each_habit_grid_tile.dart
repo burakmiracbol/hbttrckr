@@ -20,7 +20,7 @@ import '../extensions/duration_formatter.dart';
 import '../providers/habit_provider.dart';
 import '../views/mainviews/main_app_view.dart';
 import 'glass_card.dart';
-import 'habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 
 class EachHabitGridTile extends StatelessWidget {
   final bool isFuture;

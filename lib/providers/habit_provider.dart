@@ -18,7 +18,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_neat_and_clean_calendar/neat_and_clean_calendar_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 import 'package:hbttrckr/classes/colormix.dart';
 import 'package:hbttrckr/services/notification_service.dart';
 import 'dart:convert';

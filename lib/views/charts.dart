@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 
 class WeekChartWidget extends StatelessWidget {
   const WeekChartWidget({super.key});

@@ -18,7 +18,7 @@ import 'package:hbttrckr/classes/liquid_wrapper.dart';
 import 'package:hbttrckr/classes/rate_of_doing.dart';
 import 'package:hbttrckr/classes/strength_gauge.dart';
 import 'package:flutter/material.dart';
-import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 import 'package:hbttrckr/views/mainviews/main_app_view.dart';
 import 'package:hbttrckr/actions/detail_screen/settings_sheet.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
@@ -29,23 +29,6 @@ import 'package:hbttrckr/actions/detail_screen/notes_editor_sheet.dart';
 import '../classes/actions_for_habit.dart';
 import '../classes/stats_card.dart';
 import '../providers/style_provider.dart';
-
-// TODO ERROR : düzenleme oluyor iki iptal tuşu var
-
-// TODO : habitlerde kategorilendirme yapılacak ve ana ekranda ona göre bakma olacak
-
-// TODO : lottie fire . json çalışmıyor ona bak pubspec.yaml dosyasında assets kısmını açtım bir daha bak o şekil dene
-
-// TODO : time ve count selector tasarım
-// TODO : time selctor sheet için time saklama biçimini saniyeye çevirdik bu yüzden dakika ile yapılan çoğu metodu düzeltmek lazım
-// TODO : mesela habit içinden erişilebilen ve habit içinde kullanılan bir saat ve dakika ve saniye bölme yaparız işlemleri ona göre düzenleriz
-
-// TODO : calendarda ileri gidince habit değerleri gözukmesin ve geri gidince eski günlerin yapılmış değerleri görüntülene bilsin ve beş gün önceki değerler değiştirilemesin
-
-// TODO : Her habit detail screende kendi calendar istatistikleri ve sıralama istatistikleri olsun current streak best streak total sessions done sessions missed sessions skipped sessions planned hours counted hours missed hours
-// TODO : succes rate grafiği done missed skipped calendr istatistikleri haftalık süre sayı veya yaptı yapmadı grafiği ve aylık done missed skipped grafiği
-
-// TODO: Appbar veya calendar gibi bir widget ın rengini tüm habitlerin renginin karışımım belirlesin #özellik
 
 class HabitDetailScreen extends StatefulWidget {
   final bool isLiquid;
@@ -650,11 +633,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                               true
                                                                         : currentHabit.type ==
                                                                               HabitType.count
-                                                                        ? entry >=
+                                                                        ? (entry ?? 0) >=
                                                                               currentHabit.targetCount
                                                                         : currentHabit.type ==
                                                                               HabitType.time
-                                                                        ? entry ==
+                                                                        ? (entry ?? 0) ==
                                                                               currentHabit.targetSeconds
                                                                         : false
                                                                   : false,
@@ -677,11 +660,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                                                               false
                                                                         : currentHabit.type ==
                                                                               HabitType.count
-                                                                        ? entry <
+                                                                        ? (entry ?? 0) <
                                                                               currentHabit.targetCount
                                                                         : currentHabit.type ==
                                                                               HabitType.time
-                                                                        ? entry <
+                                                                        ? (entry ?? 0) <
                                                                               currentHabit.targetSeconds
                                                                         : false
                                                                   : false,

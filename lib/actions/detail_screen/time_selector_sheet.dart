@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 import 'package:wheel_slider/wheel_slider.dart';
 import '../../classes/all_widgets.dart';
 import '../../extensions/duration_formatter.dart';
-import '../../classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 import '../../providers/habit_provider.dart';
 import '../../providers/style_provider.dart';
 

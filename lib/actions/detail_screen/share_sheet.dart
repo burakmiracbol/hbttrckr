@@ -18,13 +18,11 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import '../../classes/all_widgets.dart';
 import '../../classes/glass_card.dart';
-import '../../classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 import '../../extensions/duration_formatter.dart';
-import '../../providers/style_provider.dart';
 
 void showShareDetailSheet(
   BuildContext context,

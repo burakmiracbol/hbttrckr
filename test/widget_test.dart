@@ -9,13 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:hbttrckr/main.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/providers/notification_settings_provider.dart';
 import 'package:hbttrckr/providers/scheme_provider.dart';
 import 'package:hbttrckr/views/mainviews/main_app_view.dart';
-import 'package:hbttrckr/classes/habit.dart';
+import 'package:hbttrckr/data_types/habit.dart';
 import 'package:hbttrckr/views/habit_detail_screen.dart';
 import 'package:hbttrckr/views/stats_view.dart';
 import 'package:hbttrckr/classes/stats_card.dart';
