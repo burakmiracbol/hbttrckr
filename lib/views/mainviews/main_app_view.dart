@@ -301,7 +301,6 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
     );
   }
 
-
   // --- WIDGET PARÇALARI ---
 
   Widget _buildMainContent(BuildContext context, bool showDetailPanel) {
@@ -384,7 +383,8 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
               });
             },
             child: MouseRegion(
-              cursor: SystemMouseCursors.resizeLeftRight, // Fare üzerine gelince ikon değişecek
+              cursor: SystemMouseCursors
+                  .resizeLeftRight, // Fare üzerine gelince ikon değişecek
               child: Container(
                 width: 10, // Tıklama alanı
                 color: Colors.transparent,
@@ -402,7 +402,9 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
               duration: const Duration(milliseconds: 300),
               child: _selectedHabitForDetail != null
                   ? HabitDetailScreen(
-                isLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean(),
+                      isLiquid: context
+                          .watch<StyleProvider>()
+                          .getDetailLiquidBoolean(),
                       key: ValueKey(_selectedHabitForDetail!.id),
                       habitId: _selectedHabitForDetail!.id,
                       selectedDate:
@@ -498,30 +500,33 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
   }
 
   Widget _buildNavigationRail(BuildContext context, bool isLargeScreen) {
+    final width = MediaQuery.of(context).size.width;
+    final bool isLargeScreen = width >= 1324; // Geniş Masaüstü
+
     return Container(
       color: Colors.transparent,
-      child: glassContainer(
-        shape: BoxShape.rectangle,
-        borderRadiusRect: 80,
-        context: context,
-        child: IntrinsicWidth(
-          child: NavigationRail(
-            extended: isLargeScreen,
-            backgroundColor:
-                Colors.transparent,
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-            leading: _buildFab(
-              context,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: glassContainer(
+          shape: BoxShape.rectangle,
+          borderRadiusRect: isLargeScreen ? 40 : 80,
+          context: context,
+          child: IntrinsicWidth(
+            child: NavigationRail(
+              extended: isLargeScreen,
+              backgroundColor: Colors.transparent,
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+              leading: _buildFab(context),
+              destinations: _destinations
+                  .map(
+                    (d) => NavigationRailDestination(
+                      icon: d.icon,
+                      label: Text(d.label),
+                    ),
+                  )
+                  .toList(),
             ),
-            destinations: _destinations
-                .map(
-                  (d) => NavigationRailDestination(
-                    icon: d.icon,
-                    label: Text(d.label),
-                  ),
-                )
-                .toList(),
           ),
         ),
       ),
@@ -560,15 +565,32 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
   }
 
   Widget _buildFab(BuildContext context) {
-    return glassContainer(borderRadiusRect: 160,
-      shape: BoxShape.circle,
+    final width = MediaQuery.of(context).size.width;
+    final bool isLargeScreen = width >= 1324; // Geniş Masaüstü
+
+    return glassContainer(
+      borderRadiusRect: 160,
+      shape: BoxShape.rectangle,
       context: context,
-      child: FloatingActionButton(
-        shape: CircleBorder(),
+      child: FloatingActionButton.extended(
+        isExtended: isLargeScreen,
         elevation: 0, // Glass arkasında gölge karmaşası olmasın
         backgroundColor: Colors.transparent,
         onPressed: () => showAddHabitSheet(context),
-        child: Icon(Icons.add, color: context.watch<CurrentThemeMode>().isDarkMode? Colors.white: Colors.black),
+        label: Text(
+          "Add Habit",
+          style: TextStyle(
+            color: context.watch<CurrentThemeMode>().isDarkMode
+                ? Colors.white
+                : Colors.black,
+          ),
+        ),
+        icon: Icon(
+          Icons.add,
+          color: context.watch<CurrentThemeMode>().isDarkMode
+              ? Colors.white
+              : Colors.black,
+        ),
       ),
     );
   }
