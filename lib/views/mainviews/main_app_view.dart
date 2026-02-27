@@ -310,7 +310,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       children: [
         // SOL TARAF: Liste Sayfası
         SizedBox(
-          width: _leftPanelWidth,
+          width: !showDetailPanel ? MediaQuery.of(context).size.width : _leftPanelWidth,
           child: Align(
             alignment: Alignment.topCenter,
             child: buildHabitsPage(
@@ -397,6 +397,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
               ),
             ),
           ),
+
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
