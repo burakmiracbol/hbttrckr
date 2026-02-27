@@ -131,11 +131,11 @@ class StatisticsScreen extends StatelessWidget {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     const maxTileExtent = 185.0;
-                    final crossAxisCount = (constraints.maxWidth /
-                            maxTileExtent)
-                        .floor()
-                        .clamp(1, 6)
-                        .toInt();
+                    final crossAxisCount =
+                        (constraints.maxWidth / maxTileExtent)
+                            .floor()
+                            .clamp(1, 6)
+                            .toInt();
 
                     List<int> buildSpans(int columns, int count) {
                       final spans = List<int>.filled(count, 1);
@@ -157,147 +157,228 @@ class StatisticsScreen extends StatelessWidget {
                     }
 
                     const statCardCount = 6;
-                    final spans = buildSpans(
-                      crossAxisCount,
-                      statCardCount,
-                    );
+                    final spans = buildSpans(crossAxisCount, statCardCount);
 
                     final statCards = <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(4.0),
-                        child: Card(
-                          color: Theme.of(context).cardColor.withValues(alpha: 0.2),
-                          child: AspectRatio(
-                            aspectRatio: 1,
-                            child: glassContainer(
-                              context: context,
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: RateOfDoing(
-                                      doneCount: doneCount,
-                                      missedCount: missedCount,
-                                      skippedCount: skippedCount,
-                                      totalCount: totalCount,
-                                      size: constraints.minWidth,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(4.0),
-                        child: glassContainer(
-                          context: context,
-                          child: Card(
-                            color: Theme.of(context).cardColor.withValues(alpha: 0.2),
-                            child: AspectRatio(
-                              aspectRatio: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return Padding(
-                                      padding: EdgeInsets.only(
-                                        top: 32.0,
-                                        bottom: 8.0,
-                                        right: 8.0,
-                                        left: 8.0,
-                                      ),
-                                      child: StrengthGauge(
-                                        seenStrength:
-                                            "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
-                                        strength:
-                                            (totalStrength /
-                                            totalHabits.clamp(1, 999)),
-                                        size: constraints.minWidth,
-                                      ),
-                                    );
-                                  },
+                        child: LayoutBuilder(
+                          builder: (context, designeConste) {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(
+                                    (designeConste.maxHeight / 4),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
+                              color: Theme.of(
+                                context,
+                              ).cardColor.withValues(alpha: 0.2),
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: glassContainer(
+                                  borderRadiusRect: designeConste.maxHeight / 4,
+                                  context: context,
+                                  child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: RateOfDoing(
+                                          doneCount: doneCount,
+                                          missedCount: missedCount,
+                                          skippedCount: skippedCount,
+                                          totalCount: totalCount,
+                                          size: constraints.minWidth,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.all(4.0),
-                        child: glassContainer(
-                          context: context,
-                          child: Card(
-                            color: Theme.of(context).cardColor.withValues(alpha: 0.2),
-                            child: SizedBox.expand(
-                              child: StatCard(
-                                "Toplam Alışkanlık",
-                                totalHabits.toString(),
-                                Icons.list_alt,
-                                Colors.blue,
-                                16,
-                                isWideOverride: spans[2] > 1,
+                        child: LayoutBuilder(
+                          builder: (context, designeConste) {
+                            return glassContainer(
+                              borderRadiusRect: (designeConste.maxHeight / 4),
+                              context: context,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(
+                                      (designeConste.maxHeight / 4),
+                                    ),
+                                  ),
+                                ),
+                                color: Theme.of(
+                                  context,
+                                ).cardColor.withValues(alpha: 0.2),
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 32.0,
+                                            bottom: 8.0,
+                                            right: 8.0,
+                                            left: 8.0,
+                                          ),
+                                          child: StrengthGauge(
+                                            seenStrength:
+                                                "${(totalStrength / totalHabits.clamp(1, 999)).toStringAsFixed(1)}%",
+                                            strength:
+                                                (totalStrength /
+                                                totalHabits.clamp(1, 999)),
+                                            size: constraints.minWidth,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.all(4.0),
-                        child: glassContainer(
-                          context: context,
-                          child: Card(
-                            color: Theme.of(context).cardColor.withValues(alpha: 0.2),
-                            child: SizedBox.expand(
-                              child: StatCard(
-                                "Aktif Streak",
-                                activeHabits.toString(),
-                                Icons.whatshot,
-                                Colors.orange,
-                                16,
-                                isWideOverride: spans[3] > 1,
+                        child: LayoutBuilder(
+                          builder: (context, designeConste) {
+                            return glassContainer(
+                              borderRadiusRect: (designeConste.maxHeight / 4),
+                              context: context,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(
+                                      (designeConste.maxHeight / 4),
+                                    ),
+                                  ),
+                                ),
+                                color: Theme.of(
+                                  context,
+                                ).cardColor.withValues(alpha: 0.2),
+                                child: SizedBox.expand(
+                                  child: StatCard(
+                                    "Toplam Alışkanlık",
+                                    totalHabits.toString(),
+                                    Icons.list_alt,
+                                    Colors.blue,
+                                    16,
+                                    isWideOverride: spans[2] > 1,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.all(4.0),
-                        child: glassContainer(
-                          context: context,
-                          child: Card(
-                            color: Theme.of(context).cardColor.withValues(alpha: 0.2),
-                            child: SizedBox.expand(
-                              child: StatCard(
-                                "Efsane Seviye",
-                                perfectHabits.toString(),
-                                Icons.star,
-                                Colors.purple,
-                                16,
-                                isWideOverride: spans[4] > 1,
+                        child: LayoutBuilder(
+                          builder: (context, designeConste) {
+                            return glassContainer(
+                              borderRadiusRect: (designeConste.maxHeight / 4),
+                              context: context,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(
+                                      (designeConste.maxHeight / 4),
+                                    ),
+                                  ),
+                                ),
+                                color: Theme.of(
+                                  context,
+                                ).cardColor.withValues(alpha: 0.2),
+                                child: SizedBox.expand(
+                                  child: StatCard(
+                                    "Aktif Streak",
+                                    activeHabits.toString(),
+                                    Icons.whatshot,
+                                    Colors.orange,
+                                    16,
+                                    isWideOverride: spans[3] > 1,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.all(4.0),
-                        child: glassContainer(
-                          context: context,
-                          child: Card(
-                            color: Theme.of(context).cardColor.withValues(alpha: 0.2),
-                            child: SizedBox.expand(
-                              child: StatCard(
-                                "Alışkanlık Grup Sayısı",
-                                groupHabits.toString(),
-                                Icons.grid_view_rounded,
-                                Colors.green,
-                                16,
-                                isWideOverride: spans[5] > 1,
+                        child: LayoutBuilder(
+                          builder: (context, designeConste) {
+                            return glassContainer(
+                              borderRadiusRect: (designeConste.maxHeight / 4),
+                              context: context,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(
+                                      (designeConste.maxHeight / 4),
+                                    ),
+                                  ),
+                                ),
+                                color: Theme.of(
+                                  context,
+                                ).cardColor.withValues(alpha: 0.2),
+                                child: SizedBox.expand(
+                                  child: StatCard(
+                                    "Efsane Seviye",
+                                    perfectHabits.toString(),
+                                    Icons.star,
+                                    Colors.purple,
+                                    16,
+                                    isWideOverride: spans[4] > 1,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: LayoutBuilder(
+                          builder: (context, designeConste) {
+                            return glassContainer(
+                              borderRadiusRect: (designeConste.maxHeight / 4),
+                              context: context,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(
+                                      (designeConste.maxHeight / 4),
+                                    ),
+                                  ),
+                                ),
+                                color: Theme.of(
+                                  context,
+                                ).cardColor.withValues(alpha: 0.2),
+                                child: SizedBox.expand(
+                                  child: StatCard(
+                                    "Alışkanlık Grup Sayısı",
+                                    groupHabits.toString(),
+                                    Icons.grid_view_rounded,
+                                    Colors.green,
+                                    16,
+                                    isWideOverride: spans[5] > 1,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ];
