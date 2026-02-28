@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'package:conditional_wrap/conditional_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../extensions/duration_formatter.dart';
@@ -43,7 +44,6 @@ class EachHabitTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(320)),
         color: habit.color.withValues(alpha: 0.2),
         child: ListTile(
-
           onTap: () => onHabitTapped(habit),
 
           onLongPress: () {
@@ -135,41 +135,53 @@ class EachHabitTile extends StatelessWidget {
                         icon: Icon(Icons.radio_button_unchecked, size: 25),
                         onPressed: () {},
                       )
-              : habit.type == HabitType.task
-              ? IconButton(
-                  style: IconButton.styleFrom(
-                    foregroundColor: habit.isCompletedOnDate(selectedDate)
-                        ? Colors.green
-                        : Colors.grey,
+              : habit.type == HabitType.task || habit.type == HabitType.count
+              ? WidgetWrapper(
+                  wrapper: (child) => habit.type == HabitType.time
+                      ? Consumer<HabitProvider>(
+                          builder: (context, provider, child) {
+                            final bool isRunning =
+                                provider.runningTimers[habit.id] ?? false;
+                            return Container(child: child);
+                          },
+                        )
+                      : child,
+                  child: IconButton(
+                    style: IconButton.styleFrom(
+                      foregroundColor: habit.isCompletedOnDate(selectedDate)
+                          ? Colors.green
+                          : Colors.grey,
+                    ),
+                    icon: Icon(
+                      habit.isSkippedOnDate(selectedDate)
+                          ? Icons.skip_next
+                          : habit.type == HabitType.task
+                          ? habit.isCompletedOnDate(selectedDate)
+                                ? Icons.check_circle
+                                : Icons.radio_button_unchecked
+                          : habit.type == HabitType.count
+                          ? habit.isCompletedOnDate(selectedDate)
+                                ? Icons.add
+                                : Icons.add_outlined
+                          : Icons.radio_button_unchecked,
+                      size: 25,
+                    ),
+                    onPressed: () {
+                      habit.isSkippedOnDate(selectedDate)
+                          ? context.read<HabitProvider>().changeSkipOnDate(
+                              habit.id,
+                            )
+                          : habit.type == HabitType.task
+                          ? context.read<HabitProvider>().toggleTaskCompletion(
+                              habit.id,
+                            )
+                          : habit.type == HabitType.count
+                          ? context.read<HabitProvider>().incrementCount(
+                              habit.id,
+                            )
+                          : null;
+                    },
                   ),
-                  icon: Icon(
-                    habit.isCompletedOnDate(selectedDate)
-                        ? Icons.check_circle
-                        : Icons.radio_button_unchecked,
-                    size: 25,
-                  ),
-                  onPressed: () {
-                    context.read<HabitProvider>().toggleTaskCompletion(
-                      habit.id,
-                    );
-                  },
-                )
-              : habit.type == HabitType.count
-              ? IconButton(
-                  style: IconButton.styleFrom(
-                    foregroundColor: habit.isCompletedOnDate(selectedDate)
-                        ? Colors.green
-                        : Colors.grey,
-                  ),
-                  icon: Icon(
-                    habit.isCompletedOnDate(selectedDate)
-                        ? Icons.add
-                        : Icons.add_outlined,
-                    size: 25,
-                  ),
-                  onPressed: () {
-                    context.read<HabitProvider>().incrementCount(habit.id);
-                  },
                 )
               : habit.type == HabitType.time
               ? Consumer<HabitProvider>(
@@ -184,10 +196,16 @@ class EachHabitTile extends StatelessWidget {
                             : Colors.grey,
                       ),
                       onPressed: () {
-                        provider.toggleTimer(habit.id, selectedDate);
+                        habit.isSkippedOnDate(selectedDate)
+                            ? context.read<HabitProvider>().changeSkipOnDate(
+                                habit.id,
+                              )
+                            : provider.toggleTimer(habit.id, selectedDate);
                       },
                       icon: Icon(
-                        isRunning && provider.extraDate == selectedDate
+                        habit.isSkippedOnDate(selectedDate)
+                            ? Icons.skip_next
+                            : isRunning && provider.extraDate == selectedDate
                             ? Icons.pause
                             : Icons.play_arrow,
                         size: 25,
@@ -202,7 +220,9 @@ class EachHabitTile extends StatelessWidget {
                         : Colors.grey,
                   ),
                   icon: Icon(
-                    habit.isCompletedOnDate(selectedDate)
+                    habit.isSkippedOnDate(selectedDate)
+                        ? Icons.skip_next
+                        : habit.isCompletedOnDate(selectedDate)
                         ? Icons.check_circle
                         : Icons.radio_button_unchecked,
                     size: 25,
