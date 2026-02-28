@@ -24,10 +24,11 @@ enum OrientationForPrivate { horizontal, vertical }
 
 enum Selectors { time, count }
 
-enum Liquidness { ordinary, liquid }
+enum Liquidness { ordinary, liquid, fakeLiquid }
 
 class StyleProvider with ChangeNotifier {
   bool isDetailLiquid = true;
+  bool isDetailFakeLiquid = false;
 
   AppDesignMode current = AppDesignMode.liquid;
 
@@ -41,17 +42,22 @@ class StyleProvider with ChangeNotifier {
 
   ViewStyleForMultipleData viewStyle = ViewStyleForMultipleData.grid;
 
-  void setDetailLiquid(bool wanted) {
-    isDetailLiquid = wanted;
+  void setDetailLiquid(bool wanted1, bool wanted2) {
+    isDetailLiquid = wanted1;
+    isDetailFakeLiquid = wanted2;
     notifyListeners();
   }
 
   Liquidness getDetailLiquid() {
-    return isDetailLiquid == true ? Liquidness.liquid : Liquidness.ordinary;
+    return isDetailLiquid == true ? Liquidness.liquid : isDetailFakeLiquid ? Liquidness.fakeLiquid :Liquidness.ordinary;
   }
 
-  bool getDetailLiquidBoolean() {
+  bool getDetailLiquidBoolean1() {
     return isDetailLiquid;
+  }
+
+  bool getDetailLiquidBoolean2() {
+    return isDetailFakeLiquid;
   }
 
   void setFulscreenForNow(bool wanted) {
@@ -86,9 +92,13 @@ class StyleProvider with ChangeNotifier {
 
   bool getOrientationForSelectors(Selectors selector) {
     if (selector == Selectors.time) {
-      return timeSelectorOrientation == OrientationForPrivate.horizontal ? true : false;
+      return timeSelectorOrientation == OrientationForPrivate.horizontal
+          ? true
+          : false;
     } else if (selector == Selectors.count) {
-      return countSelectorOrientation == OrientationForPrivate.horizontal ? true : false;
+      return countSelectorOrientation == OrientationForPrivate.horizontal
+          ? true
+          : false;
     } else {
       return true;
     }

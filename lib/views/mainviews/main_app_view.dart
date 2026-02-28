@@ -403,9 +403,10 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
               duration: const Duration(milliseconds: 300),
               child: _selectedHabitForDetail != null
                   ? HabitDetailScreen(
+                isFakeLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean2(),
                       isLiquid: context
                           .watch<StyleProvider>()
-                          .getDetailLiquidBoolean(),
+                          .getDetailLiquidBoolean1(),
                       key: ValueKey(_selectedHabitForDetail!.id),
                       habitId: _selectedHabitForDetail!.id,
                       selectedDate:
@@ -476,7 +477,8 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       context,
       MaterialPageRoute(
         builder: (context) => HabitDetailScreen(
-          isLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean(),
+          isFakeLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean2(),
+          isLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean1(),
           habitId: habit.id,
           selectedDate:
               context.read<HabitProvider>().selectedDate ?? DateTime.now(),

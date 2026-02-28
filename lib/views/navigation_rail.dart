@@ -40,11 +40,6 @@ class _NavigationRailMainState extends State<NavigationRailMain> {
           body: Center(child: Text('Navigation Rail Example Content')),
         ),
       ),
-
-      appBar: NavigationAppBar(
-        title: Text('Navigation Rail Example'),
-        decoration: ShapeDecoration(shape: StadiumBorder(), color: Colors.blue),
-      ),
     );
   }
 }

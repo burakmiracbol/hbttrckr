@@ -25,10 +25,12 @@ import '../extensions/duration_formatter.dart';
 import 'liquid_wrapper.dart';
 
 class ActionsForHabit extends StatelessWidget {
+  final bool isFakeLiquidBackground;
   final bool isLiquidBackground;
   final String habitId;
   final DateTime selectedDate;
   const ActionsForHabit({
+    required this.isFakeLiquidBackground,
     required this.isLiquidBackground,
     required this.selectedDate,
     required this.habitId,
@@ -43,6 +45,7 @@ class ActionsForHabit extends StatelessWidget {
       child: IntrinsicHeight(
         child: IntrinsicWidth(
           child: CardLiquidWrapper(
+            statement2: isFakeLiquidBackground,
             borderRadius: 160,
             statement: isLiquidBackground,
             shape: LiquidRoundedRectangle(borderRadius: 160),

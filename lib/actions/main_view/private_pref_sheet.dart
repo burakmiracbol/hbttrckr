@@ -168,11 +168,12 @@ void showPrivatePrefsSheet(BuildContext context) {
                 ),
               ),
 
+              // Detail screen Liquidliği
               PlatformListTile(
                 onTap: () {},
-                leading: Icon(context.watch<StyleProvider>().getDetailLiquidBoolean() ? Icons.water_drop : Icons.waves),
+                leading: Icon(context.watch<StyleProvider>().getDetailLiquidBoolean1() ? Icons.water_drop : Icons.waves),
                 title: Text("Change Detail Screens Liquidness"),
-                subtitle: Text("For now it is ${context.watch<StyleProvider>().getDetailLiquidBoolean() ? "Liquid" : "Ordinary"}"),
+                subtitle: Text("For now it is ${context.watch<StyleProvider>().getDetailLiquidBoolean1() ? "Liquid" : "Ordinary"}"),
                 trailing: DropdownButton<Liquidness>(
                   style: TextStyle(color: Colors.white),
                   dropdownColor: Colors.grey[900],
@@ -188,7 +189,7 @@ void showPrivatePrefsSheet(BuildContext context) {
                   onChanged: (v) {
                     if (v != null) {
                       setStateSheet(
-                            () => context.read<StyleProvider>().setDetailLiquid(v == Liquidness.liquid),
+                            () => context.read<StyleProvider>().setDetailLiquid(v == Liquidness.liquid, v== Liquidness.fakeLiquid),
                       );
                     }
                   },

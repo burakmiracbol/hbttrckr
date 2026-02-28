@@ -16,6 +16,7 @@
 
 import 'package:conditional_wrap/conditional_wrap.dart';
 import 'package:flutter/material.dart';
+import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 
 class LiquidWrapper extends StatelessWidget {
@@ -46,13 +47,19 @@ class LiquidWrapper extends StatelessWidget {
 class CardLiquidWrapper extends StatelessWidget {
   final Widget child;
   final bool statement;
+  final bool statement2;
   final LiquidShape shape;
+  final BoxShape glShape;
   final double borderRadius;
+  final double borderRadiusRect;
   const CardLiquidWrapper({
+    required this.statement2,
     required this.child,
     required this.statement,
     required this.shape,
     required this.borderRadius,
+    this.borderRadiusRect = 160,
+    this.glShape = BoxShape.rectangle,
     super.key,
   });
 
@@ -64,7 +71,9 @@ class CardLiquidWrapper extends StatelessWidget {
               shape: shape,
               child: GlassGlow(child: child),
             )
-          : Card(
+          : statement2?
+          glassContainer(child: child,borderRadiusRect: borderRadiusRect, context: context)
+          :Card(
         color: Theme.of(context).cardColor.withValues(alpha: 0.2),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius),

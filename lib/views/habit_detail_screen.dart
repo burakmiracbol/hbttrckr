@@ -32,6 +32,7 @@ import '../providers/style_provider.dart';
 
 class HabitDetailScreen extends StatefulWidget {
   final bool isLiquid;
+  final bool isFakeLiquid;
   final String habitId;
   final DateTime selectedDate;
   final bool isPanel;
@@ -42,6 +43,7 @@ class HabitDetailScreen extends StatefulWidget {
     super.key,
     required this.habitId,
     required this.isLiquid,
+    required this.isFakeLiquid,
     required this.selectedDate,
     this.isPanel = false,
     required this.onHabitUpdated,
@@ -76,7 +78,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
         if (widget.isPanel) {
           return Material(
             color: Colors.transparent,
-            child: buildContent(currentHabit, context,widget.isLiquid),
+            child: buildContent(currentHabit, context,widget.isLiquid, widget.isFakeLiquid),
           );
         }
 
@@ -109,14 +111,14 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                 ],
               ),
             ),
-            body: buildContent(currentHabit, context, widget.isLiquid),
+            body: buildContent(currentHabit, context, widget.isLiquid, widget.isFakeLiquid),
           ),
         );
       },
     );
   }
 
-  Widget buildContent(Habit currentHabit, BuildContext context, bool isLiquid) {
+  Widget buildContent(Habit currentHabit, BuildContext context, bool isLiquid, bool isFakeLiquid) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 200),
       child: context.watch<StyleProvider>().getFulscreenForNow() == false
@@ -158,6 +160,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       CardLiquidWrapper(
                                         borderRadius: 160,
                                         statement: isLiquid,
+                                        statement2: isFakeLiquid,
                                         shape: LiquidRoundedRectangle(
                                           borderRadius: 160,
                                         ),
@@ -189,6 +192,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         ),
                                       ),
                                       CardLiquidWrapper(
+                                        statement2: isFakeLiquid,
                                         borderRadius: 160,
                                         statement: isLiquid,
                                         shape: LiquidRoundedRectangle(
@@ -212,6 +216,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: CardLiquidWrapper(
+                                        statement2: isFakeLiquid,
                                         borderRadius: 320,
                                         statement: isLiquid,
                                         shape: LiquidOval(),
@@ -240,6 +245,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       child: IntrinsicHeight(
                                         child: IntrinsicWidth(
                                           child: CardLiquidWrapper(
+                                            statement2: isFakeLiquid,
                                             borderRadius: 320,
                                             statement: isLiquid,
                                             shape: LiquidRoundedRectangle(
@@ -364,6 +370,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         0,
                                       ),
                                       child: CardLiquidWrapper(
+                                        statement2: isFakeLiquid,
                                         borderRadius: 160,
                                         statement: isLiquid,
                                         shape: LiquidRoundedRectangle(
@@ -396,6 +403,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               Padding(
                                 padding: const EdgeInsets.all(4.0),
                                 child: CardLiquidWrapper(
+                                  statement2: isFakeLiquid,
                                   borderRadius: 160,
                                   statement: isLiquid,
                                   shape: LiquidRoundedRectangle(
@@ -461,6 +469,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               ),
 
                               ActionsForHabit(
+                                isFakeLiquidBackground: isFakeLiquid,
                                 isLiquidBackground: isLiquid,
                                 selectedDate: selectedDate ?? DateTime.now(),
                                 habitId: currentHabit.id,
@@ -476,6 +485,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: CardLiquidWrapper(
+                                          statement2: isFakeLiquid,
                                           borderRadius: 160,
                                           statement: isLiquid,
                                           shape: LiquidRoundedRectangle(
@@ -498,6 +508,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         child: AspectRatio(
                                           aspectRatio: 2.1,
                                           child: CardLiquidWrapper(
+                                            statement2: isFakeLiquid,
                                             borderRadius: 160,
                                             statement: isLiquid,
                                             shape: LiquidRoundedRectangle(
@@ -554,6 +565,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         child: LayoutBuilder(
                                           builder: (context, designeConst) {
                                             return CardLiquidWrapper(
+                                              statement2: isFakeLiquid,
                                               borderRadius: designeConst.maxWidth / 4,
                                               statement: isLiquid,
                                               shape: LiquidRoundedRectangle(
@@ -602,6 +614,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                         child: LayoutBuilder(
                                           builder: (context, designeConst1) {
                                             return CardLiquidWrapper(
+                                              statement2: isFakeLiquid,
                                               borderRadius:designeConst1.maxWidth /
                                                   4,
                                               statement: isLiquid,
@@ -708,7 +721,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                   color: Colors.grey.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
-                                child: CardLiquidWrapper(
+                                child: CardLiquidWrapper(statement2: isFakeLiquid,
                                   borderRadius: 8,
                                   statement: isLiquid,
                                   shape: LiquidRoundedRectangle(
@@ -1019,7 +1032,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Align(
                             alignment: Alignment.topRight,
-                            child: CardLiquidWrapper(
+                            child: CardLiquidWrapper(statement2: isFakeLiquid,
                               borderRadius: 160,
                               statement: isLiquid,
                               shape: LiquidOval(),
@@ -1040,7 +1053,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                             Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: CardLiquidWrapper(
+                                child: CardLiquidWrapper(statement2: isFakeLiquid,
                                   borderRadius: 160,
                                   statement: isLiquid,
                                   shape: LiquidOval(),
@@ -1069,7 +1082,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                     ),
                                     child: IntrinsicHeight(
                                       child: IntrinsicWidth(
-                                        child: CardLiquidWrapper(
+                                        child: CardLiquidWrapper(statement2: isFakeLiquid,
                                           borderRadius: 320,
                                           statement: isLiquid,
                                           shape: LiquidRoundedRectangle(
@@ -1201,7 +1214,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                                       8,
                                       0,
                                     ),
-                                    child: CardLiquidWrapper(
+                                    child: CardLiquidWrapper(statement2: isFakeLiquid,
                                       borderRadius: 160,
                                       statement: isLiquid,
                                       shape: LiquidRoundedRectangle(
@@ -1232,7 +1245,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                             Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: CardLiquidWrapper(
-                                borderRadius: 320,
+                                borderRadius: 320,statement2: isFakeLiquid,
                                 statement: isLiquid,
                                 shape: LiquidRoundedRectangle(
                                   borderRadius: 320,
@@ -1293,6 +1306,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               ),
                             ),
                             ActionsForHabit(
+                              isFakeLiquidBackground: isFakeLiquid,
                               isLiquidBackground: isLiquid,
                               selectedDate: selectedDate ?? DateTime.now(),
                               habitId: currentHabit.id,
