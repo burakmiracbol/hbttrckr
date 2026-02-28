@@ -84,13 +84,13 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: Universallness in design
 //
-//  TODO: habit düzenlemede hedef süreyi felan değiştirme yok ??
+//  TODO: habit düzenlemede hedef süreyi felan değiştirme var artık ama calendar da bozulma oldu
 //
 //  TODO: habitspage de action butonları atlandığı zaman skip next olmalı ve basınca unskip olmalı
 //
 //  TODO: eklenen her tasarım değişkeni aynı zamanda shared preferences ile kaydedilmeli
 //
-//  TODO: navigation rail ile mobil scaffold geçişi düzeltilmeli
+//  TODO: navigation rail ile mobil scaffold geçişinde overflow sıkıntıları çözülmeli
 //
 //  gridview düzeltmesi habitspage
 //
@@ -310,7 +310,9 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       children: [
         // SOL TARAF: Liste Sayfası
         SizedBox(
-          width: !showDetailPanel ? MediaQuery.of(context).size.width : _leftPanelWidth,
+          width: !showDetailPanel
+              ? MediaQuery.of(context).size.width
+              : _leftPanelWidth,
           child: Align(
             alignment: Alignment.topCenter,
             child: buildHabitsPage(
@@ -403,7 +405,9 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
               duration: const Duration(milliseconds: 300),
               child: _selectedHabitForDetail != null
                   ? HabitDetailScreen(
-                isFakeLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean2(),
+                      isFakeLiquid: context
+                          .watch<StyleProvider>()
+                          .getDetailLiquidBoolean2(),
                       isLiquid: context
                           .watch<StyleProvider>()
                           .getDetailLiquidBoolean1(),
@@ -477,7 +481,9 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       context,
       MaterialPageRoute(
         builder: (context) => HabitDetailScreen(
-          isFakeLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean2(),
+          isFakeLiquid: context
+              .watch<StyleProvider>()
+              .getDetailLiquidBoolean2(),
           isLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean1(),
           habitId: habit.id,
           selectedDate:
@@ -509,10 +515,10 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
     return Container(
       color: Colors.transparent,
       child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 050),
         child: glassContainer(
           shape: BoxShape.rectangle,
-          borderRadiusRect: isLargeScreen ? 40 : 80,
+          borderRadiusRect: 40 ,
           context: context,
           child: IntrinsicWidth(
             child: NavigationRail(

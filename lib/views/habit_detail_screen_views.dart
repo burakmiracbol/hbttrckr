@@ -65,18 +65,21 @@ class HabitDetailScreenFullscreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Align(
                     alignment: Alignment.topRight,
-                    child: CardLiquidWrapper(
-                      statement2: isFakeLiquid,
-                      borderRadius: 160,
-                      statement: isLiquid,
-                      shape: LiquidOval(),
-                      child: IconButton(
-                        icon: Icon(Icons.fullscreen_exit),
-                        onPressed: () {
-                          context.read<StyleProvider>().setFulscreenForNow(
-                            false,
-                          );
-                        },
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 12, 10, 2),
+                      child: CardLiquidWrapper(
+                        statement2: isFakeLiquid,
+                        borderRadius: 160,
+                        statement: isLiquid,
+                        shape: LiquidOval(),
+                        child: IconButton(
+                          icon: Icon(Icons.fullscreen_exit),
+                          onPressed: () {
+                            context.read<StyleProvider>().setFulscreenForNow(
+                              false,
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -879,13 +882,15 @@ class HabitDetailScreenNormal extends StatelessWidget {
                           ],
                         ),
                       ),
+
                       Container(
                         margin: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.grey.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(32),
                         ),
                         child: CardLiquidWrapper(
+                          borderRadiusRect: 32,
                           statement2: isFakeLiquid,
                           borderRadius: 8,
                           statement: isLiquid,
