@@ -169,7 +169,7 @@ class EachHabitTile extends StatelessWidget {
                     onPressed: () {
                       habit.isSkippedOnDate(selectedDate)
                           ? context.read<HabitProvider>().changeSkipOnDate(
-                              habit.id,
+                              habit.id, extraDate: selectedDate
                             )
                           : habit.type == HabitType.task
                           ? context.read<HabitProvider>().toggleTaskCompletion(
@@ -198,7 +198,7 @@ class EachHabitTile extends StatelessWidget {
                       onPressed: () {
                         habit.isSkippedOnDate(selectedDate)
                             ? context.read<HabitProvider>().changeSkipOnDate(
-                                habit.id,
+                                habit.id, extraDate: selectedDate
                               )
                             : provider.toggleTimer(habit.id, selectedDate);
                       },

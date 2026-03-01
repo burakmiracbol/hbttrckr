@@ -143,7 +143,22 @@ class EachHabitGridTile extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 12),
-                      isFuture || isTooLate
+                      habit.isSkippedOnDate(selectedDate)
+                          ? glassContainer(
+                              child: IconButton(
+                                onPressed: () {
+                                  context
+                                      .read<HabitProvider>()
+                                      .changeSkipOnDate(
+                                        habit.id,
+                                        extraDate: selectedDate,
+                                      );
+                                },
+                                icon: Icon(Icons.skip_next),
+                              ),
+                              context: context,
+                            )
+                          : isFuture || isTooLate
                           ? habit.type == HabitType.task
                                 ? glassContainer(
                                     context: context,
