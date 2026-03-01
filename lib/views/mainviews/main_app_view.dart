@@ -86,8 +86,6 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: habit düzenlemede hedef süreyi felan değiştirme var artık ama calendar da bozulma oldu
 //
-//  TODO: habitspage de action butonları atlandığı zaman skip next olmalı ve basınca unskip olmalı
-//
 //  TODO: eklenen her tasarım değişkeni aynı zamanda shared preferences ile kaydedilmeli
 //
 //  TODO: navigation rail ile mobil scaffold geçişinde overflow sıkıntıları çözülmeli
@@ -309,128 +307,111 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
     return Row(
       children: [
         // SOL TARAF: Liste Sayfası
-        SizedBox(
-          width: !showDetailPanel
-              ? MediaQuery.of(context).size.width
-              : _leftPanelWidth,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: buildHabitsPage(
-              habits: habits,
-              // onHabitTapped burada kritik:
-              onHabitTapped: (habit) {
-                if (showDetailPanel) {
-                  setState(
-                    () => _selectedHabitForDetail =
-                        _selectedHabitForDetail == habit ? null : habit,
-                  );
-                } else {
-                  _navigateToDetail(context, habit); // Mobilde tam sayfa git
-                }
-              },
-              onHabitUpdated: (updatedHabit) {
-                // bu satır aslında gerekmiyor çünkü Navigator içinden çağırılıyor
-                // ama tutarlılık için bırakabilirsin
-              },
-              onHabitDeleted: (String id) {
-                // 1. Önce sil
-                setState(() {
-                  habits.removeWhere((h) => h.id == id);
-                });
-
-                // 2. Sonra tekrar ekle (eğer edit yapıyorsan)
-                final habit = habits.firstWhere(
-                  (h) => h.id == id,
-                ); // habit burada tanımlı!
-
-                context.read<HabitProvider>().addHabit(
-                  name: habit.name,
-                  description: habit.description,
-                  color: habit.color,
-                  type: habit.type,
-                  targetCount: habit.targetCount,
-                  targetSeconds: habit.targetSeconds,
-                  reminderTime: habit.reminderTime,
-                  reminderDays: habit.reminderDays,
-                  icon: habit.icon,
-                );
-              },
-              onDateSelected: (DateTime selectedDate) {
-                // 1. Provider'daki tarihi güncelle (Tüm uygulama duysun)
-                context.read<HabitProvider>().setSelectedDate(selectedDate);
-
-                // 2. Eğer sağ panelde bir habit açıksa, o habitin seçili tarihteki
-                // verilerini göstermesi için sağ paneli tetikle
-                if (_selectedHabitForDetail != null) {
+        // showDetailPanel true ise sabit genişlik (_leftPanelWidth) kullanır,
+        // false ise Expanded gibi davranıp tüm alanı kaplar.
+        Flexible(
+          flex: showDetailPanel ? 0 : 1,
+          child: SizedBox(
+            width: showDetailPanel ? _leftPanelWidth : MediaQuery.of(context).size.width,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: buildHabitsPage(
+                habits: habits,
+                onHabitTapped: (habit) {
+                  if (showDetailPanel) {
+                    setState(
+                          () => _selectedHabitForDetail =
+                      _selectedHabitForDetail == habit ? null : habit,
+                    );
+                  } else {
+                    _navigateToDetail(context, habit);
+                  }
+                },
+                onHabitUpdated: (updatedHabit) {
+                  // Dokunulmadı
+                },
+                onHabitDeleted: (String id) {
+                  // Dokunulmadı (Mevcut mantığın korunuyor)
                   setState(() {
-                    // Sadece arayüzü tazelemek için (rebuild)
+                    habits.removeWhere((h) => h.id == id);
                   });
-                }
-              },
+                  final habit = habits.firstWhere((h) => h.id == id);
+                  context.read<HabitProvider>().addHabit(
+                    name: habit.name,
+                    description: habit.description,
+                    color: habit.color,
+                    type: habit.type,
+                    targetCount: habit.targetCount,
+                    targetSeconds: habit.targetSeconds,
+                    reminderTime: habit.reminderTime,
+                    reminderDays: habit.reminderDays,
+                    icon: habit.icon,
+                  );
+                },
+                onDateSelected: (DateTime selectedDate) {
+                  // Dokunulmadı
+                  context.read<HabitProvider>().setSelectedDate(selectedDate);
+                  if (_selectedHabitForDetail != null) {
+                    setState(() {});
+                  }
+                },
+              ),
             ),
           ),
         ),
 
         if (showDetailPanel) ...[
+          // AYIRICI (Slider)
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             onHorizontalDragUpdate: (details) {
               setState(() {
-                // Sürükleme miktarı kadar genişliği artır/azalt
                 _leftPanelWidth += details.delta.dx;
-
-                // Sınır koyalım ki panel kaybolmasın veya çok büyümesin
-                if (_leftPanelWidth < 200) _leftPanelWidth = 200;
-                if (_leftPanelWidth > 600) _leftPanelWidth = 600;
+                // Overflow'u önlemek için maksimum sınırı ekran genişliğine göre kısıtla
+                double maxWidth = MediaQuery.of(context).size.width * 0.7;
+                if (_leftPanelWidth < 300) _leftPanelWidth = 300;
+                if (_leftPanelWidth > maxWidth) _leftPanelWidth = maxWidth;
               });
             },
             child: MouseRegion(
-              cursor: SystemMouseCursors
-                  .resizeLeftRight, // Fare üzerine gelince ikon değişecek
+              cursor: SystemMouseCursors.resizeLeftRight,
               child: Container(
-                width: 10, // Tıklama alanı
+                width: 10,
                 color: Colors.transparent,
                 child: Center(
                   child: Container(
                     width: 2,
-                    color: Colors.grey[300], // Ortadaki ince slider
+                    color: Colors.grey[300],
                   ),
                 ),
               ),
             ),
           ),
 
+          // SAĞ TARAF: Detay Paneli
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: _selectedHabitForDetail != null
                   ? HabitDetailScreen(
-                      isFakeLiquid: context
-                          .watch<StyleProvider>()
-                          .getDetailLiquidBoolean2(),
-                      isLiquid: context
-                          .watch<StyleProvider>()
-                          .getDetailLiquidBoolean1(),
-                      key: ValueKey(_selectedHabitForDetail!.id),
-                      habitId: _selectedHabitForDetail!.id,
-                      selectedDate:
-                          context.read<HabitProvider>().selectedDate ??
-                          DateTime.now(),
-                      isPanel: true, // Sağ panelde olduğu için true
-
-                      onHabitUpdated: (updatedHabit) {
-                        // Önce provider'ı güncelle
-                        context.read<HabitProvider>().updateHabit(updatedHabit);
-                        // Sonra yerel referansı güncelle ki sağ panel yeni veriyi bassın
-                        setState(() {
-                          _selectedHabitForDetail = updatedHabit;
-                        });
-                      },
-                      onHabitDeleted: (id) {
-                        context.read<HabitProvider>().deleteHabit(id);
-                        setState(() => _selectedHabitForDetail = null);
-                      },
-                    )
+                // Parametrelerine dokunulmadı
+                isFakeLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean2(),
+                isLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean1(),
+                key: ValueKey(_selectedHabitForDetail!.id),
+                habitId: _selectedHabitForDetail!.id,
+                selectedDate: context.read<HabitProvider>().selectedDate ?? DateTime.now(),
+                isPanel: true,
+                onHabitUpdated: (updatedHabit) {
+                  context.read<HabitProvider>().updateHabit(updatedHabit);
+                  setState(() {
+                    _selectedHabitForDetail = updatedHabit;
+                  });
+                },
+                onHabitDeleted: (id) {
+                  context.read<HabitProvider>().deleteHabit(id);
+                  setState(() => _selectedHabitForDetail = null);
+                },
+              )
                   : _buildEmptyState(),
             ),
           ),
