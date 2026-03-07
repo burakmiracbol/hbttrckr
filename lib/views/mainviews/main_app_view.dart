@@ -86,14 +86,12 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: eklenen her tasarım değişkeni aynı zamanda shared preferences ile kaydedilmeli
 //
-//  TODO: navigation rail ile mobil scaffold geçişinde overflow sıkıntıları çözülmeli
+//  TODO: navigation rail ile mobil scaffold geçişinde overflow sıkıntıları çözülmeli bunun için statsviewa bak is expanded da gene route kulanabiliriz gibi
 //
 //  gridview düzeltmesi habitspage
 //
 //  habitspage calendar d istersek hafta stili istersek ay stili görüntüleme felan
-//
-//  detail screende calendarda istersen month istersen week olarak görüntüleme
-//
+//  detail screende calendarda istersen month istersen week olarak görüntüleme (ayarlardan)
 //  """""""""" aynısı statsview de lazım yukarı bak
 //
 //  eski tarihlerde eski tarihlerin istatistikleri gösterilsin mesela bugüne kadar 5 streak ar ise dünü açınca 4 gözüksün
