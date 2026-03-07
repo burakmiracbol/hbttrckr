@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/internal.dart';
 import 'package:hbttrckr/data_types/habit.dart';
 import 'package:hbttrckr/views/mainviews/main_app_view.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,7 @@ import '../providers/style_provider.dart';
 import 'habit_detail_screen_views.dart';
 
 class HabitDetailScreen extends StatefulWidget {
+  final bool isMobileSize;
   final bool isLiquid;
   final bool isFakeLiquid;
   final String habitId;
@@ -32,6 +34,7 @@ class HabitDetailScreen extends StatefulWidget {
   final OnHabitDeleted? onHabitDeleted;
 
   const HabitDetailScreen({
+    required this.isMobileSize,
     super.key,
     required this.habitId,
     required this.isLiquid,
@@ -129,6 +132,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
       duration: const Duration(milliseconds: 200),
       child: context.watch<StyleProvider>().getFulscreenForNow() == false
           ? HabitDetailScreenNormal(
+              isMobileSize: widget.isMobileSize,
               habitId: currentHabit.id,
               isLiquid: isLiquid,
               isFakeLiquid: isFakeLiquid,

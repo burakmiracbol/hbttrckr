@@ -392,7 +392,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
               duration: const Duration(milliseconds: 300),
               child: _selectedHabitForDetail != null
                   ? HabitDetailScreen(
-                // Parametrelerine dokunulmadı
+                isMobileSize: false,
                 isFakeLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean2(),
                 isLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean1(),
                 key: ValueKey(_selectedHabitForDetail!.id),
@@ -460,6 +460,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
       context,
       MaterialPageRoute(
         builder: (context) => HabitDetailScreen(
+          isMobileSize: true,
           isFakeLiquid: context
               .watch<StyleProvider>()
               .getDetailLiquidBoolean2(),

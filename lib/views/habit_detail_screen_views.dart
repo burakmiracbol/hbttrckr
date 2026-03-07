@@ -326,6 +326,7 @@ class HabitDetailScreenFullscreen extends StatelessWidget {
 }
 
 class HabitDetailScreenNormal extends StatelessWidget {
+  final bool isMobileSize;
   final bool isLiquid;
   final bool isFakeLiquid;
   final String habitId;
@@ -336,6 +337,7 @@ class HabitDetailScreenNormal extends StatelessWidget {
   final Habit currentHabit;
 
   const HabitDetailScreenNormal({
+    required this.isMobileSize,
     required this.isLiquid,
     required this.isFakeLiquid,
     required this.habitId,
@@ -656,21 +658,21 @@ class HabitDetailScreenNormal extends StatelessWidget {
                         habitId: currentHabit.id,
                       ),
 
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: CardLiquidWrapper(
-                                  statement2: isFakeLiquid,
-                                  borderRadius: 160,
-                                  statement: isLiquid,
-                                  shape: LiquidRoundedRectangle(
-                                    borderRadius: 96,
-                                  ),
+
+                      isMobileSize == true
+                          ? Column(children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CardLiquidWrapper(
+                            statement2: isFakeLiquid,
+                            borderRadius: 160,
+                            statement: isLiquid,
+                            shape: LiquidRoundedRectangle(
+                              borderRadius: 96,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
                                   child: StatCard(
                                     "Aktif Streak",
                                     "${currentHabit.currentStreak}",
@@ -680,208 +682,459 @@ class HabitDetailScreenNormal extends StatelessWidget {
                                     isWideOverride: true,
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                            Expanded(
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: AspectRatio(
+                            aspectRatio: 2.1,
+                            child: CardLiquidWrapper(
+                              statement2: isFakeLiquid,
+                              borderRadius: 160,
+                              statement: isLiquid,
+                              shape: LiquidRoundedRectangle(
+                                borderRadius: 96,
+                              ),
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: AspectRatio(
-                                  aspectRatio: 2.1,
-                                  child: CardLiquidWrapper(
-                                    statement2: isFakeLiquid,
-                                    borderRadius: 160,
-                                    statement: isLiquid,
-                                    shape: LiquidRoundedRectangle(
-                                      borderRadius: 96,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 16.0),
-                                      child: Opacity(
-                                        opacity: 1,
-                                        child: Center(
-                                          child: LayoutBuilder(
-                                            builder: (context, constraintsOfGauge) {
-                                              return StrengthGauge(
-                                                seenStrength:
-                                                    "${currentHabit.strength.toStringAsFixed(1)}%",
-                                                strength: currentHabit.strength,
-                                                size:
-                                                    constraintsOfGauge
-                                                        .maxHeight *
-                                                    3 /
-                                                    2,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
+                                padding: const EdgeInsets.only(
+                                  top: 16.0,
+                                ),
+                                child: Opacity(
+                                  opacity: 1,
+                                  child: Center(
+                                    child: LayoutBuilder(
+                                      builder:
+                                          (
+                                          context,
+                                          constraintsOfGauge,
+                                          ) {
+                                        return StrengthGauge(
+                                          seenStrength:
+                                          "${currentHabit.strength.toStringAsFixed(1)}%",
+                                          strength:
+                                          currentHabit
+                                              .strength,
+                                          size:
+                                          constraintsOfGauge
+                                              .maxHeight *
+                                              3 /
+                                              2,
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
 
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: LayoutBuilder(
-                                  builder: (context, designeConst) {
-                                    return CardLiquidWrapper(
-                                      statement2: isFakeLiquid,
-                                      borderRadius: designeConst.maxWidth / 4,
-                                      statement: isLiquid,
-                                      shape: LiquidRoundedRectangle(
-                                        borderRadius: designeConst.maxWidth / 4,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: LayoutBuilder(
+                            builder: (context, designeConst) {
+                              return CardLiquidWrapper(
+                                statement2: isFakeLiquid,
+                                borderRadius: 160,
+                                statement: isLiquid,
+                                shape: LiquidRoundedRectangle(
+                                  borderRadius: 96,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: StatCard(
+                                        isWideOverride: true,
+                                        "Alışkanlık Seviyesi",
+                                        currentHabit.strengthLevel,
+                                        currentHabit.strengthLevel ==
+                                            "Efsane"
+                                            ? Icons.hotel_class
+                                            : currentHabit
+                                            .strengthLevel ==
+                                            "Usta"
+                                            ? Icons.star
+                                            : currentHabit
+                                            .strengthLevel ==
+                                            "Güçlü"
+                                            ? Icons.star_half
+                                            : currentHabit
+                                            .strengthLevel ==
+                                            "Orta"
+                                            ? Icons.favorite
+                                            : currentHabit
+                                            .strengthLevel ==
+                                            "Zayıf"
+                                            ? Icons.all_out
+                                            : Icons.question_mark,
+                                        Colors.blue,
+                                        8,
                                       ),
-                                      child: AspectRatio(
-                                        aspectRatio: 1.25,
-                                        child: StatCard(
-                                          isWideOverride: false,
-                                          "Alışkanlık Seviyesi",
-                                          currentHabit.strengthLevel,
-                                          currentHabit.strengthLevel == "Efsane"
-                                              ? Icons.hotel_class
-                                              : currentHabit.strengthLevel ==
-                                                    "Usta"
-                                              ? Icons.star
-                                              : currentHabit.strengthLevel ==
-                                                    "Güçlü"
-                                              ? Icons.star_half
-                                              : currentHabit.strengthLevel ==
-                                                    "Orta"
-                                              ? Icons.favorite
-                                              : currentHabit.strengthLevel ==
-                                                    "Zayıf"
-                                              ? Icons.all_out
-                                              : Icons.question_mark,
-                                          Colors.blue,
-                                          8,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: LayoutBuilder(
+                            builder: (context, designeConst1) {
+                              return CardLiquidWrapper(
+                                statement2: isFakeLiquid,
+                                borderRadius:
+                                designeConst1.maxWidth / 4,
+                                statement: isLiquid,
+                                shape: LiquidRoundedRectangle(
+                                  borderRadius:
+                                  designeConst1.maxWidth /
+                                      4,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(
+                                    12.0,
+                                  ),
+                                  child: AspectRatio(
+                                    aspectRatio: 1.25,
+                                    child: LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        return RateOfDoing(
+                                          doneCount: currentHabit
+                                              .dailyProgress
+                                              .values
+                                              .where(
+                                                (entry) =>
+                                            entry !=
+                                                "skipped"
+                                                ? currentHabit.type ==
+                                                HabitType.task
+                                                ? entry ==
+                                                true
+                                                : currentHabit.type ==
+                                                HabitType.count
+                                                ? (entry ??
+                                                0) >=
+                                                currentHabit.targetCount
+                                                : currentHabit.type ==
+                                                HabitType.time
+                                                ? (entry ??
+                                                0) ==
+                                                currentHabit.targetSeconds
+                                                : false
+                                                : false,
+                                          )
+                                              .length
+                                              .toDouble(),
+                                          missedCount: currentHabit
+                                              .dailyProgress
+                                              .values
+                                              .where(
+                                                (entry) =>
+                                            entry !=
+                                                "skipped"
+                                                ? entry !=
+                                                null
+                                                ? true
+                                                : currentHabit.type ==
+                                                HabitType.task
+                                                ? entry ==
+                                                false
+                                                : currentHabit.type ==
+                                                HabitType.count
+                                                ? (entry ??
+                                                0) <
+                                                currentHabit.targetCount
+                                                : currentHabit.type ==
+                                                HabitType.time
+                                                ? (entry ??
+                                                0) <
+                                                currentHabit.targetSeconds
+                                                : false
+                                                : false,
+                                          )
+                                              .length
+                                              .toDouble(),
+                                          skippedCount:
+                                          currentHabit
+                                              .dailyProgress
+                                              .values
+                                              .where(
+                                                (entry) =>
+                                            entry ==
+                                                "skipped",
+                                          )
+                                              .length
+                                              .toDouble(),
+                                          totalCount:
+                                          currentHabit
+                                              .dailyProgress
+                                              .values
+                                              .length
+                                              .toDouble(),
+                                          size: constraints
+                                              .maxHeight,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                      ],)
+                          : Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: CardLiquidWrapper(
+                                            statement2: isFakeLiquid,
+                                            borderRadius: 160,
+                                            statement: isLiquid,
+                                            shape: LiquidRoundedRectangle(
+                                              borderRadius: 96,
+                                            ),
+                                            child: StatCard(
+                                              "Aktif Streak",
+                                              "${currentHabit.currentStreak}",
+                                              Icons.whatshot,
+                                              Colors.orange,
+                                              16,
+                                              isWideOverride: true,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: LayoutBuilder(
-                                  builder: (context, designeConst1) {
-                                    return CardLiquidWrapper(
-                                      statement2: isFakeLiquid,
-                                      borderRadius: designeConst1.maxWidth / 4,
-                                      statement: isLiquid,
-                                      shape: LiquidRoundedRectangle(
-                                        borderRadius:
-                                            designeConst1.maxWidth / 4,
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: AspectRatio(
+                                            aspectRatio: 2.1,
+                                            child: CardLiquidWrapper(
+                                              statement2: isFakeLiquid,
+                                              borderRadius: 160,
+                                              statement: isLiquid,
+                                              shape: LiquidRoundedRectangle(
+                                                borderRadius: 96,
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 16.0,
+                                                ),
+                                                child: Opacity(
+                                                  opacity: 1,
+                                                  child: Center(
+                                                    child: LayoutBuilder(
+                                                      builder:
+                                                          (
+                                                            context,
+                                                            constraintsOfGauge,
+                                                          ) {
+                                                            return StrengthGauge(
+                                                              seenStrength:
+                                                                  "${currentHabit.strength.toStringAsFixed(1)}%",
+                                                              strength:
+                                                                  currentHabit
+                                                                      .strength,
+                                                              size:
+                                                                  constraintsOfGauge
+                                                                      .maxHeight *
+                                                                  3 /
+                                                                  2,
+                                                            );
+                                                          },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: AspectRatio(
-                                          aspectRatio: 1.25,
+                                    ],
+                                  ),
+                                ),
+
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
                                           child: LayoutBuilder(
-                                            builder: (context, constraints) {
-                                              return RateOfDoing(
-                                                doneCount: currentHabit
-                                                    .dailyProgress
-                                                    .values
-                                                    .where(
-                                                      (entry) =>
-                                                          entry != "skipped"
-                                                          ? currentHabit.type ==
-                                                                    HabitType
-                                                                        .task
-                                                                ? entry == true
-                                                                : currentHabit
-                                                                          .type ==
-                                                                      HabitType
-                                                                          .count
-                                                                ? (entry ??
-                                                                          0) >=
-                                                                      currentHabit
-                                                                          .targetCount
-                                                                : currentHabit
-                                                                          .type ==
-                                                                      HabitType
-                                                                          .time
-                                                                ? (entry ??
-                                                                          0) ==
-                                                                      currentHabit
-                                                                          .targetSeconds
-                                                                : false
-                                                          : false,
-                                                    )
-                                                    .length
-                                                    .toDouble(),
-                                                missedCount: currentHabit
-                                                    .dailyProgress
-                                                    .values
-                                                    .where(
-                                                      (entry) =>
-                                                          entry != "skipped"
-                                                          ? entry != null
-                                                                ? true
-                                                                : currentHabit
-                                                                          .type ==
-                                                                      HabitType
-                                                                          .task
-                                                                ? entry == false
-                                                                : currentHabit
-                                                                          .type ==
-                                                                      HabitType
-                                                                          .count
-                                                                ? (entry ?? 0) <
-                                                                      currentHabit
-                                                                          .targetCount
-                                                                : currentHabit
-                                                                          .type ==
-                                                                      HabitType
-                                                                          .time
-                                                                ? (entry ?? 0) <
-                                                                      currentHabit
-                                                                          .targetSeconds
-                                                                : false
-                                                          : false,
-                                                    )
-                                                    .length
-                                                    .toDouble(),
-                                                skippedCount: currentHabit
-                                                    .dailyProgress
-                                                    .values
-                                                    .where(
-                                                      (entry) =>
-                                                          entry == "skipped",
-                                                    )
-                                                    .length
-                                                    .toDouble(),
-                                                totalCount: currentHabit
-                                                    .dailyProgress
-                                                    .values
-                                                    .length
-                                                    .toDouble(),
-                                                size: constraints.maxHeight,
+                                            builder: (context, designeConst) {
+                                              return CardLiquidWrapper(
+                                                statement2: isFakeLiquid,
+                                                borderRadius:
+                                                    designeConst.maxWidth / 4,
+                                                statement: isLiquid,
+                                                shape: LiquidRoundedRectangle(
+                                                  borderRadius:
+                                                      designeConst.maxWidth / 4,
+                                                ),
+                                                child: AspectRatio(
+                                                  aspectRatio: 1.25,
+                                                  child: StatCard(
+                                                    isWideOverride: false,
+                                                    "Alışkanlık Seviyesi",
+                                                    currentHabit.strengthLevel,
+                                                    currentHabit.strengthLevel ==
+                                                            "Efsane"
+                                                        ? Icons.hotel_class
+                                                        : currentHabit
+                                                                  .strengthLevel ==
+                                                              "Usta"
+                                                        ? Icons.star
+                                                        : currentHabit
+                                                                  .strengthLevel ==
+                                                              "Güçlü"
+                                                        ? Icons.star_half
+                                                        : currentHabit
+                                                                  .strengthLevel ==
+                                                              "Orta"
+                                                        ? Icons.favorite
+                                                        : currentHabit
+                                                                  .strengthLevel ==
+                                                              "Zayıf"
+                                                        ? Icons.all_out
+                                                        : Icons.question_mark,
+                                                    Colors.blue,
+                                                    8,
+                                                  ),
+                                                ),
                                               );
                                             },
                                           ),
                                         ),
                                       ),
-                                    );
-                                  },
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: LayoutBuilder(
+                                            builder: (context, designeConst1) {
+                                              return CardLiquidWrapper(
+                                                statement2: isFakeLiquid,
+                                                borderRadius:
+                                                    designeConst1.maxWidth / 4,
+                                                statement: isLiquid,
+                                                shape: LiquidRoundedRectangle(
+                                                  borderRadius:
+                                                      designeConst1.maxWidth /
+                                                      4,
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    12.0,
+                                                  ),
+                                                  child: AspectRatio(
+                                                    aspectRatio: 1.25,
+                                                    child: LayoutBuilder(
+                                                      builder: (context, constraints) {
+                                                        return RateOfDoing(
+                                                          doneCount: currentHabit
+                                                              .dailyProgress
+                                                              .values
+                                                              .where(
+                                                                (entry) =>
+                                                                    entry !=
+                                                                        "skipped"
+                                                                    ? currentHabit.type ==
+                                                                              HabitType.task
+                                                                          ? entry ==
+                                                                                true
+                                                                          : currentHabit.type ==
+                                                                                HabitType.count
+                                                                          ? (entry ??
+                                                                                    0) >=
+                                                                                currentHabit.targetCount
+                                                                          : currentHabit.type ==
+                                                                                HabitType.time
+                                                                          ? (entry ??
+                                                                                    0) ==
+                                                                                currentHabit.targetSeconds
+                                                                          : false
+                                                                    : false,
+                                                              )
+                                                              .length
+                                                              .toDouble(),
+                                                          missedCount: currentHabit
+                                                              .dailyProgress
+                                                              .values
+                                                              .where(
+                                                                (entry) =>
+                                                                    entry !=
+                                                                        "skipped"
+                                                                    ? entry !=
+                                                                              null
+                                                                          ? true
+                                                                          : currentHabit.type ==
+                                                                                HabitType.task
+                                                                          ? entry ==
+                                                                                false
+                                                                          : currentHabit.type ==
+                                                                                HabitType.count
+                                                                          ? (entry ??
+                                                                                    0) <
+                                                                                currentHabit.targetCount
+                                                                          : currentHabit.type ==
+                                                                                HabitType.time
+                                                                          ? (entry ??
+                                                                                    0) <
+                                                                                currentHabit.targetSeconds
+                                                                          : false
+                                                                    : false,
+                                                              )
+                                                              .length
+                                                              .toDouble(),
+                                                          skippedCount:
+                                                              currentHabit
+                                                                  .dailyProgress
+                                                                  .values
+                                                                  .where(
+                                                                    (entry) =>
+                                                                        entry ==
+                                                                        "skipped",
+                                                                  )
+                                                                  .length
+                                                                  .toDouble(),
+                                                          totalCount:
+                                                              currentHabit
+                                                                  .dailyProgress
+                                                                  .values
+                                                                  .length
+                                                                  .toDouble(),
+                                                          size: constraints
+                                                              .maxHeight,
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
 
                       Container(
                         margin: const EdgeInsets.all(16),
@@ -988,21 +1241,21 @@ class HabitDetailScreenNormal extends StatelessWidget {
                                 }
 
                                 // Tamamı yapılmış
-                                if (
-                                currentHabit.type == HabitType.task ?
-                                currentHabit.isCompletedOnDate(
-                                      normalizedDay,
-                                    ) : currentHabit.type == HabitType.count ?
-                                    currentHabit.getCountProgressForDate(
-                                          normalizedDay,
-                                        ) ==
-                                        (currentHabit.targetCount?.toInt()) : currentHabit.type == HabitType.time ?
-                                    currentHabit.getSecondsProgressForDate(
-                                          normalizedDay,
-                                        ) ==
-                                        (currentHabit.targetSeconds?.toInt())
-                                : false
-                                ) {
+                                if (currentHabit.type == HabitType.task
+                                    ? currentHabit.isCompletedOnDate(
+                                        normalizedDay,
+                                      )
+                                    : currentHabit.type == HabitType.count
+                                    ? currentHabit.getCountProgressForDate(
+                                            normalizedDay,
+                                          ) ==
+                                          (currentHabit.targetCount?.toInt())
+                                    : currentHabit.type == HabitType.time
+                                    ? currentHabit.getSecondsProgressForDate(
+                                            normalizedDay,
+                                          ) ==
+                                          (currentHabit.targetSeconds?.toInt())
+                                    : false) {
                                   return Center(
                                     child: Container(
                                       width: 36,
