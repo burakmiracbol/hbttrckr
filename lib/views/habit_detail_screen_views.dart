@@ -988,17 +988,21 @@ class HabitDetailScreenNormal extends StatelessWidget {
                                 }
 
                                 // Tamamı yapılmış
-                                if (currentHabit.isCompletedOnDate(
+                                if (
+                                currentHabit.type == HabitType.task ?
+                                currentHabit.isCompletedOnDate(
                                       normalizedDay,
-                                    ) ||
+                                    ) : currentHabit.type == HabitType.count ?
                                     currentHabit.getCountProgressForDate(
                                           normalizedDay,
                                         ) ==
-                                        (currentHabit.targetCount?.toInt()) ||
+                                        (currentHabit.targetCount?.toInt()) : currentHabit.type == HabitType.time ?
                                     currentHabit.getSecondsProgressForDate(
                                           normalizedDay,
                                         ) ==
-                                        (currentHabit.targetSeconds?.toInt())) {
+                                        (currentHabit.targetSeconds?.toInt())
+                                : false
+                                ) {
                                   return Center(
                                     child: Container(
                                       width: 36,

@@ -84,8 +84,6 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: Universallness in design
 //
-//  TODO: habit düzenlemede hedef süreyi felan değiştirme var artık ama calendar da bozulma oldu
-//
 //  TODO: eklenen her tasarım değişkeni aynı zamanda shared preferences ile kaydedilmeli
 //
 //  TODO: navigation rail ile mobil scaffold geçişinde overflow sıkıntıları çözülmeli
