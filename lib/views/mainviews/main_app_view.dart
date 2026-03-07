@@ -90,9 +90,7 @@ import '../../providers/style_provider.dart';
 //
 //  gridview düzeltmesi habitspage
 //
-//  habitspage calendar d istersek hafta stili istersek ay stili görüntüleme felan
-//  detail screende calendarda istersen month istersen week olarak görüntüleme (ayarlardan)
-//  """""""""" aynısı statsview de lazım yukarı bak
+//  habitspage calendar ,detail screen , statsview istersek hafta stili istersek ay stili görüntüleme felan (ayarlardan)
 //
 //  eski tarihlerde eski tarihlerin istatistikleri gösterilsin mesela bugüne kadar 5 streak ar ise dünü açınca 4 gözüksün
 //
