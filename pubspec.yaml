@@ -94,7 +94,7 @@ dependencies:
 
   firebase_core: ^4.4.0
   google_sign_in: ^7.2.0
-  firebase_auth: ^6.1.4
+  firebase_auth: ^6.2.0
   cloud_firestore: ^6.1.2
   google_sign_in_all_platforms: ^2.0.2
 #  elegant_notification: ^2.5.1
