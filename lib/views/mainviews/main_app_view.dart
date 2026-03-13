@@ -205,6 +205,9 @@ class MainAppViewForMaterial extends StatefulWidget {
 class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
   int _selectedIndex = 0;
   double _leftPanelWidth = 300.0; // Başlangıç genişliği sağ panel için
+  double sizeRatioOfHabitsPage = 1/3;
+  double minSizeRatioOfHabitsPage = 1/3 ;
+  double maxSizeRatioOfHabitsPage = 2/3 ;
   List<Habit> habits = [];
 
   @override
@@ -300,119 +303,130 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
   Widget _buildMainContent(BuildContext context, bool showDetailPanel) {
     var habits = context.watch<HabitProvider>().habits;
 
-    return Row(
-      children: [
-        // SOL TARAF: Liste Sayfası
-        // showDetailPanel true ise sabit genişlik (_leftPanelWidth) kullanır,
-        // false ise Expanded gibi davranıp tüm alanı kaplar.
-        Flexible(
-          flex: showDetailPanel ? 0 : 1,
-          child: SizedBox(
-            width: showDetailPanel ? _leftPanelWidth : MediaQuery.of(context).size.width,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: buildHabitsPage(
-                habits: habits,
-                onHabitTapped: (habit) {
-                  if (showDetailPanel) {
-                    setState(
+    return LayoutBuilder(
+      builder: (context, constraint) {
+        return Row(
+          children: [
+            Flexible(
+              flex: showDetailPanel ? (100*sizeRatioOfHabitsPage).round() : 1,
+              child: SizedBox(
+                width: showDetailPanel
+                    ? sizeRatioOfHabitsPage * constraint.minWidth
+                    : constraint.minWidth,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: buildHabitsPage(
+                    habits: habits,
+                    onHabitTapped: (habit) {
+                      if (showDetailPanel) {
+                        setState(
                           () => _selectedHabitForDetail =
-                      _selectedHabitForDetail == habit ? null : habit,
-                    );
-                  } else {
-                    _navigateToDetail(context, habit);
-                  }
-                },
-                onHabitUpdated: (updatedHabit) {
-                  // Dokunulmadı
-                },
-                onHabitDeleted: (String id) {
-                  // Dokunulmadı (Mevcut mantığın korunuyor)
-                  setState(() {
-                    habits.removeWhere((h) => h.id == id);
-                  });
-                  final habit = habits.firstWhere((h) => h.id == id);
-                  context.read<HabitProvider>().addHabit(
-                    name: habit.name,
-                    description: habit.description,
-                    color: habit.color,
-                    type: habit.type,
-                    targetCount: habit.targetCount,
-                    targetSeconds: habit.targetSeconds,
-                    reminderTime: habit.reminderTime,
-                    reminderDays: habit.reminderDays,
-                    icon: habit.icon,
-                  );
-                },
-                onDateSelected: (DateTime selectedDate) {
-                  // Dokunulmadı
-                  context.read<HabitProvider>().setSelectedDate(selectedDate);
-                  if (_selectedHabitForDetail != null) {
-                    setState(() {});
-                  }
-                },
-              ),
-            ),
-          ),
-        ),
-
-        if (showDetailPanel) ...[
-          // AYIRICI (Slider)
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onHorizontalDragUpdate: (details) {
-              setState(() {
-                _leftPanelWidth += details.delta.dx;
-                // Overflow'u önlemek için maksimum sınırı ekran genişliğine göre kısıtla
-                double maxWidth = MediaQuery.of(context).size.width * 0.7;
-                if (_leftPanelWidth < 300) _leftPanelWidth = 300;
-                if (_leftPanelWidth > maxWidth) _leftPanelWidth = maxWidth;
-              });
-            },
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeLeftRight,
-              child: Container(
-                width: 10,
-                color: Colors.transparent,
-                child: Center(
-                  child: Container(
-                    width: 2,
-                    color: Colors.grey[300],
+                              _selectedHabitForDetail == habit ? null : habit,
+                        );
+                      } else {
+                        _navigateToDetail(context, habit);
+                      }
+                    },
+                    onHabitUpdated: (updatedHabit) {
+                      // Dokunulmadı
+                    },
+                    onHabitDeleted: (String id) {
+                      // Dokunulmadı (Mevcut mantığın korunuyor)
+                      setState(() {
+                        habits.removeWhere((h) => h.id == id);
+                      });
+                      final habit = habits.firstWhere((h) => h.id == id);
+                      context.read<HabitProvider>().addHabit(
+                        name: habit.name,
+                        description: habit.description,
+                        color: habit.color,
+                        type: habit.type,
+                        targetCount: habit.targetCount,
+                        targetSeconds: habit.targetSeconds,
+                        reminderTime: habit.reminderTime,
+                        reminderDays: habit.reminderDays,
+                        icon: habit.icon,
+                      );
+                    },
+                    onDateSelected: (DateTime selectedDate) {
+                      // Dokunulmadı
+                      context.read<HabitProvider>().setSelectedDate(
+                        selectedDate,
+                      );
+                      if (_selectedHabitForDetail != null) {
+                        setState(() {});
+                      }
+                    },
                   ),
                 ),
               ),
             ),
-          ),
 
-          // SAĞ TARAF: Detay Paneli
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: _selectedHabitForDetail != null
-                  ? HabitDetailScreen(
-                isMobileSize: false,
-                isFakeLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean2(),
-                isLiquid: context.watch<StyleProvider>().getDetailLiquidBoolean1(),
-                key: ValueKey(_selectedHabitForDetail!.id),
-                habitId: _selectedHabitForDetail!.id,
-                selectedDate: context.read<HabitProvider>().selectedDate ?? DateTime.now(),
-                isPanel: true,
-                onHabitUpdated: (updatedHabit) {
-                  context.read<HabitProvider>().updateHabit(updatedHabit);
+            if (showDetailPanel) ...[
+              // AYIRICI (Slider)
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onHorizontalDragUpdate: (details) {
                   setState(() {
-                    _selectedHabitForDetail = updatedHabit;
+                    double deltaRatio = details.delta.dx / constraint.maxWidth;
+                    sizeRatioOfHabitsPage += deltaRatio;
+                    // deltayı eklersek patlama olur delta oranı eklemek lazım
+                    if (sizeRatioOfHabitsPage < minSizeRatioOfHabitsPage) sizeRatioOfHabitsPage = minSizeRatioOfHabitsPage;
+                    if (sizeRatioOfHabitsPage > maxSizeRatioOfHabitsPage) sizeRatioOfHabitsPage = maxSizeRatioOfHabitsPage;
                   });
                 },
-                onHabitDeleted: (id) {
-                  context.read<HabitProvider>().deleteHabit(id);
-                  setState(() => _selectedHabitForDetail = null);
-                },
-              )
-                  : _buildEmptyState(),
-            ),
-          ),
-        ],
-      ],
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.resizeLeftRight,
+                  child: Container(
+                    width: 10,
+                    color: Colors.transparent,
+                    child: Center(
+                      child: Container(width: 2, color: Colors.grey[300]),
+                    ),
+                  ),
+                ),
+              ),
+
+              // SAĞ TARAF: Detay Paneli
+              Expanded(
+                flex: 100-(100*sizeRatioOfHabitsPage).round(),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: _selectedHabitForDetail != null
+                      ? HabitDetailScreen(
+                          isMobileSize: false,
+                          isFakeLiquid: context
+                              .watch<StyleProvider>()
+                              .getDetailLiquidBoolean2(),
+                          isLiquid: context
+                              .watch<StyleProvider>()
+                              .getDetailLiquidBoolean1(),
+                          key: ValueKey(_selectedHabitForDetail!.id),
+                          habitId: _selectedHabitForDetail!.id,
+                          selectedDate:
+                              context.read<HabitProvider>().selectedDate ??
+                              DateTime.now(),
+                          isPanel: true,
+                          onHabitUpdated: (updatedHabit) {
+                            context.read<HabitProvider>().updateHabit(
+                              updatedHabit,
+                            );
+                            setState(() {
+                              _selectedHabitForDetail = updatedHabit;
+                            });
+                          },
+                          onHabitDeleted: (id) {
+                            context.read<HabitProvider>().deleteHabit(id);
+                            setState(() => _selectedHabitForDetail = null);
+                          },
+                        )
+                      : _buildEmptyState(),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 
@@ -496,7 +510,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
         duration: const Duration(milliseconds: 050),
         child: glassContainer(
           shape: BoxShape.rectangle,
-          borderRadiusRect: 40 ,
+          borderRadiusRect: 40,
           context: context,
           child: IntrinsicWidth(
             child: NavigationRail(
