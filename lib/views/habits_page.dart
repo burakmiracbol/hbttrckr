@@ -333,6 +333,36 @@ Widget buildHabitsPage({
                               ),
                             ],
                           )
+                        : context.watch<StyleProvider>().getVSFMD() ==
+                              ViewStyleForMultipleData.wrapCard
+                        ? Wrap(
+                            spacing: 12, // Yatay boşluk
+                            runSpacing: 12, // Dikey boşluk
+                            alignment: WrapAlignment.start,
+                            children: [
+                              ...visibleHabitsByGroup.map(
+                                (habit) => IntrinsicWidth(
+                                  // İçindeki metne göre genişlemesini sağlar
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minWidth:
+                                          240, // En az bu kadar olsun (absürt görünmesin)
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width -
+                                          24, // Ekranı taşmasın
+                                    ),
+                                    child: EachHabitGridTile(
+                                      isFuture: isFuture,
+                                      isTooLate: isTooLate,
+                                      onHabitTapped: onHabitTapped,
+                                      habit: habit,
+                                      selectedDate: selectedDate,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
                         : Placeholder(),
                   );
                 },
