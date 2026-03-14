@@ -88,7 +88,7 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: navigation rail ile mobil scaffold geçişinde overflow sıkıntıları çözülmeli bunun için statsviewa bak is expanded da gene route kulanabiliriz gibi
 //
-// gitlabsal denemeler ,entegrasyonlar
+//  gitlabsal denemeler ,entegrasyonlar
 //
 //  gridview düzeltmesi habitspage
 //
