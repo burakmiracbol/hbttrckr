@@ -115,7 +115,7 @@ void main() {
           ChangeNotifierProvider<HabitProvider>.value(value: habitProvider),
           ChangeNotifierProvider<SchemeProvider>.value(value: schemeProvider),
         ],
-        child: const MaterialApp(home: StatisticsScreen()),
+        child: const MaterialApp(home: StatisticsScreen(isExpanded: true,)),
       ),
     );
 

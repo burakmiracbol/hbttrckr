@@ -258,6 +258,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
     final width = MediaQuery.of(context).size.width;
 
     final bool isMobile = width < 600;
+    final bool isExpandedWithNoboundary = width >= 1000 ;
     final bool isExpanded = width >= 600 && width < 1024; // Tablet/Yarım ekran
     final bool isLargeScreen = width >= 1324; // Geniş Masaüstü
 
@@ -288,7 +289,7 @@ class MainAppViewForMaterialState extends State<MainAppViewForMaterial> {
           Expanded(
             child: _selectedIndex == 0
                 ? _buildMainContent(context, !isMobile)
-                : StatisticsScreen(),
+                : StatisticsScreen(isExpanded: isExpandedWithNoboundary,),
           ),
         ],
       ),

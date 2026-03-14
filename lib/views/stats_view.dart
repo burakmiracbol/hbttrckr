@@ -29,7 +29,8 @@ import '../classes/stats_card.dart';
 import '../providers/scheme_provider.dart';
 
 class StatisticsScreen extends StatelessWidget {
-  const StatisticsScreen({super.key});
+  final bool isExpanded;
+  const StatisticsScreen({required this.isExpanded,super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +116,6 @@ class StatisticsScreen extends StatelessWidget {
       }
       missedCount = totalCount - (doneCount + skippedCount);
     }
-
     return GlassGlowLayer(
       child: LiquidGlassLayer(
         child: Scaffold(
@@ -402,282 +402,323 @@ class StatisticsScreen extends StatelessWidget {
                 ),
 
                 // GridView sonu
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Card(
-                    color: context.read<CurrentThemeMode>().isMica
-                        ? Theme.of(context).cardColor
-                        : Theme.of(context).cardColor.withValues(alpha: 0.2),
-                    child: glassContainer(
-                      context: context,
-                      child: TableCalendar(
-                        firstDay: DateTime.utc(2020, 1, 1),
-                        lastDay: DateTime.utc(2030, 12, 31),
-                        focusedDay: DateTime.now(),
-                        calendarFormat: CalendarFormat.month,
-                        startingDayOfWeek: StartingDayOfWeek.monday,
-                        headerStyle: HeaderStyle(
-                          formatButtonVisible: false,
-                          titleCentered: true,
-                        ),
-
-                        // Günlerin nasıl renkleneceğini belirle
-                        calendarBuilders: CalendarBuilders(
-                          defaultBuilder: (context, day, focusedDay) {
-                            // Gelecek günler → siyah / şeffaf
-                            if (day.isAfter(todayDate)) {
-                              return Center(
-                                child: Text(
-                                  '${day.day}',
-                                  style: TextStyle(color: Colors.grey[600]),
+                Row(
+                  children: [
+                    isExpanded
+                        ? Expanded(
+                            child: Column(
+                              children: [
+                                glassContainer(
+                                  child: Text("For now i am blank"),
+                                  context: context,
                                 ),
-                              );
-                            }
-                            return null; // normal gün
-                          },
-
-                          todayBuilder: (context, day, focusedDay) {
-                            return Center(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.pinkAccent,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '${day.day}',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
+                              ],
+                            ),
+                          )
+                        : Container(),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Card(
+                          color: context.read<CurrentThemeMode>().isMica
+                              ? Theme.of(context).cardColor
+                              : Theme.of(
+                                  context,
+                                ).cardColor.withValues(alpha: 0.2),
+                          child: glassContainer(
+                            context: context,
+                            child: TableCalendar(
+                              firstDay: DateTime.utc(2020, 1, 1),
+                              lastDay: DateTime.utc(2030, 12, 31),
+                              focusedDay: DateTime.now(),
+                              calendarFormat: CalendarFormat.month,
+                              startingDayOfWeek: StartingDayOfWeek.monday,
+                              headerStyle: HeaderStyle(
+                                formatButtonVisible: false,
+                                titleCentered: true,
                               ),
-                            );
-                          },
 
-                          markerBuilder: (context, day, events) {
-                            if (day.isAfter(todayDate)) {
-                              return null;
-                            }
-
-                            final normalizedDay = DateTime(
-                              day.year,
-                              day.month,
-                              day.day,
-                            );
-
-                            // Gün için tüm habitleri kontrol et
-                            final habits = context.read<HabitProvider>().habits;
-
-                            if (habits.isEmpty) return null;
-
-                            int doneCount = 0;
-                            int skippedCount = 0;
-
-                            bool sameDate(DateTime a, DateTime b) =>
-                                a.year == b.year &&
-                                a.month == b.month &&
-                                a.day == b.day;
-
-                            for (final habit in habits) {
-                              // normalize edilmiş gün için o habit'in yapılıp yapılmadığını güvenli şekilde belirle
-                              bool isDone = false;
-                              bool isSkipped = false;
-
-                              // skipped kontrolü (varsa)
-                              try {
-                                isSkipped = habit.isSkippedOnDate(
-                                  normalizedDay,
-                                );
-                              } catch (_) {
-                                isSkipped = false;
-                              }
-
-                              // Güvenli günlük veri okuma: doğrudan map lookup yerine tarihe göre eşleme
-                              dynamic v;
-                              try {
-                                for (final entry
-                                    in habit.dailyProgress.entries) {
-                                  final dynamic k = entry
-                                      .key; // treat as dynamic to allow legacy string keys
-                                  if (k is DateTime) {
-                                    if (sameDate(k, normalizedDay)) {
-                                      v = entry.value;
-                                      break;
-                                    }
-                                  } else if (k is String) {
-                                    try {
-                                      final parsed = DateTime.parse(k);
-                                      if (sameDate(parsed, normalizedDay)) {
-                                        v = entry.value;
-                                        break;
-                                      }
-                                    } catch (_) {}
+                              // Günlerin nasıl renkleneceğini belirle
+                              calendarBuilders: CalendarBuilders(
+                                defaultBuilder: (context, day, focusedDay) {
+                                  // Gelecek günler → siyah / şeffaf
+                                  if (day.isAfter(todayDate)) {
+                                    return Center(
+                                      child: Text(
+                                        '${day.day}',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    );
                                   }
-                                }
-                              } catch (_) {
-                                v = null;
-                              }
+                                  return null; // normal gün
+                                },
 
-                              if (habit.type == HabitType.task) {
-                                isDone = v == true;
-                              } else if (habit.type == HabitType.count) {
-                                final achieved = (v is num) ? v.toInt() : 0;
-                                isDone = achieved >= (habit.targetCount ?? 1);
-                              } else if (habit.type == HabitType.time) {
-                                final achievedSeconds = (v is num)
-                                    ? v.toInt()
-                                    : 0;
-                                final targetSecs = habit.targetSeconds ?? 60;
-                                isDone = achievedSeconds >= targetSecs;
-                              }
-
-                              if (isDone) doneCount++;
-                              if (!isDone && isSkipped) skippedCount++;
-                            }
-
-                            // Kurallar:
-                            // - Tüm habitler yapılmış → dolu yeşil
-                            // - Bazısı yapılmış → içi boş yeşil çember
-                            // - Hiçbiri yapılmamış ve atlanmış ise → içi boş açık gri çember
-                            // - Hiçbiri yapılmamış ve geçmiş gün ise → dolu kırmızı
-
-                            if (normalizedDay.isBefore(
-                              firstHabitCreatedTime.subtract(Duration(days: 1)),
-                            )) {
-                              return Center(
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withValues(alpha: 0.8),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${day.day}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
-
-                            // Tamamı yapılmış
-                            if (doneCount == habits.length) {
-                              return Center(
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: Colors.green.withValues(alpha: 0.8),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${day.day}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
-
-                            // Bazısı yapılmış
-                            if (doneCount > 0) {
-                              return Center(
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.green.withValues(
-                                        alpha: 0.9,
-                                      ),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${day.day}',
-                                      style: TextStyle(
-                                        color: Colors.green.withValues(
-                                          alpha: 0.9,
+                                todayBuilder: (context, day, focusedDay) {
+                                  return Center(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.pinkAccent,
+                                          width: 2,
                                         ),
-                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
-
-                            // Hiç yapılmamış ama atlananlar varsa (skipped)
-                            if (skippedCount > 0) {
-                              return Center(
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.grey.withValues(alpha: 0.6),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${day.day}',
-                                      style: TextStyle(
-                                        color: Colors.grey.withValues(
-                                          alpha: 0.8,
+                                      child: Center(
+                                        child: Text(
+                                          '${day.day}',
+                                          style: TextStyle(color: Colors.white),
                                         ),
-                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            }
+                                  );
+                                },
 
-                            if (doneCount == 0 && skippedCount == 0) {
-                              return Center(
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.withValues(alpha: 0.8),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${day.day}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                markerBuilder: (context, day, events) {
+                                  if (day.isAfter(todayDate)) {
+                                    return null;
+                                  }
+
+                                  final normalizedDay = DateTime(
+                                    day.year,
+                                    day.month,
+                                    day.day,
+                                  );
+
+                                  // Gün için tüm habitleri kontrol et
+                                  final habits = context
+                                      .read<HabitProvider>()
+                                      .habits;
+
+                                  if (habits.isEmpty) return null;
+
+                                  int doneCount = 0;
+                                  int skippedCount = 0;
+
+                                  bool sameDate(DateTime a, DateTime b) =>
+                                      a.year == b.year &&
+                                      a.month == b.month &&
+                                      a.day == b.day;
+
+                                  for (final habit in habits) {
+                                    // normalize edilmiş gün için o habit'in yapılıp yapılmadığını güvenli şekilde belirle
+                                    bool isDone = false;
+                                    bool isSkipped = false;
+
+                                    // skipped kontrolü (varsa)
+                                    try {
+                                      isSkipped = habit.isSkippedOnDate(
+                                        normalizedDay,
+                                      );
+                                    } catch (_) {
+                                      isSkipped = false;
+                                    }
+
+                                    // Güvenli günlük veri okuma: doğrudan map lookup yerine tarihe göre eşleme
+                                    dynamic v;
+                                    try {
+                                      for (final entry
+                                          in habit.dailyProgress.entries) {
+                                        final dynamic k = entry
+                                            .key; // treat as dynamic to allow legacy string keys
+                                        if (k is DateTime) {
+                                          if (sameDate(k, normalizedDay)) {
+                                            v = entry.value;
+                                            break;
+                                          }
+                                        } else if (k is String) {
+                                          try {
+                                            final parsed = DateTime.parse(k);
+                                            if (sameDate(
+                                              parsed,
+                                              normalizedDay,
+                                            )) {
+                                              v = entry.value;
+                                              break;
+                                            }
+                                          } catch (_) {}
+                                        }
+                                      }
+                                    } catch (_) {
+                                      v = null;
+                                    }
+
+                                    if (habit.type == HabitType.task) {
+                                      isDone = v == true;
+                                    } else if (habit.type == HabitType.count) {
+                                      final achieved = (v is num)
+                                          ? v.toInt()
+                                          : 0;
+                                      isDone =
+                                          achieved >= (habit.targetCount ?? 1);
+                                    } else if (habit.type == HabitType.time) {
+                                      final achievedSeconds = (v is num)
+                                          ? v.toInt()
+                                          : 0;
+                                      final targetSecs =
+                                          habit.targetSeconds ?? 60;
+                                      isDone = achievedSeconds >= targetSecs;
+                                    }
+
+                                    if (isDone) doneCount++;
+                                    if (!isDone && isSkipped) skippedCount++;
+                                  }
+
+                                  // Kurallar:
+                                  // - Tüm habitler yapılmış → dolu yeşil
+                                  // - Bazısı yapılmış → içi boş yeşil çember
+                                  // - Hiçbiri yapılmamış ve atlanmış ise → içi boş açık gri çember
+                                  // - Hiçbiri yapılmamış ve geçmiş gün ise → dolu kırmızı
+
+                                  if (normalizedDay.isBefore(
+                                    firstHabitCreatedTime.subtract(
+                                      Duration(days: 1),
                                     ),
-                                  ),
-                                ),
-                              );
-                            }
+                                  )) {
+                                    return Center(
+                                      child: Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.8,
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${day.day}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
 
-                            return null;
-                          },
+                                  // Tamamı yapılmış
+                                  if (doneCount == habits.length) {
+                                    return Center(
+                                      child: Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.withValues(
+                                            alpha: 0.8,
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${day.day}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  // Bazısı yapılmış
+                                  if (doneCount > 0) {
+                                    return Center(
+                                      child: Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: Colors.transparent,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.green.withValues(
+                                              alpha: 0.9,
+                                            ),
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${day.day}',
+                                            style: TextStyle(
+                                              color: Colors.green.withValues(
+                                                alpha: 0.9,
+                                              ),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  // Hiç yapılmamış ama atlananlar varsa (skipped)
+                                  if (skippedCount > 0) {
+                                    return Center(
+                                      child: Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: Colors.transparent,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.grey.withValues(
+                                              alpha: 0.6,
+                                            ),
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${day.day}',
+                                            style: TextStyle(
+                                              color: Colors.grey.withValues(
+                                                alpha: 0.8,
+                                              ),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  if (doneCount == 0 && skippedCount == 0) {
+                                    return Center(
+                                      child: Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.withValues(
+                                            alpha: 0.8,
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${day.day}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
