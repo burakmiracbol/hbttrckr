@@ -18,17 +18,17 @@ import 'package:flutter/material.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../actions/detail_screen/notes_editor_sheet.dart';
-import '../actions/detail_screen/settings_sheet.dart';
-import '../classes/actions_for_habit.dart';
-import '../classes/liquid_wrapper.dart';
-import '../classes/rate_of_doing.dart';
-import '../classes/stats_card.dart';
-import '../classes/strength_gauge.dart';
-import '../data_types/habit.dart';
-import '../providers/habit_provider.dart';
-import '../providers/style_provider.dart';
-import 'mainviews/main_app_view.dart';
+import '../../actions/detail_screen/notes_editor_sheet.dart';
+import '../../actions/detail_screen/settings_sheet.dart';
+import '../../classes/actions_for_habit.dart';
+import '../../classes/liquid_wrapper.dart';
+import '../../classes/rate_of_doing.dart';
+import '../../classes/stats_card.dart';
+import '../../classes/strength_gauge.dart';
+import '../../data_types/habit.dart';
+import '../../providers/habit_provider.dart';
+import '../../providers/style_provider.dart';
+import '../mainviews/main_app_view.dart';
 
 class HabitDetailScreenFullscreen extends StatelessWidget {
   final bool isLiquid;
@@ -658,236 +658,248 @@ class HabitDetailScreenNormal extends StatelessWidget {
                         habitId: currentHabit.id,
                       ),
 
-
                       isMobileSize == true
-                          ? Column(children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CardLiquidWrapper(
-                            statement2: isFakeLiquid,
-                            borderRadius: 160,
-                            statement: isLiquid,
-                            shape: LiquidRoundedRectangle(
-                              borderRadius: 96,
-                            ),
-                            child: Row(
+                          ? Column(
                               children: [
-                                Expanded(
-                                  child: StatCard(
-                                    "Aktif Streak",
-                                    "${currentHabit.currentStreak}",
-                                    Icons.whatshot,
-                                    Colors.orange,
-                                    16,
-                                    isWideOverride: true,
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CardLiquidWrapper(
+                                    statement2: isFakeLiquid,
+                                    borderRadius: 160,
+                                    statement: isLiquid,
+                                    shape: LiquidRoundedRectangle(
+                                      borderRadius: 96,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: StatCard(
+                                            "Aktif Streak",
+                                            "${currentHabit.currentStreak}",
+                                            Icons.whatshot,
+                                            Colors.orange,
+                                            16,
+                                            isWideOverride: true,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: AspectRatio(
+                                    aspectRatio: 2.1,
+                                    child: CardLiquidWrapper(
+                                      statement2: isFakeLiquid,
+                                      borderRadius: 160,
+                                      statement: isLiquid,
+                                      shape: LiquidRoundedRectangle(
+                                        borderRadius: 96,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 16.0,
+                                        ),
+                                        child: Opacity(
+                                          opacity: 1,
+                                          child: Center(
+                                            child: LayoutBuilder(
+                                              builder:
+                                                  (
+                                                    context,
+                                                    constraintsOfGauge,
+                                                  ) {
+                                                    return StrengthGauge(
+                                                      seenStrength:
+                                                          "${currentHabit.strength.toStringAsFixed(1)}%",
+                                                      strength:
+                                                          currentHabit.strength,
+                                                      size:
+                                                          constraintsOfGauge
+                                                              .maxHeight *
+                                                          3 /
+                                                          2,
+                                                    );
+                                                  },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: LayoutBuilder(
+                                    builder: (context, designeConst2) {
+                                      return CardLiquidWrapper(
+                                        statement2: isFakeLiquid,
+                                        borderRadius:
+                                            designeConst2.maxWidth / 4,
+                                        borderRadiusRect:
+                                        designeConst2.maxWidth / 4,
+                                        statement: isLiquid,
+                                        shape: LiquidRoundedRectangle(
+                                          borderRadius:
+                                              designeConst2.maxWidth / 4,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child:  AspectRatio(
+                                                aspectRatio: 1.25,
+                                                child: StatCard(
+                                                  isWideOverride: false,
+                                                  "Alışkanlık Seviyesi",
+                                                  currentHabit.strengthLevel,
+                                                  currentHabit.strengthLevel ==
+                                                          "Efsane"
+                                                      ? Icons.hotel_class
+                                                      : currentHabit
+                                                                .strengthLevel ==
+                                                            "Usta"
+                                                      ? Icons.star
+                                                      : currentHabit
+                                                                .strengthLevel ==
+                                                            "Güçlü"
+                                                      ? Icons.star_half
+                                                      : currentHabit
+                                                                .strengthLevel ==
+                                                            "Orta"
+                                                      ? Icons.favorite
+                                                      : currentHabit
+                                                                .strengthLevel ==
+                                                            "Zayıf"
+                                                      ? Icons.all_out
+                                                      : Icons.question_mark,
+                                                  Colors.blue,
+                                                  8,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: LayoutBuilder(
+                                    builder: (context, designeConst1) {
+                                      return CardLiquidWrapper(
+                                        statement2: isFakeLiquid,
+                                        borderRadius:
+                                            designeConst1.maxWidth / 4,
+                                        borderRadiusRect: designeConst1.maxWidth /4,
+                                        statement: isLiquid,
+                                        shape: LiquidRoundedRectangle(
+                                          borderRadius:
+                                              designeConst1.maxWidth / 4,
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: AspectRatio(
+                                            aspectRatio: 1.25,
+                                            child: LayoutBuilder(
+                                              builder: (context, constraints) {
+                                                return RateOfDoing(
+                                                  doneCount: currentHabit
+                                                      .dailyProgress
+                                                      .values
+                                                      .where(
+                                                        (entry) =>
+                                                            entry != "skipped"
+                                                            ? currentHabit.type ==
+                                                                      HabitType
+                                                                          .task
+                                                                  ? entry ==
+                                                                        true
+                                                                  : currentHabit
+                                                                            .type ==
+                                                                        HabitType
+                                                                            .count
+                                                                  ? (entry ??
+                                                                            0) >=
+                                                                        currentHabit
+                                                                            .targetCount
+                                                                  : currentHabit
+                                                                            .type ==
+                                                                        HabitType
+                                                                            .time
+                                                                  ? (entry ??
+                                                                            0) ==
+                                                                        currentHabit
+                                                                            .targetSeconds
+                                                                  : false
+                                                            : false,
+                                                      )
+                                                      .length
+                                                      .toDouble(),
+                                                  missedCount: currentHabit
+                                                      .dailyProgress
+                                                      .values
+                                                      .where(
+                                                        (entry) =>
+                                                            entry != "skipped"
+                                                            ? entry != null
+                                                                  ? true
+                                                                  : currentHabit
+                                                                            .type ==
+                                                                        HabitType
+                                                                            .task
+                                                                  ? entry ==
+                                                                        false
+                                                                  : currentHabit
+                                                                            .type ==
+                                                                        HabitType
+                                                                            .count
+                                                                  ? (entry ??
+                                                                            0) <
+                                                                        currentHabit
+                                                                            .targetCount
+                                                                  : currentHabit
+                                                                            .type ==
+                                                                        HabitType
+                                                                            .time
+                                                                  ? (entry ??
+                                                                            0) <
+                                                                        currentHabit
+                                                                            .targetSeconds
+                                                                  : false
+                                                            : false,
+                                                      )
+                                                      .length
+                                                      .toDouble(),
+                                                  skippedCount: currentHabit
+                                                      .dailyProgress
+                                                      .values
+                                                      .where(
+                                                        (entry) =>
+                                                            entry == "skipped",
+                                                      )
+                                                      .length
+                                                      .toDouble(),
+                                                  totalCount: currentHabit
+                                                      .dailyProgress
+                                                      .values
+                                                      .length
+                                                      .toDouble(),
+                                                  size: constraints.maxHeight,
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: AspectRatio(
-                            aspectRatio: 2.1,
-                            child: CardLiquidWrapper(
-                              statement2: isFakeLiquid,
-                              borderRadius: 160,
-                              statement: isLiquid,
-                              shape: LiquidRoundedRectangle(
-                                borderRadius: 96,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 16.0,
-                                ),
-                                child: Opacity(
-                                  opacity: 1,
-                                  child: Center(
-                                    child: LayoutBuilder(
-                                      builder:
-                                          (
-                                          context,
-                                          constraintsOfGauge,
-                                          ) {
-                                        return StrengthGauge(
-                                          seenStrength:
-                                          "${currentHabit.strength.toStringAsFixed(1)}%",
-                                          strength:
-                                          currentHabit
-                                              .strength,
-                                          size:
-                                          constraintsOfGauge
-                                              .maxHeight *
-                                              3 /
-                                              2,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: LayoutBuilder(
-                            builder: (context, designeConst) {
-                              return CardLiquidWrapper(
-                                statement2: isFakeLiquid,
-                                borderRadius: 160,
-                                statement: isLiquid,
-                                shape: LiquidRoundedRectangle(
-                                  borderRadius: 96,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: StatCard(
-                                        isWideOverride: true,
-                                        "Alışkanlık Seviyesi",
-                                        currentHabit.strengthLevel,
-                                        currentHabit.strengthLevel ==
-                                            "Efsane"
-                                            ? Icons.hotel_class
-                                            : currentHabit
-                                            .strengthLevel ==
-                                            "Usta"
-                                            ? Icons.star
-                                            : currentHabit
-                                            .strengthLevel ==
-                                            "Güçlü"
-                                            ? Icons.star_half
-                                            : currentHabit
-                                            .strengthLevel ==
-                                            "Orta"
-                                            ? Icons.favorite
-                                            : currentHabit
-                                            .strengthLevel ==
-                                            "Zayıf"
-                                            ? Icons.all_out
-                                            : Icons.question_mark,
-                                        Colors.blue,
-                                        8,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: LayoutBuilder(
-                            builder: (context, designeConst1) {
-                              return CardLiquidWrapper(
-                                statement2: isFakeLiquid,
-                                borderRadius:
-                                designeConst1.maxWidth / 4,
-                                statement: isLiquid,
-                                shape: LiquidRoundedRectangle(
-                                  borderRadius:
-                                  designeConst1.maxWidth /
-                                      4,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(
-                                    12.0,
-                                  ),
-                                  child: AspectRatio(
-                                    aspectRatio: 1.25,
-                                    child: LayoutBuilder(
-                                      builder: (context, constraints) {
-                                        return RateOfDoing(
-                                          doneCount: currentHabit
-                                              .dailyProgress
-                                              .values
-                                              .where(
-                                                (entry) =>
-                                            entry !=
-                                                "skipped"
-                                                ? currentHabit.type ==
-                                                HabitType.task
-                                                ? entry ==
-                                                true
-                                                : currentHabit.type ==
-                                                HabitType.count
-                                                ? (entry ??
-                                                0) >=
-                                                currentHabit.targetCount
-                                                : currentHabit.type ==
-                                                HabitType.time
-                                                ? (entry ??
-                                                0) ==
-                                                currentHabit.targetSeconds
-                                                : false
-                                                : false,
-                                          )
-                                              .length
-                                              .toDouble(),
-                                          missedCount: currentHabit
-                                              .dailyProgress
-                                              .values
-                                              .where(
-                                                (entry) =>
-                                            entry !=
-                                                "skipped"
-                                                ? entry !=
-                                                null
-                                                ? true
-                                                : currentHabit.type ==
-                                                HabitType.task
-                                                ? entry ==
-                                                false
-                                                : currentHabit.type ==
-                                                HabitType.count
-                                                ? (entry ??
-                                                0) <
-                                                currentHabit.targetCount
-                                                : currentHabit.type ==
-                                                HabitType.time
-                                                ? (entry ??
-                                                0) <
-                                                currentHabit.targetSeconds
-                                                : false
-                                                : false,
-                                          )
-                                              .length
-                                              .toDouble(),
-                                          skippedCount:
-                                          currentHabit
-                                              .dailyProgress
-                                              .values
-                                              .where(
-                                                (entry) =>
-                                            entry ==
-                                                "skipped",
-                                          )
-                                              .length
-                                              .toDouble(),
-                                          totalCount:
-                                          currentHabit
-                                              .dailyProgress
-                                              .values
-                                              .length
-                                              .toDouble(),
-                                          size: constraints
-                                              .maxHeight,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-
-                      ],)
+                            )
                           : Column(
                               children: [
                                 Padding(
@@ -982,6 +994,8 @@ class HabitDetailScreenNormal extends StatelessWidget {
                                                 statement2: isFakeLiquid,
                                                 borderRadius:
                                                     designeConst.maxWidth / 4,
+                                                borderRadiusRect:
+                                                    designeConst.maxWidth / 4,
                                                 statement: isLiquid,
                                                 shape: LiquidRoundedRectangle(
                                                   borderRadius:
@@ -1030,6 +1044,9 @@ class HabitDetailScreenNormal extends StatelessWidget {
                                               return CardLiquidWrapper(
                                                 statement2: isFakeLiquid,
                                                 borderRadius:
+                                                    designeConst1.maxWidth / 4,
+
+                                                borderRadiusRect:
                                                     designeConst1.maxWidth / 4,
                                                 statement: isLiquid,
                                                 shape: LiquidRoundedRectangle(

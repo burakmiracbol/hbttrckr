@@ -20,7 +20,7 @@ import 'package:hbttrckr/data_types/habit.dart';
 import 'package:hbttrckr/views/mainviews/main_app_view.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
-import '../providers/style_provider.dart';
+import '../../providers/style_provider.dart';
 import 'habit_detail_screen_views.dart';
 
 class HabitDetailScreen extends StatefulWidget {
