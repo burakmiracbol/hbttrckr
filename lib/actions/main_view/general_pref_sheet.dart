@@ -18,6 +18,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hbttrckr/actions/main_view/private_pref_sheet.dart';
 import 'package:hbttrckr/actions/main_view/scheme_prefs_sheet.dart';
+import 'package:hbttrckr/providers/style_provider.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import '../../classes/all_widgets.dart';
@@ -84,18 +85,21 @@ void showGeneralPrefsSheet(BuildContext context) {
             },
           ),
 
-          PlatformListTile(
-            leading: Consumer<CurrentThemeMode>(
-              builder: (ctx, theme, child) =>
-                  Icon(theme.isMica ? Icons.blur_off : Icons.blur_on),
+          Consumer<CurrentThemeMode>(
+            builder: (ctx, theme, child) => PlatformListTile(
+              leading: Icon(theme.isMica ? Icons.blur_off : Icons.blur_on),
+              title: Text("Uygulamanın Şeffaflığını Değiştirin"),
+              subtitle: Text(
+                "şu anki görüntü modu ${theme.isMica ? "normal" : "şeffaf"}",
+              ),
+              onTap: () async {
+                await theme.toggleMica();
+                ctx.read<StyleProvider>().setDetailLiquid(
+                  theme.isMica,
+                  !theme.isMica,
+                );
+              },
             ),
-            title: Text("Uygulamanın Şeffaflığını Değiştirin"),
-            subtitle: Text(
-              "şu anki görüntü modu ${context.watch<CurrentThemeMode>().isMica ? "normal" : "şeffaf"}",
-            ),
-            onTap: () async {
-              await context.read<CurrentThemeMode>().toggleMica();
-            },
           ),
 
           PlatformListTile(
