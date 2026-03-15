@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hbttrckr/classes/glass_card.dart';
 import 'package:hbttrckr/data_types/habit.dart';
-import 'package:hbttrckr/views/habit_detail_screen.dart';
+import 'package:hbttrckr/views/detailscreen/habit_detail_screen.dart';
 import 'package:hbttrckr/views/stats_view.dart';
 import 'package:hbttrckr/providers/habit_provider.dart';
 import 'package:hbttrckr/providers/scheme_provider.dart';

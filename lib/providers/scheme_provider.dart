@@ -23,13 +23,37 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ve temanın base color'unu değiştirebilmesini sağlar.
 
 class CurrentThemeMode with ChangeNotifier {
-  bool isDarkMode = ThemeMode.system == ThemeMode.dark;
+  // Başlangıç değerlerini güvenli bir şekilde tanımlayalım
+  bool isDarkMode = false;
   ThemeMode currentMode = ThemeMode.system;
   bool isMica = true;
 
+// 1. Veriyi Getirme (Asenkron olduğu için initState veya bir başlatıcıda çağrılmalı)
+  Future<void> loadPrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Kayıtlı değer yoksa sistemin o anki moduna bakabiliriz
+    // Ancak basitlik adına varsayılanı 'false' (light) kabul edelim:
+    isDarkMode = prefs.getBool('is_dark_mode') ?? false;
+
+    // Modu değişkene göre güncelle
+    currentMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+
+    notifyListeners(); // Arayüzü güncellemek için
+  }
+
+// 2. Veriyi Kaydetme
+  Future<void> savePrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_dark_mode', isDarkMode);
+  }
+
+// 3. Mod Değiştirme
   void changeThemeMode() {
     isDarkMode = !isDarkMode;
     currentMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+
+    savePrefs(); // Arka planda kaydeder
     notifyListeners();
   }
 
