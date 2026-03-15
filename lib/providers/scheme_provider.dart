@@ -23,50 +23,57 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ve temanın base color'unu değiştirebilmesini sağlar.
 
 class CurrentThemeMode with ChangeNotifier {
-  // Başlangıç değerlerini güvenli bir şekilde tanımlayalım
   bool isDarkMode = false;
   ThemeMode currentMode = ThemeMode.system;
   bool isMica = true;
 
-// 1. Veriyi Getirme (Asenkron olduğu için initState veya bir başlatıcıda çağrılmalı)
+  // Constructor: Sınıf oluşturulduğu anda verileri yükle
+  CurrentThemeMode() {
+    loadPrefs();
+  }
+
   Future<void> loadPrefs() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Kayıtlı değer yoksa sistemin o anki moduna bakabiliriz
-    // Ancak basitlik adına varsayılanı 'false' (light) kabul edelim:
+    // Değerleri oku
     isDarkMode = prefs.getBool('is_dark_mode') ?? false;
+    isMica = prefs.getBool('is_mica') ?? true; // Mica durumunu da oku
 
-    // Modu değişkene göre güncelle
+    // Temayı ve Pencere efektini uygula
     currentMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+    _applyWindowEffect();
 
-    notifyListeners(); // Arayüzü güncellemek için
+    notifyListeners();
   }
 
-// 2. Veriyi Kaydetme
-  Future<void> savePrefs() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('is_dark_mode', isDarkMode);
+  // Pencere efektini merkezi bir yerden yönetelim
+  Future<void> _applyWindowEffect() async {
+    if (isMica) {
+      await Window.setEffect(effect: WindowEffect.aero, dark: isDarkMode);
+    } else {
+      await Window.setEffect(effect: WindowEffect.disabled, dark: isDarkMode);
+      await Window.setEffect(effect: WindowEffect.transparent, dark: isDarkMode);
+    }
   }
 
-// 3. Mod Değiştirme
-  void changeThemeMode() {
+  void changeThemeMode() async {
     isDarkMode = !isDarkMode;
     currentMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
 
-    savePrefs(); // Arka planda kaydeder
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_dark_mode', isDarkMode);
+
+    _applyWindowEffect(); // Tema değişince efekti de güncelle (dark mode uyumu için)
     notifyListeners();
   }
 
   Future<void> toggleMica() async {
-    if (isMica) {
-      await Window.setEffect(effect: WindowEffect.disabled);
-      await Future.delayed(const Duration(milliseconds: 100));
-      await Window.setEffect(effect: WindowEffect.transparent);
-      isMica = false;
-    } else {
-      await Window.setEffect(effect: WindowEffect.aero, dark: false);
-      isMica = true;
-    }
+    isMica = !isMica;
+    await _applyWindowEffect();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_mica', isMica); // Mica durumunu kaydet
+
     notifyListeners();
   }
 }
