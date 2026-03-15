@@ -84,10 +84,6 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: Universallness in design
 //
-//  TODO: eklenen her tasarım değişkeni aynı zamanda shared preferences ile kaydedilmeli
-//
-//  TODO: navigation rail ile mobil scaffold geçişinde overflow sıkıntıları çözülmeli bunun için statsviewa bak is expanded da gene route kulanabiliriz gibi
-//
 //  gitlabsal denemeler ,entegrasyonlar
 //
 //  gridview düzeltmesi habitspage
