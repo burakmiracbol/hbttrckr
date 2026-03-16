@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:hbttrckr/actions/main_view/scheme_prefs_sheet.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
+import 'package:table_calendar/table_calendar.dart';
 import '../../classes/all_widgets.dart';
 import '../../providers/scheme_provider.dart';
 import '../../providers/style_provider.dart';
@@ -171,9 +172,15 @@ void showPrivatePrefsSheet(BuildContext context) {
               // Detail screen Liquidliği
               PlatformListTile(
                 onTap: () {},
-                leading: Icon(context.watch<StyleProvider>().getDetailLiquidBoolean1() ? Icons.water_drop : Icons.waves),
+                leading: Icon(
+                  context.watch<StyleProvider>().getDetailLiquidBoolean1()
+                      ? Icons.water_drop
+                      : Icons.waves,
+                ),
                 title: Text("Change Detail Screens Liquidness"),
-                subtitle: Text("For now it is ${context.watch<StyleProvider>().getDetailLiquidBoolean1() ? "Liquid" : "Ordinary"}"),
+                subtitle: Text(
+                  "For now it is ${context.watch<StyleProvider>().getDetailLiquidBoolean1() ? "Liquid" : "Ordinary"}",
+                ),
                 trailing: DropdownButton<Liquidness>(
                   style: TextStyle(color: Colors.white),
                   dropdownColor: Colors.grey[900],
@@ -181,20 +188,69 @@ void showPrivatePrefsSheet(BuildContext context) {
                   items: Liquidness.values
                       .map(
                         (e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e.toString().split('.').last),
-                    ),
-                  )
+                          value: e,
+                          child: Text(e.toString().split('.').last),
+                        ),
+                      )
                       .toList(),
                   onChanged: (v) {
                     if (v != null) {
                       setStateSheet(
-                            () => context.read<StyleProvider>().setDetailLiquid(v == Liquidness.liquid, v== Liquidness.fakeLiquid),
+                        () => context.read<StyleProvider>().setDetailLiquid(
+                          v == Liquidness.liquid,
+                          v == Liquidness.fakeLiquid,
+                        ),
                       );
                     }
                   },
                 ),
               ),
+
+              PlatformListTile(
+                onTap: () {},
+                leading: Icon(
+                  context.watch<StyleProvider>().getDetailCalendarStyle() ==
+                          CalendarFormat.month
+                      ? Icons.calendar_month
+                      : context
+                                .watch<StyleProvider>()
+                                .getDetailCalendarStyle() ==
+                            CalendarFormat.twoWeeks
+                      ? Icons.calendar_view_day
+                      : Icons.calendar_view_week,
+                ),
+                title: Text("Change Detail Screen Calendar Style"),
+                subtitle: Text(
+                  "For now it is ${context.watch<StyleProvider>().getDetailCalendarStyle()}",
+                ),
+                trailing: DropdownButton<CalendarFormat>(
+                  style: TextStyle(color: Colors.white),
+                  dropdownColor: Colors.grey[900],
+                  value: context
+                      .watch<StyleProvider>()
+                      .getDetailCalendarStyle(),
+                  items: CalendarFormat.values
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.toString().split('.').last),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (v) {
+                    if (v != null) {
+                      setStateSheet(
+                        () => context
+                            .read<StyleProvider>()
+                            .setDetailCalendarStyle(v),
+                      );
+                    }
+                  },
+                ),
+              ),
+
+
+
             ],
           );
         },

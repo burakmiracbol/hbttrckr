@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 enum AppDesignMode { material, cupertino, liquid, fluent, macos, yaru }
 
@@ -31,6 +32,7 @@ class StyleProvider with ChangeNotifier {
   bool isDetailLiquid = true;
   bool isDetailFakeLiquid = false;
   bool isFulscreenNow = false;
+  CalendarFormat detailCalendarStyle = CalendarFormat.month;
   AppDesignMode current = AppDesignMode.liquid;
   OrientationForPrivate timeSelectorOrientation =
       OrientationForPrivate.vertical;
@@ -52,16 +54,24 @@ class StyleProvider with ChangeNotifier {
 
     // 2. Enum Değerleri (Index üzerinden okuma)
     // getInt yanındaki varsayılan değerler sınıfın başındaki varsayılanlarla aynı olmalı.
-    current = AppDesignMode.values[prefs.getInt('current_design') ?? AppDesignMode.liquid.index];
+    current = AppDesignMode
+        .values[prefs.getInt('current_design') ?? AppDesignMode.liquid.index];
 
-    timeSelectorOrientation = OrientationForPrivate.values[
-    prefs.getInt('time_orient') ?? OrientationForPrivate.vertical.index];
+    detailCalendarStyle =
+        CalendarFormat.values[prefs.getInt('detail_calendar_style') ??
+            CalendarFormat.month.index];
 
-    countSelectorOrientation = OrientationForPrivate.values[
-    prefs.getInt('count_orient') ?? OrientationForPrivate.horizontal.index];
+    timeSelectorOrientation =
+        OrientationForPrivate.values[prefs.getInt('time_orient') ??
+            OrientationForPrivate.vertical.index];
 
-    viewStyle = ViewStyleForMultipleData.values[
-    prefs.getInt('view_style') ?? ViewStyleForMultipleData.grid.index];
+    countSelectorOrientation =
+        OrientationForPrivate.values[prefs.getInt('count_orient') ??
+            OrientationForPrivate.horizontal.index];
+
+    viewStyle =
+        ViewStyleForMultipleData.values[prefs.getInt('view_style') ??
+            ViewStyleForMultipleData.grid.index];
 
     notifyListeners();
   }
@@ -74,6 +84,7 @@ class StyleProvider with ChangeNotifier {
     await prefs.setBool('is_fulscreen_now', isFulscreenNow);
 
     // Enumları index olarak kaydediyoruz
+    await prefs.setInt('detail_calendar_style', detailCalendarStyle.index);
     await prefs.setInt('current_design', current.index);
     await prefs.setInt('time_orient', timeSelectorOrientation.index);
     await prefs.setInt('count_orient', countSelectorOrientation.index);
@@ -81,6 +92,16 @@ class StyleProvider with ChangeNotifier {
   }
 
   // --- SETTER METOTLARI (Kayıt işlemi eklendi) ---
+
+  void setDetailCalendarStyle(CalendarFormat wanted) {
+    detailCalendarStyle = wanted;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  CalendarFormat getDetailCalendarStyle() {
+    return detailCalendarStyle;
+  }
 
   void setDetailLiquid(bool wanted1, bool wanted2) {
     isDetailLiquid = wanted1;
@@ -101,7 +122,10 @@ class StyleProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setOrientationForSelectors(Selectors selector, OrientationForPrivate wantedOrientation) {
+  void setOrientationForSelectors(
+    Selectors selector,
+    OrientationForPrivate wantedOrientation,
+  ) {
     if (selector == Selectors.time) {
       timeSelectorOrientation = wantedOrientation;
     } else if (selector == Selectors.count) {
@@ -134,11 +158,9 @@ class StyleProvider with ChangeNotifier {
     return isDetailFakeLiquid;
   }
 
-
   bool getFulscreenForNow() {
     return isFulscreenNow;
   }
-
 
   ViewStyleForMultipleData getVSFMD() {
     return viewStyle;

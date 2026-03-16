@@ -1169,8 +1169,12 @@ class HabitDetailScreenNormal extends StatelessWidget {
                             firstDay: DateTime.utc(2020, 1, 1),
                             lastDay: DateTime.utc(2030, 12, 31),
                             focusedDay: DateTime.now(),
-                            calendarFormat: CalendarFormat.month,
+                            calendarFormat: context.read<StyleProvider>().getDetailCalendarStyle(),
+
+                            // TODO: bak burayaaaaaAAAAAAA BAAK aradığın burada
                             startingDayOfWeek: StartingDayOfWeek.monday,
+
+
                             headerStyle: const HeaderStyle(
                               formatButtonVisible: false,
                               titleCentered: true,
