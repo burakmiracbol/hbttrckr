@@ -53,7 +53,6 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
   late final currentHabit = Provider.of<HabitProvider>(
     context,
   ).getHabitById(widget.habitId);
-  late final selectedDate = Provider.of<HabitProvider>(context).selectedDate;
 
   late String howManyDaysBeforeCreated =
       "${DateTime.now().difference(currentHabit.createdAt).inDays + 1}";
@@ -136,7 +135,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
               habitId: currentHabit.id,
               isLiquid: isLiquid,
               isFakeLiquid: isFakeLiquid,
-              selectedDate: selectedDate ?? DateTime.now(),
+              selectedDate: context.watch<HabitProvider>().selectedDate ?? DateTime.now(),
               onHabitUpdated: widget.onHabitUpdated,
               onHabitDeleted: widget.onHabitDeleted,
               currentHabit: currentHabit,
@@ -146,7 +145,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
               isLiquid: isLiquid,
               isFakeLiquid: isFakeLiquid,
               habitId: currentHabit.id,
-              selectedDate: selectedDate ?? DateTime.now(),
+              selectedDate: context.watch<HabitProvider>().selectedDate ?? DateTime.now(),
               currentHabit: currentHabit,
               howManyDaysBeforeCreated: howManyDaysBeforeCreated,
               onHabitUpdated: widget.onHabitUpdated,

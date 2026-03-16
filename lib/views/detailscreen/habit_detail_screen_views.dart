@@ -1170,6 +1170,9 @@ class HabitDetailScreenNormal extends StatelessWidget {
                             firstDay: DateTime.utc(2020, 1, 1),
                             lastDay: DateTime.utc(2030, 12, 31),
                             focusedDay: DateTime.now(),
+                            currentDay: context
+                                .watch<HabitProvider>()
+                                .selectedDate,
                             calendarFormat: context
                                 .read<StyleProvider>()
                                 .getDetailCalendarStyle(),
@@ -1202,7 +1205,7 @@ class HabitDetailScreenNormal extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: Colors.pinkAccent,
+                                        color: Color.fromARGB(255, 17, 232, 162),
                                         width: 2,
                                       ),
                                     ),

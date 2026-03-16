@@ -84,6 +84,10 @@ import '../../providers/style_provider.dart';
 //
 //  TODO: Universallness in design
 //
+//  TODO: Table Calendarda çok önemli özellikler var !!
+//
+//  detail screen calendarda yapılanları diğerlerinde de ver
+//
 //  gitlabsal denemeler ,entegrasyonlar
 //
 //  gridview düzeltmesi habitspage
