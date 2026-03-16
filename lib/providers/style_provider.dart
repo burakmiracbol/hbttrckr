@@ -33,6 +33,7 @@ class StyleProvider with ChangeNotifier {
   bool isDetailFakeLiquid = false;
   bool isFulscreenNow = false;
   CalendarFormat detailCalendarStyle = CalendarFormat.month;
+  StartingDayOfWeek detailCalendarStartingDay = StartingDayOfWeek.monday;
   AppDesignMode current = AppDesignMode.liquid;
   OrientationForPrivate timeSelectorOrientation =
       OrientationForPrivate.vertical;
@@ -61,6 +62,10 @@ class StyleProvider with ChangeNotifier {
         CalendarFormat.values[prefs.getInt('detail_calendar_style') ??
             CalendarFormat.month.index];
 
+    detailCalendarStartingDay =
+        StartingDayOfWeek.values[prefs.getInt('detail_calendar_starting_day') ??
+            StartingDayOfWeek.monday.index];
+
     timeSelectorOrientation =
         OrientationForPrivate.values[prefs.getInt('time_orient') ??
             OrientationForPrivate.vertical.index];
@@ -84,6 +89,7 @@ class StyleProvider with ChangeNotifier {
     await prefs.setBool('is_fulscreen_now', isFulscreenNow);
 
     // Enumları index olarak kaydediyoruz
+    await prefs.setInt('detail_calendar_starting_day',detailCalendarStartingDay.index);
     await prefs.setInt('detail_calendar_style', detailCalendarStyle.index);
     await prefs.setInt('current_design', current.index);
     await prefs.setInt('time_orient', timeSelectorOrientation.index);
@@ -92,6 +98,15 @@ class StyleProvider with ChangeNotifier {
   }
 
   // --- SETTER METOTLARI (Kayıt işlemi eklendi) ---
+
+  void setDetailCalendarStartingDay (StartingDayOfWeek wanted) {
+    detailCalendarStartingDay = wanted;
+    _saveToPrefs();
+    notifyListeners();
+  }
+  StartingDayOfWeek getDetailCalendarStartingDay(){
+    return detailCalendarStartingDay;
+  }
 
   void setDetailCalendarStyle(CalendarFormat wanted) {
     detailCalendarStyle = wanted;

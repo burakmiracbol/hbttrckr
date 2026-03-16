@@ -249,8 +249,38 @@ void showPrivatePrefsSheet(BuildContext context) {
                 ),
               ),
 
-
-
+              PlatformListTile(
+                onTap: () {},
+                leading: Icon(Icons.settings_system_daydream_sharp),
+                title: Text("Change Detail Screens Calendar Starting Day"),
+                subtitle: Text(
+                  "For now it is ${context.watch<StyleProvider>().getDetailCalendarStartingDay()}",
+                ),
+                trailing: DropdownButton<StartingDayOfWeek>(
+                  style: TextStyle(color: Colors.white),
+                  dropdownColor: Colors.grey[900],
+                  value: context
+                      .watch<StyleProvider>()
+                      .getDetailCalendarStartingDay(),
+                  items: StartingDayOfWeek.values
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.toString().split('.').last),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (v) {
+                    if (v != null) {
+                      setStateSheet(
+                        () => context
+                            .read<StyleProvider>()
+                            .setDetailCalendarStartingDay(v),
+                      );
+                    }
+                  },
+                ),
+              ),
             ],
           );
         },

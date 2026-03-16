@@ -739,7 +739,7 @@ class HabitDetailScreenNormal extends StatelessWidget {
                                         borderRadius:
                                             designeConst2.maxWidth / 4,
                                         borderRadiusRect:
-                                        designeConst2.maxWidth / 4,
+                                            designeConst2.maxWidth / 4,
                                         statement: isLiquid,
                                         shape: LiquidRoundedRectangle(
                                           borderRadius:
@@ -748,7 +748,7 @@ class HabitDetailScreenNormal extends StatelessWidget {
                                         child: Row(
                                           children: [
                                             Expanded(
-                                              child:  AspectRatio(
+                                              child: AspectRatio(
                                                 aspectRatio: 1.25,
                                                 child: StatCard(
                                                   isWideOverride: false,
@@ -794,7 +794,8 @@ class HabitDetailScreenNormal extends StatelessWidget {
                                         statement2: isFakeLiquid,
                                         borderRadius:
                                             designeConst1.maxWidth / 4,
-                                        borderRadiusRect: designeConst1.maxWidth /4,
+                                        borderRadiusRect:
+                                            designeConst1.maxWidth / 4,
                                         statement: isLiquid,
                                         shape: LiquidRoundedRectangle(
                                           borderRadius:
@@ -1169,12 +1170,12 @@ class HabitDetailScreenNormal extends StatelessWidget {
                             firstDay: DateTime.utc(2020, 1, 1),
                             lastDay: DateTime.utc(2030, 12, 31),
                             focusedDay: DateTime.now(),
-                            calendarFormat: context.read<StyleProvider>().getDetailCalendarStyle(),
-
-                            // TODO: bak burayaaaaaAAAAAAA BAAK aradığın burada
-                            startingDayOfWeek: StartingDayOfWeek.monday,
-
-
+                            calendarFormat: context
+                                .read<StyleProvider>()
+                                .getDetailCalendarStyle(),
+                            startingDayOfWeek: context
+                                .read<StyleProvider>()
+                                .getDetailCalendarStartingDay(),
                             headerStyle: const HeaderStyle(
                               formatButtonVisible: false,
                               titleCentered: true,
