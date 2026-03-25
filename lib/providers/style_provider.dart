@@ -33,7 +33,9 @@ class StyleProvider with ChangeNotifier {
   bool isDetailFakeLiquid = false;
   bool isFulscreenNow = false;
   CalendarFormat detailCalendarStyle = CalendarFormat.month;
+  CalendarFormat statCalendarStyle = CalendarFormat.month;
   StartingDayOfWeek detailCalendarStartingDay = StartingDayOfWeek.monday;
+  StartingDayOfWeek statCalendarStartingDay = StartingDayOfWeek.monday;
   AppDesignMode current = AppDesignMode.liquid;
   OrientationForPrivate timeSelectorOrientation =
       OrientationForPrivate.vertical;
@@ -66,6 +68,14 @@ class StyleProvider with ChangeNotifier {
         StartingDayOfWeek.values[prefs.getInt('detail_calendar_starting_day') ??
             StartingDayOfWeek.monday.index];
 
+    statCalendarStyle =
+    CalendarFormat.values[prefs.getInt('stat_calendar_style') ??
+        CalendarFormat.month.index];
+
+    statCalendarStartingDay =
+    StartingDayOfWeek.values[prefs.getInt('stat_calendar_starting_day') ??
+        StartingDayOfWeek.monday.index];
+
     timeSelectorOrientation =
         OrientationForPrivate.values[prefs.getInt('time_orient') ??
             OrientationForPrivate.vertical.index];
@@ -91,6 +101,8 @@ class StyleProvider with ChangeNotifier {
     // Enumları index olarak kaydediyoruz
     await prefs.setInt('detail_calendar_starting_day',detailCalendarStartingDay.index);
     await prefs.setInt('detail_calendar_style', detailCalendarStyle.index);
+    await prefs.setInt('stat_calendar_starting_day',statCalendarStartingDay.index);
+    await prefs.setInt('stat_calendar_style', statCalendarStyle.index);
     await prefs.setInt('current_design', current.index);
     await prefs.setInt('time_orient', timeSelectorOrientation.index);
     await prefs.setInt('count_orient', countSelectorOrientation.index);
@@ -116,6 +128,25 @@ class StyleProvider with ChangeNotifier {
 
   CalendarFormat getDetailCalendarStyle() {
     return detailCalendarStyle;
+  }
+
+  void setStatCalendarStartingDay (StartingDayOfWeek wanted) {
+    statCalendarStartingDay = wanted;
+    _saveToPrefs();
+    notifyListeners();
+  }
+  StartingDayOfWeek getStatCalendarStartingDay(){
+    return statCalendarStartingDay;
+  }
+
+  void setStatCalendarStyle(CalendarFormat wanted) {
+    statCalendarStyle = wanted;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  CalendarFormat getStatCalendarStyle() {
+    return statCalendarStyle;
   }
 
   void setDetailLiquid(bool wanted1, bool wanted2) {

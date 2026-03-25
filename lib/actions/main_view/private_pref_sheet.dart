@@ -33,255 +33,334 @@ void showPrivatePrefsSheet(BuildContext context) {
     builder: (sheetContext) {
       return StatefulBuilder(
         builder: (context, setStateSheet) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 8.0),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: PlatformTitle(
-                        fontSize: Theme.of(
-                          context,
-                        ).textTheme.headlineSmall!.fontSize,
-                        title: 'Özel Tercihler',
-                        padding: EdgeInsets.fromLTRB(16, 2, 16, 2),
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 8.0),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: PlatformTitle(
+                          fontSize: Theme.of(
+                            context,
+                          ).textTheme.headlineSmall!.fontSize,
+                          title: 'Özel Tercihler',
+                          padding: EdgeInsets.fromLTRB(16, 2, 16, 2),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-
-              PlatformListTile(
-                onTap: () {},
-                leading: Icon(
-                  context.read<StyleProvider>().getOrientationForSelectors(
-                        Selectors.time,
-                      )
-                      ? Icons.stay_current_landscape
-                      : Icons.stay_current_portrait,
+            
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(
+                    context.read<StyleProvider>().getOrientationForSelectors(
+                          Selectors.time,
+                        )
+                        ? Icons.stay_current_landscape
+                        : Icons.stay_current_portrait,
+                  ),
+                  title: Text("Time Selector Slider Orientation"),
+                  subtitle: Text(
+                    "For now it's ${context.read<StyleProvider>().getOrientationForSelectors(Selectors.time) ? "horizontal" : "vertical"}",
+                  ),
+                  trailing: DropdownButton<OrientationForPrivate>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context.read<StyleProvider>().timeSelectorOrientation,
+                    items: OrientationForPrivate.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.toString().split('.').last),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                          () => context
+                              .read<StyleProvider>()
+                              .setOrientationForSelectors(Selectors.time, v),
+                        );
+                      }
+                    },
+                  ),
                 ),
-                title: Text("Time Selector Slider Orientation"),
-                subtitle: Text(
-                  "For now it's ${context.read<StyleProvider>().getOrientationForSelectors(Selectors.time) ? "horizontal" : "vertical"}",
+            
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(
+                    context.read<StyleProvider>().getOrientationForSelectors(
+                          Selectors.count,
+                        )
+                        ? Icons.stay_current_landscape
+                        : Icons.stay_current_portrait,
+                  ),
+                  title: Text("Count Selector Slider Orientation"),
+                  subtitle: Text(
+                    "For now it's ${context.read<StyleProvider>().getOrientationForSelectors(Selectors.count) ? "horizontal" : "vertical"}",
+                  ),
+                  trailing: DropdownButton<OrientationForPrivate>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context.read<StyleProvider>().countSelectorOrientation,
+                    items: OrientationForPrivate.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.toString().split('.').last),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                          () => context
+                              .read<StyleProvider>()
+                              .setOrientationForSelectors(Selectors.count, v),
+                        );
+                      }
+                    },
+                  ),
                 ),
-                trailing: DropdownButton<OrientationForPrivate>(
-                  style: TextStyle(color: Colors.white),
-                  dropdownColor: Colors.grey[900],
-                  value: context.read<StyleProvider>().timeSelectorOrientation,
-                  items: OrientationForPrivate.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.toString().split('.').last),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (v) {
-                    if (v != null) {
-                      setStateSheet(
-                        () => context
-                            .read<StyleProvider>()
-                            .setOrientationForSelectors(Selectors.time, v),
-                      );
-                    }
-                  },
+            
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(
+                    context.watch<StyleProvider>().getVSFMD() ==
+                            ViewStyleForMultipleData.grid
+                        ? Icons.grid_view_rounded
+                        : context.watch<StyleProvider>().getVSFMD() ==
+                              ViewStyleForMultipleData.list
+                        ? Icons.list
+                        : Icons.credit_card_rounded,
+                  ),
+                  title: Text("Change Layout in Habits Page"),
+                  subtitle: Text(
+                    "For now it is ${context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.grid
+                        ? "Grid"
+                        : context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.list
+                        ? "List"
+                        : "Wrap Card"}",
+                  ),
+                  trailing: DropdownButton<ViewStyleForMultipleData>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context.watch<StyleProvider>().getVSFMD(),
+                    items: ViewStyleForMultipleData.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.toString().split('.').last),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                          () => context.read<StyleProvider>().setVSFMD(v),
+                        );
+                      }
+                    },
+                  ),
                 ),
-              ),
-
-              PlatformListTile(
-                onTap: () {},
-                leading: Icon(
-                  context.read<StyleProvider>().getOrientationForSelectors(
-                        Selectors.count,
-                      )
-                      ? Icons.stay_current_landscape
-                      : Icons.stay_current_portrait,
+            
+                // Detail screen Liquidliği
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(
+                    context.watch<StyleProvider>().getDetailLiquidBoolean1()
+                        ? Icons.water_drop
+                        : Icons.waves,
+                  ),
+                  title: Text("Change Detail Screens Liquidness"),
+                  subtitle: Text(
+                    "For now it is ${context.watch<StyleProvider>().getDetailLiquidBoolean1() ? "Liquid" : "Ordinary"}",
+                  ),
+                  trailing: DropdownButton<Liquidness>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context.watch<StyleProvider>().getDetailLiquid(),
+                    items: Liquidness.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.toString().split('.').last),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                          () => context.read<StyleProvider>().setDetailLiquid(
+                            v == Liquidness.liquid,
+                            v == Liquidness.fakeLiquid,
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
-                title: Text("Count Selector Slider Orientation"),
-                subtitle: Text(
-                  "For now it's ${context.read<StyleProvider>().getOrientationForSelectors(Selectors.count) ? "horizontal" : "vertical"}",
+            
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(
+                    context.watch<StyleProvider>().getDetailCalendarStyle() ==
+                            CalendarFormat.month
+                        ? Icons.calendar_month
+                        : context
+                                  .watch<StyleProvider>()
+                                  .getDetailCalendarStyle() ==
+                              CalendarFormat.twoWeeks
+                        ? Icons.calendar_view_day
+                        : Icons.calendar_view_week,
+                  ),
+                  title: Text("Change Detail Screen Calendar Style"),
+                  subtitle: Text(
+                    "For now it is ${context.watch<StyleProvider>().getDetailCalendarStyle()}",
+                  ),
+                  trailing: DropdownButton<CalendarFormat>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context
+                        .watch<StyleProvider>()
+                        .getDetailCalendarStyle(),
+                    items: CalendarFormat.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.toString().split('.').last),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                          () => context
+                              .read<StyleProvider>()
+                              .setDetailCalendarStyle(v),
+                        );
+                      }
+                    },
+                  ),
                 ),
-                trailing: DropdownButton<OrientationForPrivate>(
-                  style: TextStyle(color: Colors.white),
-                  dropdownColor: Colors.grey[900],
-                  value: context.read<StyleProvider>().countSelectorOrientation,
-                  items: OrientationForPrivate.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.toString().split('.').last),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (v) {
-                    if (v != null) {
-                      setStateSheet(
-                        () => context
-                            .read<StyleProvider>()
-                            .setOrientationForSelectors(Selectors.count, v),
-                      );
-                    }
-                  },
+            
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(Icons.settings_system_daydream_sharp),
+                  title: Text("Change Detail Screens Calendar Starting Day"),
+                  subtitle: Text(
+                    "For now it is ${context.watch<StyleProvider>().getDetailCalendarStartingDay()}",
+                  ),
+                  trailing: DropdownButton<StartingDayOfWeek>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context
+                        .watch<StyleProvider>()
+                        .getDetailCalendarStartingDay(),
+                    items: StartingDayOfWeek.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.toString().split('.').last),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                          () => context
+                              .read<StyleProvider>()
+                              .setDetailCalendarStartingDay(v),
+                        );
+                      }
+                    },
+                  ),
                 ),
-              ),
-
-              PlatformListTile(
-                onTap: () {},
-                leading: Icon(
-                  context.watch<StyleProvider>().getVSFMD() ==
-                          ViewStyleForMultipleData.grid
-                      ? Icons.grid_view_rounded
-                      : context.watch<StyleProvider>().getVSFMD() ==
-                            ViewStyleForMultipleData.list
-                      ? Icons.list
-                      : Icons.credit_card_rounded,
+            
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(
+                    context.watch<StyleProvider>().getStatCalendarStyle() ==
+                        CalendarFormat.month
+                        ? Icons.calendar_month
+                        : context
+                        .watch<StyleProvider>()
+                        .getStatCalendarStyle() ==
+                        CalendarFormat.twoWeeks
+                        ? Icons.calendar_view_day
+                        : Icons.calendar_view_week,
+                  ),
+                  title: Text("Change Stat Screen Calendar Style"),
+                  subtitle: Text(
+                    "For now it is ${context.watch<StyleProvider>().getStatCalendarStyle()}",
+                  ),
+                  trailing: DropdownButton<CalendarFormat>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context
+                        .watch<StyleProvider>()
+                        .getStatCalendarStyle(),
+                    items: CalendarFormat.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(e.toString().split('.').last),
+                      ),
+                    )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                              () => context
+                              .read<StyleProvider>()
+                              .setStatCalendarStyle(v),
+                        );
+                      }
+                    },
+                  ),
                 ),
-                title: Text("Change Layout in Habits Page"),
-                subtitle: Text(
-                  "For now it is ${context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.grid
-                      ? "Grid"
-                      : context.watch<StyleProvider>().getVSFMD() == ViewStyleForMultipleData.list
-                      ? "List"
-                      : "Wrap Card"}",
+            
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(Icons.settings_system_daydream_sharp),
+                  title: Text("Change Stat Screens Calendar Starting Day"),
+                  subtitle: Text(
+                    "For now it is ${context.watch<StyleProvider>().getStatCalendarStartingDay()}",
+                  ),
+                  trailing: DropdownButton<StartingDayOfWeek>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context
+                        .watch<StyleProvider>()
+                        .getStatCalendarStartingDay(),
+                    items: StartingDayOfWeek.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(e.toString().split('.').last),
+                      ),
+                    )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                              () => context
+                              .read<StyleProvider>()
+                              .setStatCalendarStartingDay(v),
+                        );
+                      }
+                    },
+                  ),
                 ),
-                trailing: DropdownButton<ViewStyleForMultipleData>(
-                  style: TextStyle(color: Colors.white),
-                  dropdownColor: Colors.grey[900],
-                  value: context.watch<StyleProvider>().getVSFMD(),
-                  items: ViewStyleForMultipleData.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.toString().split('.').last),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (v) {
-                    if (v != null) {
-                      setStateSheet(
-                        () => context.read<StyleProvider>().setVSFMD(v),
-                      );
-                    }
-                  },
-                ),
-              ),
-
-              // Detail screen Liquidliği
-              PlatformListTile(
-                onTap: () {},
-                leading: Icon(
-                  context.watch<StyleProvider>().getDetailLiquidBoolean1()
-                      ? Icons.water_drop
-                      : Icons.waves,
-                ),
-                title: Text("Change Detail Screens Liquidness"),
-                subtitle: Text(
-                  "For now it is ${context.watch<StyleProvider>().getDetailLiquidBoolean1() ? "Liquid" : "Ordinary"}",
-                ),
-                trailing: DropdownButton<Liquidness>(
-                  style: TextStyle(color: Colors.white),
-                  dropdownColor: Colors.grey[900],
-                  value: context.watch<StyleProvider>().getDetailLiquid(),
-                  items: Liquidness.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.toString().split('.').last),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (v) {
-                    if (v != null) {
-                      setStateSheet(
-                        () => context.read<StyleProvider>().setDetailLiquid(
-                          v == Liquidness.liquid,
-                          v == Liquidness.fakeLiquid,
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-
-              PlatformListTile(
-                onTap: () {},
-                leading: Icon(
-                  context.watch<StyleProvider>().getDetailCalendarStyle() ==
-                          CalendarFormat.month
-                      ? Icons.calendar_month
-                      : context
-                                .watch<StyleProvider>()
-                                .getDetailCalendarStyle() ==
-                            CalendarFormat.twoWeeks
-                      ? Icons.calendar_view_day
-                      : Icons.calendar_view_week,
-                ),
-                title: Text("Change Detail Screen Calendar Style"),
-                subtitle: Text(
-                  "For now it is ${context.watch<StyleProvider>().getDetailCalendarStyle()}",
-                ),
-                trailing: DropdownButton<CalendarFormat>(
-                  style: TextStyle(color: Colors.white),
-                  dropdownColor: Colors.grey[900],
-                  value: context
-                      .watch<StyleProvider>()
-                      .getDetailCalendarStyle(),
-                  items: CalendarFormat.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.toString().split('.').last),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (v) {
-                    if (v != null) {
-                      setStateSheet(
-                        () => context
-                            .read<StyleProvider>()
-                            .setDetailCalendarStyle(v),
-                      );
-                    }
-                  },
-                ),
-              ),
-
-              PlatformListTile(
-                onTap: () {},
-                leading: Icon(Icons.settings_system_daydream_sharp),
-                title: Text("Change Detail Screens Calendar Starting Day"),
-                subtitle: Text(
-                  "For now it is ${context.watch<StyleProvider>().getDetailCalendarStartingDay()}",
-                ),
-                trailing: DropdownButton<StartingDayOfWeek>(
-                  style: TextStyle(color: Colors.white),
-                  dropdownColor: Colors.grey[900],
-                  value: context
-                      .watch<StyleProvider>()
-                      .getDetailCalendarStartingDay(),
-                  items: StartingDayOfWeek.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.toString().split('.').last),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (v) {
-                    if (v != null) {
-                      setStateSheet(
-                        () => context
-                            .read<StyleProvider>()
-                            .setDetailCalendarStartingDay(v),
-                      );
-                    }
-                  },
-                ),
-              ),
-            ],
+            
+              ],
+            ),
           );
         },
       );

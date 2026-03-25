@@ -27,6 +27,7 @@ import 'package:hbttrckr/classes/strength_gauge.dart';
 import '../classes/glass_card.dart';
 import '../classes/stats_card.dart';
 import '../providers/scheme_provider.dart';
+import '../providers/style_provider.dart';
 
 class StatisticsScreen extends StatelessWidget {
   final bool isExpanded;
@@ -431,8 +432,8 @@ class StatisticsScreen extends StatelessWidget {
                               firstDay: DateTime.utc(2020, 1, 1),
                               lastDay: DateTime.utc(2030, 12, 31),
                               focusedDay: DateTime.now(),
-                              calendarFormat: CalendarFormat.month,
-                              startingDayOfWeek: StartingDayOfWeek.monday,
+                              calendarFormat: context.watch<StyleProvider>().statCalendarStyle,
+                              startingDayOfWeek: context.watch<StyleProvider>().statCalendarStartingDay,
                               headerStyle: HeaderStyle(
                                 formatButtonVisible: false,
                                 titleCentered: true,
