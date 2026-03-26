@@ -358,7 +358,83 @@ void showPrivatePrefsSheet(BuildContext context) {
                     },
                   ),
                 ),
-            
+
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(
+                    context.watch<StyleProvider>().getHabitsPageCalendarStyle() ==
+                        CalendarFormat.month
+                        ? Icons.calendar_month
+                        : context
+                        .watch<StyleProvider>()
+                        .getHabitsPageCalendarStyle() ==
+                        CalendarFormat.twoWeeks
+                        ? Icons.calendar_view_day
+                        : Icons.calendar_view_week,
+                  ),
+                  title: Text("Change Habits Page Calendar Style"),
+                  subtitle: Text(
+                    "For now it is ${context.watch<StyleProvider>().getHabitsPageCalendarStyle()}",
+                  ),
+                  trailing: DropdownButton<CalendarFormat>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context
+                        .watch<StyleProvider>()
+                        .getHabitsPageCalendarStyle(),
+                    items: CalendarFormat.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(e.toString().split('.').last),
+                      ),
+                    )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                              () => context
+                              .read<StyleProvider>()
+                              .setHabitsPageCalendarStyle(v),
+                        );
+                      }
+                    },
+                  ),
+                ),
+
+                PlatformListTile(
+                  onTap: () {},
+                  leading: Icon(Icons.settings_system_daydream_sharp),
+                  title: Text("Change Habits Page Calendar Starting Day"),
+                  subtitle: Text(
+                    "For now it is ${context.watch<StyleProvider>().getHabitsPageCalendarStartingDay()}",
+                  ),
+                  trailing: DropdownButton<StartingDayOfWeek>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.grey[900],
+                    value: context
+                        .watch<StyleProvider>()
+                        .getHabitsPageCalendarStartingDay(),
+                    items: StartingDayOfWeek.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(e.toString().split('.').last),
+                      ),
+                    )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateSheet(
+                              () => context
+                              .read<StyleProvider>()
+                              .setHabitsPageCalendarStartingDay(v),
+                        );
+                      }
+                    },
+                  ),
+                ),
+
               ],
             ),
           );

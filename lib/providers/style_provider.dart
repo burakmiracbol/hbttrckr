@@ -34,8 +34,10 @@ class StyleProvider with ChangeNotifier {
   bool isFulscreenNow = false;
   CalendarFormat detailCalendarStyle = CalendarFormat.month;
   CalendarFormat statCalendarStyle = CalendarFormat.month;
+  CalendarFormat habitsPageCalendarStyle = CalendarFormat.week;
   StartingDayOfWeek detailCalendarStartingDay = StartingDayOfWeek.monday;
   StartingDayOfWeek statCalendarStartingDay = StartingDayOfWeek.monday;
+  StartingDayOfWeek habitsPageCalendarStartingDay = StartingDayOfWeek.monday;
   AppDesignMode current = AppDesignMode.liquid;
   OrientationForPrivate timeSelectorOrientation =
       OrientationForPrivate.vertical;
@@ -76,6 +78,14 @@ class StyleProvider with ChangeNotifier {
     StartingDayOfWeek.values[prefs.getInt('stat_calendar_starting_day') ??
         StartingDayOfWeek.monday.index];
 
+    habitsPageCalendarStyle =
+    CalendarFormat.values[prefs.getInt('habits_page_calendar_style') ??
+        CalendarFormat.month.index];
+
+    habitsPageCalendarStartingDay =
+    StartingDayOfWeek.values[prefs.getInt('habits_page_calendar_starting_day') ??
+        StartingDayOfWeek.monday.index];
+
     timeSelectorOrientation =
         OrientationForPrivate.values[prefs.getInt('time_orient') ??
             OrientationForPrivate.vertical.index];
@@ -103,6 +113,9 @@ class StyleProvider with ChangeNotifier {
     await prefs.setInt('detail_calendar_style', detailCalendarStyle.index);
     await prefs.setInt('stat_calendar_starting_day',statCalendarStartingDay.index);
     await prefs.setInt('stat_calendar_style', statCalendarStyle.index);
+
+    await prefs.setInt('habits_page_calendar_starting_day',habitsPageCalendarStartingDay.index);
+    await prefs.setInt('habits_page_calendar_style', habitsPageCalendarStyle.index);
     await prefs.setInt('current_design', current.index);
     await prefs.setInt('time_orient', timeSelectorOrientation.index);
     await prefs.setInt('count_orient', countSelectorOrientation.index);
@@ -147,6 +160,25 @@ class StyleProvider with ChangeNotifier {
 
   CalendarFormat getStatCalendarStyle() {
     return statCalendarStyle;
+  }
+
+  void setHabitsPageCalendarStartingDay (StartingDayOfWeek wanted) {
+    habitsPageCalendarStartingDay = wanted;
+    _saveToPrefs();
+    notifyListeners();
+  }
+  StartingDayOfWeek getHabitsPageCalendarStartingDay(){
+    return habitsPageCalendarStartingDay;
+  }
+
+  void setHabitsPageCalendarStyle(CalendarFormat wanted) {
+    habitsPageCalendarStyle = wanted;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  CalendarFormat getHabitsPageCalendarStyle() {
+    return habitsPageCalendarStyle;
   }
 
   void setDetailLiquid(bool wanted1, bool wanted2) {
